@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<drawer>
+    <group name="activities">
+        <item name="MainActivity" component="chao.app.debugtools.MainActivity"/>
+        <item name="SecondActivity" component="chao.app.debugtools.SecondActivity" />
+        <group>
+            <item name="MainActivity" component="chao.app.debugtools.MainActivity"/>
+            <item name="SecondActivity" component="chao.app.debugtools.SecondActivity" />
+        </group>
+    </group>
+    <item name="SecondFragment" component="chao.app.debugtools.SecondFragment" />
+    <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment"/>
+</drawer>
