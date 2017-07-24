@@ -19,9 +19,15 @@ public class DrawerXmlParser {
     private static final String XML_EVENT_ITEM = "item";
     private static final String XML_EVENT_GROUP = "group";
     private static final String XML_EVENT_DRAWER = "drawer";
+    private static final String XML_EVENT_EXTRA = "extra";
 
     private static final String XML_ATTRIBUTE_NAME = "name";
     private static final String XML_ATTRIBUTE_COMPONENT = "component";
+    private static final String XML_ATTRIBUTE_FLAGS = "flags";
+    private static final String XML_ATTRIBUTE_EXTRA_KEY = "key";
+    private static final String XML_ATTRIBUTE_EXTRA_VALUE = "value";
+    private static final String XML_ATTRIBUTE_EXTRA_FORMAT = "format";
+
 
 
     private XmlPullParser mPullParser;
@@ -75,11 +81,19 @@ public class DrawerXmlParser {
                             node = new DrawerNode();
                             node.setParent((DrawerGroup) current);
                             if (TextUtils.isEmpty(name)) {
-                                name = "unknown";
+                                name = "<unknown>";
                             }
                             node.setNodeName(name);
                             node.setComponent(mPullParser.getAttributeValue(null, XML_ATTRIBUTE_COMPONENT));
+                            node.setFlags(mPullParser.getAttributeValue(null, XML_ATTRIBUTE_FLAGS));
                             current = node;
+                        } else if (XML_EVENT_EXTRA.equalsIgnoreCase(nodeName)) {
+                            String extraKey = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_EXTRA_KEY);
+                            String extraValue = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_EXTRA_VALUE);
+                            String extraFormat = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_EXTRA_FORMAT);
+                            current.addExtra(extraKey, extraValue, extraFormat);
+                        } else {
+                            throw new IllegalStateException("Unknown xml node name: " + nodeName);
                         }
                         break;
                     case XmlPullParser.END_TAG:

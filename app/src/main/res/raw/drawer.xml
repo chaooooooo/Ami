@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<drawer>
+<drawer name="/" component="chao.app.debugtools.MainActivity">
     <group name="activities">
-        <item name="MainActivity" component="chao.app.debugtools.MainActivity"/>
-        <item name="SecondActivity" component="chao.app.debugtools.SecondActivity" />
+        <item name="SecondFragment" component="chao.app.debugtools.SecondFragment"/>
+        <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment" />
         <group>
-            <item name="MainActivity" component="chao.app.debugtools.MainActivity"/>
-            <item name="SecondActivity" component="chao.app.debugtools.SecondActivity" />
+            <item name="SecondFragment" component="chao.app.debugtools.SecondFragment"/>
+            <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment" />
         </group>
     </group>
     <item name="SecondFragment" component="chao.app.debugtools.SecondFragment" />
-    <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment"/>
+    <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment" flag="">
+        <extra key="" value="" format="int"/>
+        <extra key="" value="" format="string"/>
+    </item>
 </drawer>

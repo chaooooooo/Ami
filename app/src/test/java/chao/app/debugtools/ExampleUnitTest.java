@@ -2,8 +2,6 @@ package chao.app.debugtools;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -12,6 +10,10 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+
+
+        String patten = "   100      |10086   ";
+        String[] ps = patten.split("\\s*|\\s*");
+        System.out.println(patten.trim());
     }
 }
