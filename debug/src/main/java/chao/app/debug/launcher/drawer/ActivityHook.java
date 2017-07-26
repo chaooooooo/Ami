@@ -20,6 +20,9 @@ public class ActivityHook implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return null;
+        if ("onKeyDown".equals(method.getName())) {
+
+        }
+        return method.invoke(proxy,args);
     }
 }

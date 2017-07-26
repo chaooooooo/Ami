@@ -3,11 +3,13 @@ package chao.app.debug.launcher.drawer;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +23,7 @@ import chao.app.debug.DebugTools;
 import chao.app.debug.R;
 
 
-public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener {
+public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener {
 
     private static DrawerManager sDrawerManager;
 
@@ -103,8 +105,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         }
         mDecorView.addView(mDrawerLayout);
         mRealContent.addView(mRealView);
-
-
     }
 
     private <T extends View> T findViewById(int resId) {
@@ -141,6 +141,17 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mDrawerAdapter.navigationUp();
 
         }
+    }
+
+    @Override
+    public boolean onDispatchKeyEvent(KeyEvent keyEvent) {
+        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                mDrawerLayout.closeDrawers();
+                return true;
+            }
+        }
+        return false;
     }
 
     private class DrawerAdapter extends RecyclerView.Adapter {
@@ -239,6 +250,12 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         sDrawerManager = new DrawerManager(app);
         sDrawerManager.setDrawerId(drawerXml);
         app.registerActivityLifecycleCallbacks(new ActivitiesLifeCycleAdapter(){
+
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                activity.getWindow().setCallback(WindowCallbackHook.newInstance(activity, sDrawerManager));
+
+            }
 
             @Override
             public void onActivityStarted(Activity activity) {
