@@ -1,0 +1,8 @@
+1. 调试状态EditText默认值
+2. DrawerLauncher和Activity分离
+3. 动态加载、自动加载DrawerLayout
+4. 代理设置。
+
+5. 如果drawer.xml根设置component将替换原launcher页
+6. 默认group需要添加右侧箭头表示进入group
+7. 返回键处理

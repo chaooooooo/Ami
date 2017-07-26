@@ -92,6 +92,7 @@ public class DrawerXmlParser {
                             String extraValue = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_EXTRA_VALUE);
                             String extraFormat = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_EXTRA_FORMAT);
                             current.addExtra(extraKey, extraValue, extraFormat);
+
                         } else {
                             throw new IllegalStateException("Unknown xml node name: " + nodeName);
                         }
@@ -101,7 +102,9 @@ public class DrawerXmlParser {
                             LogHelper.e(TAG, "current should not be null.");
                             break;
                         }
-                        current = current.getParent();
+                        if (!XML_EVENT_EXTRA.equalsIgnoreCase(nodeName)) {
+                            current = current.getParent();
+                        }
                         break;
                     default:
                         break;

@@ -9,8 +9,8 @@
         </group>
     </group>
     <item name="SecondFragment" component="chao.app.debugtools.SecondFragment" />
-    <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment" flag="">
-        <extra key="" value="" format="int"/>
-        <extra key="" value="" format="string"/>
+    <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment" flags="FLAG_ACTIVITY_NEW_TASK|FLAG_ACTIVITY_CLEAR_TASK">
+        <extra key="key1" value="10086" format="int"/>
+        <extra key="key2" value="value2" format="string"/>
     </item>
 </drawer>

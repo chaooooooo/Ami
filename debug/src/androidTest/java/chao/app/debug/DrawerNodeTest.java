@@ -23,7 +23,7 @@ public class DrawerNodeTest {
 //        node.addExtra("serialize", A.class.getName(), "object");
 //        node.addExtra("parcelable", B.class.getName(), "object");
 
-        node.setFlags("FLAG_ACTIVITY_BROUGHT_TO_FRONT|FLAG_ACTIVITY_NEW_DOCUMENT|0x00001000|abcdefgh");
+        node.setFlags("FLAG_ACTIVITY_BROUGHT_TO_FRONT|FLAG_ACTIVITY_CLEAR_TASK|0x00001000|abcdefgh");
 
         log("flags : " + Integer.toHexString(node.getFlags()));
 

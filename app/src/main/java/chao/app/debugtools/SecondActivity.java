@@ -14,5 +14,8 @@ public class SecondActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.second_activity);
+        System.out.println(getClass().getName() + " --> " + findViewById(android.R.id.content));
+
+
     }
 }
