@@ -3,5 +3,10 @@
 3. 动态加载、自动加载DrawerLayout  ok
 4. 代理设置。
 
+5. DrawerUI可以配置，自定义DrawerAdapter
 6. 默认group需要添加右侧箭头表示进入group
+
 7. 返回键处理      ok
+
+
+8. properties

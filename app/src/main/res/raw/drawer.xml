@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<drawer name="/" component="chao.app.debugtools.MainActivity">
+<drawer>
     <group name="activities">
         <item name="SecondFragment" component="chao.app.debugtools.SecondFragment"/>
         <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment" />
