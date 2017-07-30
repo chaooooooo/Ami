@@ -2,10 +2,10 @@ package chao.app.ami;
 
 import android.app.Application;
 
-import java.lang.reflect.InvocationTargetException;
-
 import chao.app.ami.launcher.drawer.DrawerManager;
 import chao.app.ami.proxy.ProxyManager;
+import chao.app.ami.text.TextManager;
+import chao.app.ami.utils.Util;
 
 /**
  * @author chao.qin
@@ -22,25 +22,16 @@ public class AMi {
     }
 
     public static void init(Application app, int drawerId) {
+        if (!Util.isHostAppDebugMode(app)) {
+            return;
+        }
         if (mInstance != null) {
             return;
         }
         mInstance = new AMi(app);
         DrawerManager.init(app, drawerId);
         ProxyManager.init(app);
-        try {
-            ProxyManager.setProxy("192.168.10.10", 8080);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        TextManager.init();
     }
 
 

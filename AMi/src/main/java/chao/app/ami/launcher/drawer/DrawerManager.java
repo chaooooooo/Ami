@@ -21,7 +21,6 @@ import java.lang.ref.WeakReference;
 
 import chao.app.ami.DebugTools;
 import chao.app.debug.R;
-import chao.app.ami.utils.Util;
 
 
 public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener {
@@ -247,9 +246,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     }
 
     public static void init(Application app, int drawerXml) {
-        if (!Util.isHostAppDebugMode(app)) {
-            return;
-        }
         sDrawerManager = new DrawerManager(app);
         sDrawerManager.setDrawerId(drawerXml);
         app.registerActivityLifecycleCallbacks(new ActivitiesLifeCycleAdapter(){
