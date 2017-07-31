@@ -8,8 +8,8 @@ import android.util.Log;
  */
 
 public class debug {
-    private static final String TAG = "debug";
-    public static void log(String log) {
-        Log.d(TAG, log);
-    }
+
+
+
+
 }

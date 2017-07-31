@@ -12,8 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import chao.app.ami.launcher.drawer.DrawerXmlID;
 import chao.app.ami.proxy.ProxyManager;
-import chao.app.ami.utils.Util;
-import chao.app.ami.utils.debug;
 
 @DrawerXmlID(R.raw.drawer)
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -30,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateText();
 //        mLauncher.setDrawerId(R.raw.drawer);
 //        mLauncher.setContentView(this, R.layout.activity_main);
-        debug.log("isDebug : " + Util.isHostAppDebugMode(getApplication()));
 
         try {
             ProxyManager.setProxy("192.168.10.10", 8080);
