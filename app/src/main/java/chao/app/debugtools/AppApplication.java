@@ -16,6 +16,7 @@ public class AppApplication extends Application {
     public void onCreate() {
         super.onCreate();
         AMi.init(this, R.raw.drawer);
+
     }
 
 

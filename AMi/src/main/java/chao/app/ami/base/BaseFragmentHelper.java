@@ -105,6 +105,6 @@ public class BaseFragmentHelper implements IBaseFragment {
     }
     
     private void lifecycle(String log, int level) {
-        AMi.lifecycle(TAG, mFragment.getClass().getSimpleName() + " -------> " + log, level);
+        AMi.lifecycle(TAG, mFragment.toString() + " -------> " + log, level);
     }
 }

@@ -73,7 +73,7 @@ public class BaseFragment extends Fragment implements IBaseFragment{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mHelper.onDestroyView();
+        mHelper.onDestroy();
     }
 
     @Override

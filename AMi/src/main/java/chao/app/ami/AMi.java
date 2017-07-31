@@ -64,7 +64,10 @@ public class AMi {
     }
 
     public static void lifecycle(String tag, String log, int level) {
-        if (level < mLifecycle) {
+        if (mLifecycle == LIFECYCLE_LEVEL_NONE) {
+            return;
+        }
+        if (level > mLifecycle) {
             return;
         }
         log(tag, log);

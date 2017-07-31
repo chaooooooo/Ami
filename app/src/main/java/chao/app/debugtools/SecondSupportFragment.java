@@ -2,19 +2,20 @@ package chao.app.debugtools;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import chao.app.ami.base.BaseSupportFragment;
+
 /**
  * @author chao.qin
  * @since 2017/3/24
  */
 
-public class SecondSupportFragment extends Fragment {
+public class SecondSupportFragment extends BaseSupportFragment {
 
     @Nullable
     @Override
