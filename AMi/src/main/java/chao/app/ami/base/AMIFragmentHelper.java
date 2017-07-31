@@ -16,15 +16,15 @@ import chao.app.ami.annotations.LayoutID;
  * @since 2017/7/31
  */
 
-public class BaseFragmentHelper implements IBaseFragment {
+public class AMIFragmentHelper implements IAMIFragment {
 
-    private static final String TAG = BaseFragmentHelper.class.getSimpleName();
+    private static final String TAG = AMIFragmentHelper.class.getSimpleName();
 
 
-    private IBaseFragment mFragment;
+    private IAMIFragment mFragment;
     private View mLayout;
 
-    BaseFragmentHelper(IBaseFragment fragment) {
+    AMIFragmentHelper(IAMIFragment fragment) {
         if (fragment == null) {
             throw new AMiException("FragmentHelper should have a fragment.");
         }
@@ -100,7 +100,7 @@ public class BaseFragmentHelper implements IBaseFragment {
         return layoutID.value();
     }
 
-    public <T extends View> T findViewById(int resId) {
+    public <T extends View> T findView(int resId) {
         return (T) mLayout.findViewById(resId);
     }
     

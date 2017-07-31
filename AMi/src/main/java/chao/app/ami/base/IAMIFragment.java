@@ -12,7 +12,7 @@ import android.view.ViewGroup;
  * @since 2017/7/31
  */
 
-public interface IBaseFragment {
+public interface IAMIFragment {
     void onAttach(Context context);
 
     void onCreate(@Nullable Bundle savedInstanceState);
@@ -35,5 +35,5 @@ public interface IBaseFragment {
 
     void onDetach();
 
-    <T extends View> T findViewById(int resId);
+    <T extends View> T findView(int resId);
 }

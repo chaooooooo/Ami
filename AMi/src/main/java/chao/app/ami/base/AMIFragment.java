@@ -1,9 +1,9 @@
 package chao.app.ami.base;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +13,8 @@ import android.view.ViewGroup;
  * @since 2017/7/31
  */
 
-public class BaseSupportFragment extends Fragment implements IBaseFragment{
-    private BaseFragmentHelper mHelper = new BaseFragmentHelper(this);
+public class AMIFragment extends Fragment implements IAMIFragment {
+    private AMIFragmentHelper mHelper = new AMIFragmentHelper(this);
 
     @Override
     public void onAttach(Context context) {
@@ -31,8 +31,7 @@ public class BaseSupportFragment extends Fragment implements IBaseFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = mHelper.onCreateView(inflater, container, savedInstanceState);
-        return view;
+        return mHelper.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -84,8 +83,8 @@ public class BaseSupportFragment extends Fragment implements IBaseFragment{
     }
 
     @Override
-    public <T extends View> T findViewById(int resId) {
-        return mHelper.findViewById(resId);
+    public <T extends View> T findView(int resId) {
+        return mHelper.findView(resId);
     }
 
 }

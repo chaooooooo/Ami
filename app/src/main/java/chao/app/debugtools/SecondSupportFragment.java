@@ -8,14 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import chao.app.ami.base.BaseSupportFragment;
+import chao.app.ami.base.AMISupportFragment;
 
 /**
  * @author chao.qin
  * @since 2017/3/24
  */
 
-public class SecondSupportFragment extends BaseSupportFragment {
+public class SecondSupportFragment extends AMISupportFragment {
 
     @Nullable
     @Override

@@ -7,14 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import chao.app.ami.base.BaseFragment;
+import chao.app.ami.base.AMIFragment;
 
 /**
  * @author chao.qin
  * @since 2017/3/24
  */
 
-public class SecondFragment extends BaseFragment {
+public class SecondFragment extends AMIFragment {
 
     @Nullable
     @Override

@@ -5,5 +5,6 @@ package chao.app.ami.base;
  * @since 2017/7/31
  */
 
-public class SimpleFragment extends BaseFragment {
+public class SimpleFragment extends AMIFragment {
+
 }

@@ -3,6 +3,7 @@ package chao.app.ami.utils;
 import android.app.Application;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 
 /**
  * @author chao.qin
@@ -25,5 +26,9 @@ public class Util {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static <T extends Collection> String toString(T collection) {
+        return null;
     }
 }
