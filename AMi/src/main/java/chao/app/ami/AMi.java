@@ -3,6 +3,8 @@ package chao.app.ami;
 import android.app.Application;
 import android.util.Log;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import chao.app.ami.launcher.drawer.DrawerManager;
 import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;
@@ -38,6 +40,7 @@ public class AMi {
             return;
         }
         mInstance = new AMi(app);
+        LeakCanary.install(app);
         DrawerManager.init(app, drawerId);
         ProxyManager.init(app);
         TextManager.init();
