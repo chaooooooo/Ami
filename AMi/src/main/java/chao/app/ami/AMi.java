@@ -14,7 +14,8 @@ import chao.app.ami.utils.Util;
  * @author chao.qin
  * @since 2017/7/27
  *
- * @hide
+ * 调试工具
+ *
  */
 
 public class AMi {
