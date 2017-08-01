@@ -43,12 +43,14 @@ public class Ami {
             return;
         }
         mInstance = new Ami(app);
-        LeakCanary.install(app);
         DrawerManager.init(app, drawerId);
         ProxyManager.init(app);
         TextManager.init();
     }
 
+    public static void enableLeakCanary(Application app) {
+        LeakCanary.install(app);
+    }
 
     public static Application getApp() {
         return mApp;

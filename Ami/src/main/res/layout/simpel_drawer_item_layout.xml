@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center_vertical"
+    android:minHeight="48dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/drawer_item_name"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:lines="1"
+        tools:text="好好学习天天向上， 小小的天ssssssss大的梦想"/>
+
+    <ImageView
+        android:id="@+id/drawer_item_arrow"
+        android:src="@drawable/ic_right_arrow"
+        android:visibility="invisible"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

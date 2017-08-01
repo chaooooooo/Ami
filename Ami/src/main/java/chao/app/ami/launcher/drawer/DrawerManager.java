@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -99,6 +100,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mRealContent = findViewById(R.id.real_content);
             mDrawerListView = findViewById(R.id.ui_list);
             mDrawerListView.setLayoutManager(new LinearLayoutManager(mContext.get(), LinearLayoutManager.VERTICAL, false));
+            mDrawerListView.addItemDecoration(new DividerItemDecoration(mContext.get(), LinearLayoutManager.VERTICAL));
+
 
             DrawerXmlParser parser = new DrawerXmlParser();
             parser.parseDrawer(mContext.get().getResources().openRawResource(drawerXmlId() == 0 ? mDrawerId : drawerXmlId()), this);
@@ -164,13 +167,21 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new RecyclerView.ViewHolder(LayoutInflater.from(mContext.get()).inflate(android.R.layout.simple_list_item_1, parent, false)) {};
+            return new RecyclerView.ViewHolder(LayoutInflater.from(mContext.get()).inflate(R.layout.simpel_drawer_item_layout, parent, false)) {};
         }
 
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-            TextView textView = (TextView) holder.itemView;
-            textView.setOnClickListener(new View.OnClickListener() {
+            View itemView = holder.itemView;
+            TextView textView = (TextView) itemView.findViewById(R.id.drawer_item_name);
+            ImageView arrow = (ImageView) itemView.findViewById(R.id.drawer_item_arrow);
+            DrawerNode node = mCurrentGroupNode.getChild(position);
+            int visible = View.INVISIBLE;
+            if (node instanceof DrawerGroup) {
+                visible = View.VISIBLE;
+            }
+            arrow.setVisibility(visible);
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     DrawerNode drawerNode = mCurrentGroupNode.getChild(holder.getAdapterPosition());
