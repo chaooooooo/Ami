@@ -2,7 +2,7 @@ package chao.app.debugtools;
 
 import android.app.Application;
 
-import chao.app.ami.AMi;
+import chao.app.ami.Ami;
 
 /**
  * @author chao.qin
@@ -15,7 +15,7 @@ public class AppApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        AMi.init(this, R.raw.drawer);
+        Ami.init(this, R.raw.drawer);
 
     }
 

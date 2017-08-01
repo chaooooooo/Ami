@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import chao.app.ami.AMi;
+import chao.app.ami.Ami;
 import chao.app.ami.annotations.LayoutID;
 
 /**
@@ -26,7 +26,7 @@ public class AMIActivityHelper implements IAMIActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        lifecycle("onCreate()", AMi.LIFECYCLE_LEVEL_CREATE);
+        lifecycle("onCreate()", Ami.LIFECYCLE_LEVEL_CREATE);
         int layoutId = getLayoutFromAnnotation();
         if (layoutId != View.NO_ID) {
             mActivity.setContentView(layoutId);
@@ -35,27 +35,27 @@ public class AMIActivityHelper implements IAMIActivity {
 
     @Override
     public void onStart() {
-        lifecycle("onCreate()", AMi.LIFECYCLE_LEVEL_CREATE);
+        lifecycle("onCreate()", Ami.LIFECYCLE_LEVEL_CREATE);
     }
 
     @Override
     public void onResume() {
-        lifecycle("onCreate()", AMi.LIFECYCLE_LEVEL_CREATE);
+        lifecycle("onCreate()", Ami.LIFECYCLE_LEVEL_CREATE);
     }
 
     @Override
     public void onPause() {
-        lifecycle("onCreate()", AMi.LIFECYCLE_LEVEL_CREATE);
+        lifecycle("onCreate()", Ami.LIFECYCLE_LEVEL_CREATE);
     }
 
     @Override
     public void onStop() {
-        lifecycle("onCreate()", AMi.LIFECYCLE_LEVEL_CREATE);
+        lifecycle("onCreate()", Ami.LIFECYCLE_LEVEL_CREATE);
     }
 
     @Override
     public void onDestroy() {
-        lifecycle("onCreate()", AMi.LIFECYCLE_LEVEL_CREATE);
+        lifecycle("onCreate()", Ami.LIFECYCLE_LEVEL_CREATE);
     }
 
     @Override
@@ -72,6 +72,6 @@ public class AMIActivityHelper implements IAMIActivity {
     }
 
     private void lifecycle(String log, int level) {
-        AMi.lifecycle(TAG, mActivity.toString() + " -------> " + log, level);
+        Ami.lifecycle(TAG, mActivity.toString() + " -------> " + log, level);
     }
 }

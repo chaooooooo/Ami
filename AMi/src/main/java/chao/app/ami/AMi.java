@@ -18,11 +18,11 @@ import chao.app.ami.utils.Util;
  *
  */
 
-public class AMi {
+public class Ami {
 
     private static final String TAG = "AMI";
     private static Application mApp;
-    private static AMi mInstance;
+    private static Ami mInstance;
 
     public static final int LIFECYCLE_LEVEL_FULL = 3;
     public static final int LIFECYCLE_LEVEL_SIMPLE = 2;
@@ -31,7 +31,7 @@ public class AMi {
 
     private static int mLifecycle = LIFECYCLE_LEVEL_NONE;
 
-    private AMi(Application app) {
+    private Ami(Application app) {
         mApp = app;
     }
 
@@ -42,7 +42,7 @@ public class AMi {
         if (mInstance != null) {
             return;
         }
-        mInstance = new AMi(app);
+        mInstance = new Ami(app);
         LeakCanary.install(app);
         DrawerManager.init(app, drawerId);
         ProxyManager.init(app);

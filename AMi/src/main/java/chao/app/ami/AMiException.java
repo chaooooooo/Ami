@@ -5,16 +5,16 @@ package chao.app.ami;
  * @since 2017/7/31
  */
 
-public class AMiException extends RuntimeException {
-    public AMiException(){
+public class AmiException extends RuntimeException {
+    public AmiException(){
 
     }
 
-    public AMiException(String message) {
+    public AmiException(String message) {
         super(message);
     }
 
-    public AMiException(String message, Throwable e) {
+    public AmiException(String message, Throwable e) {
         super(message, e);
     }
 }

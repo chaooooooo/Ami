@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import chao.app.ami.AMi;
+import chao.app.ami.Ami;
 import chao.app.ami.utils.Util;
 
 /**
@@ -38,7 +38,7 @@ public class TextManager {
     private static ArrayList<Poetry> readPoetry(String poetryPath) throws IOException {
         InputStream is = null;
         try {
-            is = AMi.getApp().getAssets().open(poetryPath);
+            is = Ami.getApp().getAssets().open(poetryPath);
             PoetryReader reader = new PoetryReader();
             return reader.readPoetry(is);
         } finally {
@@ -98,7 +98,7 @@ public class TextManager {
     }
 
     private static void checkDebugMode() {
-        if (!Util.isHostAppDebugMode(AMi.getApp())) {
+        if (!Util.isHostAppDebugMode(Ami.getApp())) {
             throw new IllegalStateException("TextManager must be use in debug mode.");
         }
     }
