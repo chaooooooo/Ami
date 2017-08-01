@@ -16,7 +16,7 @@ public class AppApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Ami.init(this, R.raw.drawer);
-
+        Ami.setLifecycleLevel(Ami.LIFECYCLE_LEVEL_FULL);
     }
 
 

@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<drawer>
-    <group name="activities">
-        <item name="SecondFragment" component="chao.app.debugtools.SecondFragment"/>
-        <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment" />
-        <group>
-            <item name="SecondFragment" component="chao.app.debugtools.SecondFragment"/>
-            <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment" />
-        </group>
-    </group>
-    <item name="SecondFragment" component="chao.app.debugtools.SecondFragment" />
-    <item name="SecondSupportFragment" component="chao.app.debugtools.SecondSupportFragment" flags="FLAG_ACTIVITY_NEW_TASK|FLAG_ACTIVITY_CLEAR_TASK">
-        <extra key="key1" value="10086" format="int"/>
-        <extra key="key2" value="value2" format="string"/>
+<drawer packageName="chao.app.debugtools">
+    <property name="p1" value="v1"/>
+    <property name="p2" value="v2"/>
+    <item name="SecondActivity" component=".NormalActivity"/>
+
+    <item name="InputActivity" component=".EditTextInputActivity">
+        <input viewId="username" text="chaooooooo"/>
+        <input viewId="password" text="abc123!!"/>
+        <input viewId="check_code" text="666666"/>
     </item>
+
+    <item name="InputFragment" component=".EditTextInputFragment">
+        <input viewId="username" text="chaooooooo"/>
+        <input viewId="password" text="abc123!!"/>
+        <input viewId="check_code" text="666666"/>
+    </item>
+
+    <group name="fragments">
+        <item name="NormalFragment" component=".NormalFragment"/>
+
+        <item name="SupportFragment" component=".SupportFragment"/>
+
+        <item name="FlagFragment" component=".NormalFragment" flags="FLAG_ACTIVITY_NEW_TASK|FLAG_ACTIVITY_CLEAR_TASK"/>
+
+        <item name="ExtrasFragment" component=".SupportFragment">
+            <extra name="key1" value="10086" format="int"/>
+            <extra name="key2" value="Hello World!" format="string"/>
+        </item>
+    </group>
+
 </drawer>

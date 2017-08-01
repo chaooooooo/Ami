@@ -8,7 +8,7 @@ import android.os.Bundle;
  * @since 2017/3/24
  */
 
-public class SecondActivity extends Activity {
+public class NormalActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -6,6 +6,11 @@ package chao.app.ami.launcher.drawer;
  */
 
 class DrawerParserException extends RuntimeException {
+
+    public DrawerParserException(String message) {
+        super(message);
+    }
+
     public DrawerParserException(String message, Throwable e) {
         super(message, e);
     }

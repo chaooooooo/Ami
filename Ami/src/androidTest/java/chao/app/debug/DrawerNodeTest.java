@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.io.Serializable;
 
-import chao.app.ami.launcher.drawer.DrawerNode;
+import chao.app.ami.launcher.drawer.ComponentNode;
 
 /**
  * @author chao.qin
@@ -15,10 +15,10 @@ import chao.app.ami.launcher.drawer.DrawerNode;
  */
 
 public class DrawerNodeTest {
-    DrawerNode node;
+    ComponentNode node;
     @Test
     public void testAddExtra() {
-        node = new DrawerNode();
+        node = new ComponentNode();
 
 //        node.addExtra("serialize", A.class.getName(), "object");
 //        node.addExtra("parcelable", B.class.getName(), "object");

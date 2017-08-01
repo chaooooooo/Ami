@@ -11,7 +11,7 @@ import android.os.Bundle;
  * @since 2017/3/23
  */
 
-public class DebugTools {
+public class UI {
 
     public static void show(Context context, Class clazz) {
         show(context,clazz,null,0);

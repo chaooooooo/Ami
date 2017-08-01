@@ -23,6 +23,8 @@
             android:orientation="horizontal"
             android:padding="8dp"
             android:background="?attr/colorPrimary"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
@@ -32,7 +34,7 @@
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/navigation_title"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:layout_marginLeft="10dp"
                 android:textColor="@android:color/primary_text_light"
                 android:layout_width="wrap_content"
@@ -42,7 +44,7 @@
             android:id="@+id/ui_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/darker_gray"
+            android:background="@color/common_background_color"
             />
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

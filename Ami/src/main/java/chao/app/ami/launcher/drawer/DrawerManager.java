@@ -3,6 +3,7 @@ package chao.app.ami.launcher.drawer;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,8 +20,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
+import java.util.Map;
+import java.util.Set;
 
-import chao.app.ami.DebugTools;
+import chao.app.ami.Ami;
+import chao.app.ami.UI;
 import chao.app.debug.R;
 
 
@@ -31,7 +35,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     private RecyclerView mDrawerListView;
     private DrawerAdapter mDrawerAdapter;
 
-    private DrawerGroup mDrawerRootNode;
+    private DrawerNode mDrawerRootNode;
 
     private DrawerLayout mDrawerLayout;
 
@@ -104,7 +108,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
 
             DrawerXmlParser parser = new DrawerXmlParser();
-            parser.parseDrawer(mContext.get().getResources().openRawResource(drawerXmlId() == 0 ? mDrawerId : drawerXmlId()), this);
+            parser.parseDrawer(mContext.get().getResources().openRawResource(mDrawerId), this);
         }
         mDecorView.addView(mDrawerLayout);
         mRealContent.addView(mRealView);
@@ -114,20 +118,12 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         return (T) mDrawerLayout.findViewById(resId);
     }
 
-    int drawerXmlId() {
-        DrawerXmlID xmlID = getClass().getAnnotation(DrawerXmlID.class);
-        if (xmlID != null) {
-            return xmlID.value();
-        }
-        return 0;
-    }
-
-    void setDrawerId(int rawId) {
+    private void setDrawerId(int rawId) {
         mDrawerId = rawId;
     }
 
     @Override
-    public void onXmlParserDone(DrawerGroup rootNode) {
+    public void onXmlParserDone(DrawerNode rootNode) {
         mDrawerRootNode = rootNode;
         mDrawerAdapter = new DrawerAdapter(mDrawerRootNode);
         mDrawerListView.setAdapter(mDrawerAdapter);
@@ -158,10 +154,10 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     private class DrawerAdapter extends RecyclerView.Adapter {
 
-        private DrawerGroup mCurrentGroupNode;
+        private NodeGroup mCurrentGroup;
 
-        private DrawerAdapter(DrawerGroup groupNode) {
-            mCurrentGroupNode = groupNode;
+        private DrawerAdapter(NodeGroup groupNode) {
+            mCurrentGroup = groupNode;
             updateNavigation();
         }
 
@@ -175,78 +171,88 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             View itemView = holder.itemView;
             TextView textView = (TextView) itemView.findViewById(R.id.drawer_item_name);
             ImageView arrow = (ImageView) itemView.findViewById(R.id.drawer_item_arrow);
-            DrawerNode node = mCurrentGroupNode.getChild(position);
+            Node node = mCurrentGroup.getChild(position);
             int visible = View.INVISIBLE;
-            if (node instanceof DrawerGroup) {
+            if (node instanceof NodeGroup) {
                 visible = View.VISIBLE;
             }
             arrow.setVisibility(visible);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DrawerNode drawerNode = mCurrentGroupNode.getChild(holder.getAdapterPosition());
-                    if (drawerNode instanceof DrawerGroup) {
-                        DrawerGroup group = (DrawerGroup) drawerNode;
+                    Node node = mCurrentGroup.getChild(holder.getAdapterPosition());
+                    if (node instanceof NodeGroup) {
+                        NodeGroup group = (NodeGroup) node;
                         mDrawerAdapter.navigationTo(group);
-                    } else {
+                    } else if (node instanceof ComponentNode){
+                        ComponentNode componentNode = (ComponentNode) node;
                         try {
                             mDrawerLayout.closeDrawer(GravityCompat.START, false);
-                            Class<?> clazz = Class.forName(drawerNode.getComponent());
-                            DebugTools.show(mContext.get(), clazz, drawerNode.getBundle(), drawerNode.getFlags());
+                            Class<?> clazz = componentName(componentNode);
+                            UI.show(mContext.get(), clazz, componentNode.getBundle(), componentNode.getFlags());
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }
                     }
                 }
             });
-            textView.setText(mCurrentGroupNode.getChild(position).getNodeName());
+            textView.setText(mCurrentGroup.getChild(position).getName());
+        }
+
+        private Class componentName(ComponentNode node) throws ClassNotFoundException {
+            String packageName = mDrawerRootNode.getPackageName();
+            String component = node.getComponent();
+            if (component.charAt(0) == '.') {
+                component = packageName + component;
+            }
+            return Class.forName(component);
         }
 
         @Override
         public int getItemCount() {
-            return mCurrentGroupNode.size();
+            return mCurrentGroup.size();
         }
 
         private void navigationUp() {
-            DrawerGroup group = mCurrentGroupNode.getParent();
+            NodeGroup group = mCurrentGroup.getParent();
             if (group != null) {
-                mCurrentGroupNode = group;
+                mCurrentGroup = group;
                 notifyDataSetChanged();
                 updateNavigation();
             }
         }
 
-        private void navigationTo(DrawerGroup groupNode) {
+        private void navigationTo(NodeGroup groupNode) {
             if (groupNode == null) {
                 return;
             }
-            mCurrentGroupNode = groupNode;
+            mCurrentGroup = groupNode;
             notifyDataSetChanged();
             updateNavigation();
         }
 
         private void updateNavigation() {
-            if (mCurrentGroupNode.getParent() != null) {
+            if (mCurrentGroup.getParent() != null) {
                 mNavigationBackView.setImageResource(R.drawable.ic_navigation);
             } else {
                 mNavigationBackView.setImageResource(0);
             }
-            mNavigationPathView.setText(buildNavigationTitle(mCurrentGroupNode));
+            mNavigationPathView.setText(buildNavigationTitle(mCurrentGroup));
         }
 
-        private String buildNavigationTitle(DrawerNode node) {
+        private String buildNavigationTitle(Node node) {
             if (node == null) {
                 return "/";
             }
-            String title = node.getNodeName();
+            String title = node.getName();
             if (title == null) {
                 title = "";
             }
-            DrawerNode parent = node.getParent();
+            NodeGroup parent = node.getParent();
             while (parent != null) {
-                String parentName = parent.getNodeName();
+                String parentName = parent.getName();
                 if (!TextUtils.isEmpty(parentName)) {
-                    title = parent.getNodeName() + "/" +  title;
+                    title = parent.getName() + "/" +  title;
                 }
                 parent = parent.getParent();
             }
@@ -271,7 +277,35 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             public void onActivityStarted(Activity activity) {
                 sDrawerManager.setupView(activity);
             }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+                sDrawerManager.injectInput(activity);
+            }
         });
+    }
+
+    private void injectInput(Activity activity) {
+        Intent intent = activity.getIntent();
+        if (intent == null) {
+            return;
+        }
+        Map<String, String> inputs = (Map<String, String>) intent.getSerializableExtra(Constants.EXTRA_KEY_INPUT);
+        if (inputs == null) {
+            return;
+        }
+        Set<String> viewIds = inputs.keySet();
+        if (viewIds.size() == 0) {
+            return;
+        }
+        for (String viewId : viewIds) {
+            int resId = activity.getResources().getIdentifier(viewId, "id", Ami.getApp().getPackageName());
+            View view = activity.findViewById(resId);
+            if (view == null || !(view instanceof TextView)) {
+                return;
+            }
+            ((TextView) view).setText(inputs.get(viewId));
+        }
     }
 
     public static DrawerManager get() {
