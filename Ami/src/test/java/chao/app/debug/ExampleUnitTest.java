@@ -2,7 +2,7 @@ package chao.app.debug;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Arrays;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,6 +12,11 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+        Object[][] objects = new Object[10][];
+        objects[1] = new Object[20];
+        for (int i=0; i<20;i++) {
+            objects[1][i] = "i = " + i;
+        }
+        System.out.println(Arrays.toString(objects[1]));
     }
 }

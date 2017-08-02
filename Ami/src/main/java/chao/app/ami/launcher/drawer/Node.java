@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * @since 2017/8/1
  */
 
-public class Node implements Constants{
+public class Node implements DrawerConstants {
 
     private ArrayList<Property> mProperties = new ArrayList<>();
 

@@ -26,15 +26,23 @@ import java.util.Set;
 import chao.app.ami.ActivitiesLifeCycleAdapter;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
+import chao.app.ami.classes.ClassesManager;
+import chao.app.ami.classes.Frame;
+import chao.app.ami.classes.FrameAdapter;
 import chao.app.debug.R;
 
 
-public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener {
+public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, ClassesManager.TopFrameChangedListener {
 
     private static DrawerManager sDrawerManager;
 
     private RecyclerView mDrawerListView;
     private DrawerAdapter mDrawerAdapter;
+
+    private RecyclerView mFrameListView;
+    private FrameAdapter mFrameAdapter;
+    private ImageView mFrameNavigationBackView;
+    private TextView mFrameNavigationPathView;
 
     private DrawerNode mDrawerRootNode;
 
@@ -97,15 +105,28 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         if (mDrawerLayout == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext.get());
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
-
-            mNavigationBackView = findViewById(R.id.navigation_back);
-            mNavigationBackView.setOnClickListener(this);
-            mNavigationPathView = findViewById(R.id.navigation_title);
-
             mRealContent = findViewById(R.id.real_content);
-            mDrawerListView = findViewById(R.id.ui_list);
+            
+            View componentContent = findViewById(R.id.drawer_component_content);
+            mNavigationBackView = (ImageView) componentContent.findViewById(R.id.navigation_back);
+            mNavigationBackView.setOnClickListener(this);
+            mNavigationPathView = (TextView) componentContent.findViewById(R.id.navigation_title);
+            mDrawerListView = (RecyclerView) componentContent.findViewById(R.id.ui_list);
             mDrawerListView.setLayoutManager(new LinearLayoutManager(mContext.get(), LinearLayoutManager.VERTICAL, false));
             mDrawerListView.addItemDecoration(new DividerItemDecoration(mContext.get(), LinearLayoutManager.VERTICAL));
+
+
+            ClassesManager classesManager = ClassesManager.getInstance();
+            classesManager.addFrameChangeListener(this);
+            View frameContent = findViewById(R.id.drawer_frame_content);
+            mFrameListView = (RecyclerView) frameContent.findViewById(R.id.frame_list);
+            mFrameListView.setLayoutManager(new LinearLayoutManager(mContext.get(), LinearLayoutManager.VERTICAL, false));
+            mFrameListView.addItemDecoration(new DividerItemDecoration(mContext.get(), LinearLayoutManager.VERTICAL));
+            mFrameAdapter = new FrameAdapter();
+            mFrameListView.setAdapter(mFrameAdapter);
+            mFrameNavigationBackView = (ImageView) frameContent.findViewById(R.id.navigation_back);
+            mFrameNavigationBackView.setOnClickListener(this);
+            mFrameNavigationPathView = (TextView) frameContent.findViewById(R.id.navigation_title);
 
 
             DrawerXmlParser parser = new DrawerXmlParser();
@@ -137,8 +158,10 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.navigation_back) {
+        if (v == mNavigationBackView) {
             mDrawerAdapter.navigationUp();
+        } else if (v == mFrameNavigationBackView) {
+            mFrameAdapter.navigationUp();
         }
     }
 
@@ -151,6 +174,17 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             }
         }
         return false;
+    }
+
+    public void notifyFrameChanged() {
+        if (mFrameAdapter != null) {
+            mFrameAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onTopFrameChanged(Frame frame, String path) {
+        mFrameNavigationPathView.setText(path);
     }
 
     private class DrawerAdapter extends RecyclerView.Adapter {
@@ -214,7 +248,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             return mCurrentGroup.size();
         }
 
-        private void navigationUp() {
+        public void navigationUp() {
             NodeGroup group = mCurrentGroup.getParent();
             if (group != null) {
                 mCurrentGroup = group;
@@ -223,7 +257,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             }
         }
 
-        private void navigationTo(NodeGroup groupNode) {
+        public void navigationTo(NodeGroup groupNode) {
             if (groupNode == null) {
                 return;
             }
@@ -281,7 +315,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             @Override
             public void onActivityResumed(Activity activity) {
                 sDrawerManager.injectInput(activity);
-//                FrameProcessor.process(activity);
             }
         });
     }
@@ -291,7 +324,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         if (intent == null) {
             return;
         }
-        Map<String, String> inputs = (Map<String, String>) intent.getSerializableExtra(Constants.EXTRA_KEY_INPUT);
+        Map<String, String> inputs = (Map<String, String>) intent.getSerializableExtra(DrawerConstants.EXTRA_KEY_INPUT);
         if (inputs == null) {
             return;
         }

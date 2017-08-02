@@ -5,7 +5,7 @@ package chao.app.ami.launcher.drawer;
  * @since 2017/8/1
  */
 
-public interface Constants {
+public interface DrawerConstants {
 
     String EXTRA_KEY_INPUT = "inputs";
 

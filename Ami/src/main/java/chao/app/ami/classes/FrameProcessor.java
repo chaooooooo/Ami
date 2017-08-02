@@ -1,9 +1,7 @@
 package chao.app.ami.classes;
 
 
-import android.support.v4.util.ArrayMap;
-
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Stack;
 
 /**
@@ -11,18 +9,59 @@ import java.util.Stack;
  * @since 2017/8/2
  */
 
-public class FrameProcessor {
+class FrameProcessor {
 
-    private Stack mFrameStack = new Stack();
-    private ArrayMap<String, String> mFieldMap = new ArrayMap<>();
+    private Stack<Frame> mFrameStack = new Stack<>();
 
+    private ArrayList<ClassesManager.TopFrameChangedListener> mListeners = new ArrayList<>();
 
-    public void process(Object object) {
-        mFrameStack.push(object);
-        Class<?> clazz = object.getClass();
-        Field[] fields = clazz.getDeclaredFields();
+    public void pushInto(Object object) {
+        Frame frame = new Frame(object);
+        mFrameStack.push(frame);
+        String path = "";
+        for (Frame f: mFrameStack) {
+            path = path + "/" + f.getName();
+        }
+        for (ClassesManager.TopFrameChangedListener listener: mListeners) {
+            listener.onTopFrameChanged(frame, path);
+        }
+    }
+
+    public Frame popOut() {
+        Frame frame = mFrameStack.pop();
+        String path = "";
+        for (Frame f: mFrameStack) {
+            path = path + "/" + f.getName();
+        }
+        for (ClassesManager.TopFrameChangedListener listener: mListeners) {
+            listener.onTopFrameChanged(frame, path);
+        }
+        return frame;
+    }
+
+    public Frame peek() {
+        return mFrameStack.peek();
+    }
+
+    public void clear() {
+        mFrameStack.clear();
+    }
+
+    public static void addTopFrameChangeListener() {
 
     }
 
+    public void addFrameChangeListener(ClassesManager.TopFrameChangedListener listener) {
+        if (listener == null) {
+            return;
+        }
+        mListeners.add(listener);
+    }
 
+    public void removeFrameChangeListener(ClassesManager.TopFrameChangedListener listener) {
+        if (listener == null) {
+            return;
+        }
+        mListeners.remove(listener);
+    }
 }

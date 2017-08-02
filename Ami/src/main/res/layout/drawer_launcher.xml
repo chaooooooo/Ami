@@ -14,32 +14,14 @@
             android:layout_height="match_parent" />
     </FrameLayout>
     <LinearLayout
+        android:id="@+id/drawer_component_content"
         android:orientation="vertical"
         android:layout_gravity="left"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
-            android:id="@+id/navigation_bar"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:background="?attr/colorPrimary"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/navigation_back"
-                android:src="@drawable/ic_navigation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/navigation_title"
-                android:textSize="18sp"
-                android:layout_marginLeft="10dp"
-                android:textColor="@android:color/primary_text_light"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+
+        <include layout="@layout/navigation_layout" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/ui_list"
             android:layout_width="match_parent"
@@ -48,10 +30,18 @@
             />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/drawer_frame_content"
         android:layout_gravity="right"
         android:background="@color/common_background_color"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <include layout="@layout/navigation_layout" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/frame_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>
