@@ -13,7 +13,7 @@ import android.view.ViewGroup;
  * @since 2017/7/31
  */
 
-public class AMISupportFragment extends Fragment implements IAMIFragment {
+public abstract class AMISupportFragment extends Fragment implements IAMIFragment {
     private AMIFragmentHelper mHelper = new AMIFragmentHelper(this);
 
     @Override

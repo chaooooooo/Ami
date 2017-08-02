@@ -49,6 +49,7 @@ public class AMIFragmentHelper implements IAMIFragment {
             return null;
         }
         mLayout = inflater.inflate(layoutId,container,false);
+        setupView(mLayout);
         return mLayout;
     }
 
@@ -103,7 +104,12 @@ public class AMIFragmentHelper implements IAMIFragment {
     public <T extends View> T findView(int resId) {
         return (T) mLayout.findViewById(resId);
     }
-    
+
+    @Override
+    public void setupView(View layout) {
+        mFragment.setupView(layout);
+    }
+
     private void lifecycle(String log, int level) {
         Ami.lifecycle(TAG, mFragment.toString() + " -------> " + log, level);
     }

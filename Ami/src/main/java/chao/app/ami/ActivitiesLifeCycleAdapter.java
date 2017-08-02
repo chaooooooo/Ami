@@ -1,4 +1,4 @@
-package chao.app.ami.launcher.drawer;
+package chao.app.ami;
 
 import android.app.Activity;
 import android.app.Application;
@@ -9,7 +9,7 @@ import android.os.Bundle;
  * @since 2017/7/25
  */
 
-class ActivitiesLifeCycleAdapter implements Application.ActivityLifecycleCallbacks {
+public class ActivitiesLifeCycleAdapter implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
     }

@@ -35,4 +35,9 @@ public class SupportFragment extends AMISupportFragment {
         textView.setText(text);
         return textView;
     }
+
+    @Override
+    public void setupView(View layout) {
+
+    }
 }

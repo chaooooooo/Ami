@@ -16,7 +16,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_gravity="left"
-        android:layout_width="240dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
             android:id="@+id/navigation_bar"
@@ -46,5 +46,12 @@
             android:layout_height="match_parent"
             android:background="@color/common_background_color"
             />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_gravity="right"
+        android:background="@color/common_background_color"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

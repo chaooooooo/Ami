@@ -21,8 +21,11 @@ public class NormalFragment extends AMIFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TextView textView = new TextView(getActivity());
         textView.setText("Second Fragment!");
-
-
         return textView;
+    }
+
+    @Override
+    public void setupView(View layout) {
+
     }
 }

@@ -1,13 +1,16 @@
-1. 调试状态EditText默认值
+1. 调试状态EditText默认值         ok
 2. DrawerLauncher和Activity分离  ok
 3. 动态加载、自动加载DrawerLayout  ok
 4. 代理设置。
 
 5. DrawerUI可以配置，自定义DrawerAdapter
-6. 默认group需要添加右侧箭头表示进入group
+6. 默认group需要添加右侧箭头表示进入group ok
 
 7. 返回键处理      ok
 
 
 8. properties
-9. 歌词，诗歌，文言文，段子等文本来提供debug随机字符串
+9. 歌词，诗歌，文言文，段子等文本来提供debug随机字符串 ok
+
+
+10. debug信息

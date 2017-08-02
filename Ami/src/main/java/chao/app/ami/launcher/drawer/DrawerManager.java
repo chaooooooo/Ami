@@ -23,6 +23,7 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
 
+import chao.app.ami.ActivitiesLifeCycleAdapter;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.app.debug.R;
@@ -270,7 +271,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
                 activity.getWindow().setCallback(WindowCallbackHook.newInstance(activity, sDrawerManager));
-
             }
 
             @Override
@@ -281,6 +281,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             @Override
             public void onActivityResumed(Activity activity) {
                 sDrawerManager.injectInput(activity);
+//                FrameProcessor.process(activity);
             }
         });
     }

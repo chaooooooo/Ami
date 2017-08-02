@@ -32,7 +32,7 @@ public class UI {
     }
 
     private static void showAppFragment(Context context, Class fragment,Bundle bundle, int flags) {
-        Intent intent = DebugFragmentContainer.buildContainerIntent(context, fragment);
+        Intent intent = FragmentContainer.buildContainerIntent(context, fragment);
         if (bundle != null) {
             intent.putExtras(bundle);
         }
@@ -41,7 +41,7 @@ public class UI {
     }
 
     private static void showSupportFragment(Context context, Class fragment,Bundle bundle, int flags) {
-        Intent intent = DebugSupportFragmentContainer.buildContainerIntent(context, fragment);
+        Intent intent = SupportFragmentContainer.buildContainerIntent(context, fragment);
         if (bundle != null) {
             intent.putExtras(bundle);
         }

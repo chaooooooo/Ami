@@ -16,14 +16,14 @@ import chao.app.debug.R;
  * <p>
  * 这个Activity 只存在一个Fragment
  */
-public class DebugSupportFragmentContainer extends FragmentActivity {
+public class SupportFragmentContainer extends FragmentActivity {
 
     public static final String KEY_FRAGMENT = "fragment";
 
     private Class<? extends Fragment> mTargetFragment;
 
     public static Intent buildContainerIntent(Context context,Class fragment) {
-        Intent intent = new Intent(context,DebugSupportFragmentContainer.class);
+        Intent intent = new Intent(context,SupportFragmentContainer.class);
         intent.putExtra(KEY_FRAGMENT,fragment);
         return intent;
     }

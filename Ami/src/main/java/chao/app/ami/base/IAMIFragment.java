@@ -36,4 +36,6 @@ public interface IAMIFragment {
     void onDetach();
 
     <T extends View> T findView(int resId);
+
+    void setupView(View layout);
 }
