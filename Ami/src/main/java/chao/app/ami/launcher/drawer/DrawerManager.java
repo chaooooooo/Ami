@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -29,6 +30,7 @@ import chao.app.ami.UI;
 import chao.app.ami.classes.ClassesManager;
 import chao.app.ami.classes.Frame;
 import chao.app.ami.classes.FrameAdapter;
+import chao.app.ami.hooks.FragmentLifecycle;
 import chao.app.debug.R;
 
 
@@ -304,7 +306,18 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                //hook点击事件
                 activity.getWindow().setCallback(WindowCallbackHook.newInstance(activity, sDrawerManager));
+
+                //hook fragment
+//                FragmentManagerHook.hook(activity);
+
+
+                if (activity instanceof FragmentActivity) {
+                    FragmentActivity fActivity = (FragmentActivity) activity;
+                    android.support.v4.app.FragmentManager supportManager = fActivity.getSupportFragmentManager();
+                    supportManager.registerFragmentLifecycleCallbacks(new FragmentLifecycle(), true);
+                }
             }
 
             @Override
@@ -319,7 +332,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         });
     }
 
-    private void injectInput(Activity activity) {
+    public void injectInput(Activity activity) {
         Intent intent = activity.getIntent();
         if (intent == null) {
             return;
@@ -333,12 +346,25 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             return;
         }
         for (String viewId : viewIds) {
-            int resId = activity.getResources().getIdentifier(viewId, "id", Ami.getApp().getPackageName());
-            View view = activity.findViewById(resId);
-            if (view == null || !(view instanceof TextView)) {
-                return;
+            View view = null;
+            String[] ids = viewId.split("\\.");
+            if (ids.length == 0) {
+                ids = new String[]{viewId};
             }
-            ((TextView) view).setText(inputs.get(viewId));
+            for (String id: ids) {
+                int resId = activity.getResources().getIdentifier(id, "id", Ami.getApp().getPackageName());
+                if (view == null) {
+                    view = activity.findViewById(resId);
+                } else {
+                    view = view.findViewById(resId);
+                }
+                if (view == null) {
+                    return;
+                }
+                if (view instanceof TextView) {
+                    ((TextView) view).setText(inputs.get(viewId));
+                }
+            }
         }
     }
 

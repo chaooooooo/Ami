@@ -2,7 +2,12 @@
 <drawer packageName="chao.app.debugtools">
     <property name="p1" value="v1"/>
     <property name="p2" value="v2"/>
-    <item name="SecondActivity" component=".NormalActivity"/>
+    <item name="TabHostFragment" component=".TestTabHostFragment">
+        <input viewId="username.edit" text="chaooooooo"/>
+        <input viewId="password.edit" text="abc123!!"/>
+        <input viewId="check_code.edit" text="666666"/>
+    </item>
+    <item name="NormalActivity" component=".NormalActivity"/>
 
     <item name="InputActivity" component=".EditTextInputActivity">
         <input viewId="username" text="chaooooooo"/>
