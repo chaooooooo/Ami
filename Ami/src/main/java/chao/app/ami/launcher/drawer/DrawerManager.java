@@ -130,6 +130,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mFrameNavigationBackView.setOnClickListener(this);
             mFrameNavigationPathView = (TextView) frameContent.findViewById(R.id.navigation_title);
 
+            mDrawerLayout.addDrawerListener(mFrameAdapter);
+
 
             DrawerXmlParser parser = new DrawerXmlParser();
             parser.parseDrawer(mContext.get().getResources().openRawResource(mDrawerId), this);

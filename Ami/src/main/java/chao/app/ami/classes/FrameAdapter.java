@@ -1,6 +1,7 @@
 package chao.app.ami.classes;
 
 import android.content.Context;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,7 @@ import chao.app.debug.R;
  * @since 2017/8/2
  */
 
-public class FrameAdapter extends RecyclerView.Adapter {
+public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.DrawerListener {
 
     private static final int ITEM_VIEW_TYPE_CATEGORY = 1;
     private static final int ITEM_VIEW_TYPE_INFO = 2;
@@ -79,5 +80,27 @@ public class FrameAdapter extends RecyclerView.Adapter {
     public void navigationUp() {
         mFrameProcessor.popOut();
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+        Ami.log("onDrawerSlide : " + drawerView + " slideOffset: " + slideOffset);
+    }
+
+    @Override
+    public void onDrawerOpened(View drawerView) {
+        Ami.log("onDrawerOpened : " + drawerView);
+    }
+
+    @Override
+    public void onDrawerClosed(View drawerView) {
+        Ami.log("onDrawerClosed : " + drawerView);
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
+        if (newState == DrawerLayout.STATE_DRAGGING) {
+            notifyDataSetChanged();
+        }
     }
 }

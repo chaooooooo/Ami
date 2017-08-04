@@ -14,3 +14,23 @@
 
 
 10. debug信息
+    1. 右侧drawer显示当前Activity的成员变量列表， 包括父类的成员变量   done
+    2. 优化显示样式   done
+    3. 点击列表，进入该成员变量的成员变量列表    done
+    4. 第一页显示当前Activity信息列表以及该Activity中的Fragment列表
+
+
+
+11. View调试信息
+    1. decorView加一层FrameLayout显示view
+    2. 点击时查找当前点击点对应的最内层的view
+    2. 点击View元素， 屏幕右上角显示该View的相关信息， 并用方框标记该view
+        包括以下信息：
+        1. view的boundary （px）
+        2. view的左右上下边距（dp）
+        3. view的text
+        4. 界面上下滑动可以改变view信息颜色， 解决view信息字体颜色和背景颜色一致导致不可见问题
+    3. 长按弹出action列表，Action列表包括
+        1. 文本注入
+        2. 右drawer查看view详细信息（frame方式）
+        3. view自身的longClick的action

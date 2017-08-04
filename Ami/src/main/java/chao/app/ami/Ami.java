@@ -1,6 +1,7 @@
 package chao.app.ami;
 
 import android.app.Application;
+import android.os.StrictMode;
 import android.util.Log;
 
 import com.squareup.leakcanary.LeakCanary;
@@ -43,6 +44,16 @@ public class Ami {
         if (mInstance != null) {
             return;
         }
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+//                .penaltyDeath()
+                .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build());
         mInstance = new Ami(app);
         DrawerManager.init(app, drawerId);
         ProxyManager.init(app);
@@ -79,6 +90,5 @@ public class Ami {
         }
         log(tag, log);
     }
-
 
 }

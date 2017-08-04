@@ -28,6 +28,9 @@ class FrameProcessor {
     }
 
     public Frame popOut() {
+        if (mFrameStack.size() == 1) {
+            return null;
+        }
         Frame frame = mFrameStack.pop();
         String path = "";
         for (Frame f: mFrameStack) {
