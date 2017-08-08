@@ -18,7 +18,7 @@ public class DrawerNodeTest {
     ComponentNode node;
     @Test
     public void testAddExtra() {
-        node = new ComponentNode();
+        node = new ComponentNode("");
 
 //        node.addExtra("serialize", A.class.getName(), "object");
 //        node.addExtra("parcelable", B.class.getName(), "object");

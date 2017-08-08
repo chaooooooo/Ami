@@ -84,7 +84,6 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
 
     @Override
     public void onDrawerSlide(View drawerView, float slideOffset) {
-        Ami.log("onDrawerSlide : " + drawerView + " slideOffset: " + slideOffset);
     }
 
     @Override

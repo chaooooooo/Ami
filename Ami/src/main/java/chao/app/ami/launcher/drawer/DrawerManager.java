@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.DividerItemDecoration;
@@ -55,7 +57,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     private int mDrawerId;
 
-    private FrameLayout mRealContent;
+    private InterceptorFrameLayout mRealContent;
     private View mRealView;
     private ViewGroup mDecorView;
 
@@ -107,7 +109,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         if (mDrawerLayout == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext.get());
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
-            mRealContent = findViewById(R.id.real_content);
+            mRealContent = findViewById(R.id.real_content_container);
             
             View componentContent = findViewById(R.id.drawer_component_content);
             mNavigationBackView = (ImageView) componentContent.findViewById(R.id.navigation_back);
@@ -132,12 +134,14 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
             mDrawerLayout.addDrawerListener(mFrameAdapter);
 
+//            ViewInterceptor interceptor = new ViewInterceptor();
+//            mRealContent.setInterceptor(interceptor);
 
             DrawerXmlParser parser = new DrawerXmlParser();
             parser.parseDrawer(mContext.get().getResources().openRawResource(mDrawerId), this);
         }
         mDecorView.addView(mDrawerLayout);
-        mRealContent.addView(mRealView);
+        mRealContent.addView(mRealView, 0);
     }
 
     private <T extends View> T findViewById(int resId) {
@@ -317,8 +321,12 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
                 if (activity instanceof FragmentActivity) {
                     FragmentActivity fActivity = (FragmentActivity) activity;
-                    android.support.v4.app.FragmentManager supportManager = fActivity.getSupportFragmentManager();
+                    FragmentManager supportManager = fActivity.getSupportFragmentManager();
                     supportManager.registerFragmentLifecycleCallbacks(new FragmentLifecycle(), true);
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    Hooker.hookFragmentManager(activity.getFragmentManager());
                 }
             }
 
