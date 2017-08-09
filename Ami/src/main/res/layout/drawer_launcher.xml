@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <chao.app.ami.launcher.drawer.InterceptorFrameLayout
+    <chao.app.ami.viewinfo.InterceptorFrameLayout
         android:id="@+id/real_content_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -12,7 +12,7 @@
             android:id="@+id/view_info_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </chao.app.ami.launcher.drawer.InterceptorFrameLayout>
+    </chao.app.ami.viewinfo.InterceptorFrameLayout>
     <LinearLayout
         android:id="@+id/drawer_component_content"
         android:orientation="vertical"

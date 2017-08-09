@@ -33,6 +33,8 @@ import chao.app.ami.classes.ClassesManager;
 import chao.app.ami.classes.Frame;
 import chao.app.ami.classes.FrameAdapter;
 import chao.app.ami.hooks.FragmentLifecycle;
+import chao.app.ami.viewinfo.InterceptorFrameLayout;
+import chao.app.ami.viewinfo.InterceptorLayerManager;
 import chao.app.debug.R;
 
 
@@ -57,6 +59,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     private int mDrawerId;
 
+    private InterceptorLayerManager mRealContentManager;
     private InterceptorFrameLayout mRealContent;
     private View mRealView;
     private ViewGroup mDecorView;
@@ -111,6 +114,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             LayoutInflater inflater = LayoutInflater.from(mContext.get());
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
             mRealContent = findViewById(R.id.real_content_container);
+            mRealContentManager = new InterceptorLayerManager(mRealContent);
             
             View componentContent = findViewById(R.id.drawer_component_content);
             mNavigationBackView = (ImageView) componentContent.findViewById(R.id.navigation_back);

@@ -21,6 +21,7 @@
         <input viewId="check_code" text="666666"/>
     </item>
     <item name="TouchableFragment" component=".TestTouchableFragment"/>
+    <item name="TestListFragment" component=".TestListFragment"/>
 
 
     <group name="fragments">

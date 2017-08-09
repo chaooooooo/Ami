@@ -1,4 +1,4 @@
-package chao.app.ami.launcher.drawer;
+package chao.app.ami.viewinfo;
 
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,6 +10,7 @@ import chao.app.ami.Ami;
 import chao.app.ami.Interceptor;
 import chao.app.ami.hooks.ViewGroupHook;
 import chao.app.ami.hooks.ViewHook;
+import chao.app.debug.R;
 
 /**
  * @author chao.qin
@@ -20,7 +21,9 @@ public class ViewInterceptor {
 
 
     private Interceptor.OnInterceptorListener mListenerInterceptor = new ListenerInterceptor();
+
     private OnViewTouchedListener mOnViewTouchedListener;
+    private OnViewLongClickListener mOnViewLongClickListener;
 
     public ViewInterceptor() {
     }
@@ -35,6 +38,9 @@ public class ViewInterceptor {
      *    这里只能静态注入， 如果在初始化后调用setOnXxxListener会该View的Xxx事件拦截器丢失
      */
     public void injectListeners(View child) {
+        if (child.getId() == R.id.ami_action_list) {
+            return;
+        }
         View.OnTouchListener srcTouchListener = ViewHook.getOnTouchListener(child);
         View.OnTouchListener hookTouchListener = Interceptor.newInstance(srcTouchListener, View.OnTouchListener.class, mListenerInterceptor);
         child.setOnTouchListener(hookTouchListener);
@@ -100,6 +106,9 @@ public class ViewInterceptor {
         @Override
         public boolean onLongClick(View v) {
             Ami.log("onLongClick : " + v);
+            if (mOnViewLongClickListener != null) {
+                return mOnViewLongClickListener.onViewLongClicked(v);
+            }
             return false;
         }
 
@@ -114,12 +123,20 @@ public class ViewInterceptor {
         }
     }
 
+    public void setOnViewLongClickListener(OnViewLongClickListener listener) {
+        mOnViewLongClickListener = listener;
+    }
+
     public void setOnViewTouchedListener(OnViewTouchedListener listener) {
         mOnViewTouchedListener = listener;
     }
 
     public interface OnViewTouchedListener {
         void onViewTouched(View view, MotionEvent event);
+    }
+
+    public interface OnViewLongClickListener {
+        boolean onViewLongClicked(View view);
     }
 
 }
