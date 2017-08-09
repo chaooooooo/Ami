@@ -95,6 +95,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         }
 
         if (mDecorView != null) {
+            mRealContent.cleanFocusDraw();
             mRealContent.removeView(mRealView);
             mDecorView.removeAllViews();
             if (mRealView != null) {
@@ -338,6 +339,12 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             @Override
             public void onActivityResumed(Activity activity) {
                 sDrawerManager.injectInput(activity);
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+                super.onActivityStopped(activity);
+                sDrawerManager.mRealContent.cleanFocusDraw();
             }
         });
     }

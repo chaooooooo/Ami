@@ -20,6 +20,7 @@ public class ViewInterceptor {
 
 
     private Interceptor.OnInterceptorListener mListenerInterceptor = new ListenerInterceptor();
+    private OnViewTouchedListener mOnViewTouchedListener;
 
     public ViewInterceptor() {
     }
@@ -38,14 +39,23 @@ public class ViewInterceptor {
         View.OnTouchListener hookTouchListener = Interceptor.newInstance(srcTouchListener, View.OnTouchListener.class, mListenerInterceptor);
         child.setOnTouchListener(hookTouchListener);
 
-        View.OnLongClickListener srcLongClickListener = ViewHook.getOnLongClickListener(child);
-        View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, View.OnLongClickListener.class, mListenerInterceptor);
-        child.setOnLongClickListener(hookLongClickListener);
 
         if (!(child instanceof ViewGroup)) {
+            View.OnClickListener srcClickListener = ViewHook.getOnClickListener(child);
+            View.OnClickListener hookClickListener = Interceptor.newInstance(srcClickListener, View.OnClickListener.class, mListenerInterceptor);
+            child.setOnClickListener(hookClickListener);
+
+            View.OnLongClickListener srcLongClickListener = ViewHook.getOnLongClickListener(child);
+            View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, View.OnLongClickListener.class, mListenerInterceptor);
+            child.setOnLongClickListener(hookLongClickListener);
             return;
         }
         ViewGroup vgChild = (ViewGroup) child;
+
+//        vgChild.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+//        vgChild.setDescendantFocusability(FOCUS_BEFORE_DESCENDANTS);
+//        vgChild.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+
         ViewGroup.OnHierarchyChangeListener srcHierarchyListener = ViewGroupHook.getOnHierarchyChangeListener(vgChild);
         ViewGroup.OnHierarchyChangeListener hookHierarchyListener = Interceptor.newInstance(srcHierarchyListener, ViewGroup.OnHierarchyChangeListener.class, mListenerInterceptor);
         vgChild.setOnHierarchyChangeListener(hookHierarchyListener);
@@ -95,9 +105,21 @@ public class ViewInterceptor {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Ami.log("onTouch : " + v);
+            Ami.log("onTouch : " + v.getClass().getSimpleName() + ":" + v.getId() + " event: " + event.getAction());
+            Ami.log("onTouch : " + v + " event:" + event.getAction());
+            if (mOnViewTouchedListener != null) {
+                mOnViewTouchedListener.onViewTouched(v, event);
+            }
             return false;
         }
+    }
+
+    public void setOnViewTouchedListener(OnViewTouchedListener listener) {
+        mOnViewTouchedListener = listener;
+    }
+
+    public interface OnViewTouchedListener {
+        void onViewTouched(View view, MotionEvent event);
     }
 
 }

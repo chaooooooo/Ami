@@ -20,6 +20,8 @@
         <input viewId="password" text="abc123!!"/>
         <input viewId="check_code" text="666666"/>
     </item>
+    <item name="TouchableFragment" component=".TestTouchableFragment"/>
+
 
     <group name="fragments">
         <item name="NormalFragment" component=".NormalFragment"/>

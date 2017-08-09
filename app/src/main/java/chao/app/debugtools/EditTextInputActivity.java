@@ -1,5 +1,9 @@
 package chao.app.debugtools;
 
+import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMIActivity;
 
@@ -9,6 +13,16 @@ import chao.app.ami.base.AMIActivity;
  */
 
 @LayoutID(R.layout.edit_input_fragment)
-public class EditTextInputActivity extends AMIActivity {
+public class EditTextInputActivity extends AMIActivity implements View.OnClickListener {
 
+    @Override
+    public void setupView(Bundle savedInstanceState) {
+        LinearLayout content = findView(R.id.edit_input_content);
+//        content.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
 }

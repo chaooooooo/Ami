@@ -18,6 +18,11 @@ public class AMIActivity extends AppCompatActivity implements IAMIActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHelper.onCreate(savedInstanceState);
+        setupView(savedInstanceState);
+    }
+
+    public void setupView(Bundle savedInstanceState) {
+
     }
 
 
