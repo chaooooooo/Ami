@@ -5,6 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.WeakHashMap;
 
 import chao.app.ami.Ami;
 import chao.app.ami.Interceptor;
@@ -24,6 +26,8 @@ public class ViewInterceptor {
 
     private OnViewTouchedListener mOnViewTouchedListener;
     private OnViewLongClickListener mOnViewLongClickListener;
+
+    private WeakHashMap<View, View.OnLongClickListener> mLongClickMap = new WeakHashMap<>();
 
     public ViewInterceptor() {
     }
@@ -52,15 +56,15 @@ public class ViewInterceptor {
             child.setOnClickListener(hookClickListener);
 
             View.OnLongClickListener srcLongClickListener = ViewHook.getOnLongClickListener(child);
-            View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, View.OnLongClickListener.class, mListenerInterceptor);
+            View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, View.OnLongClickListener.class, mListenerInterceptor, true);
             child.setOnLongClickListener(hookLongClickListener);
+            //如果longClick不为空，缓存来通过action选项触发
+            if (srcLongClickListener != null && !(srcLongClickListener instanceof Proxy)) {
+                mLongClickMap.put(child, srcLongClickListener);
+            }
             return;
         }
         ViewGroup vgChild = (ViewGroup) child;
-
-//        vgChild.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
-//        vgChild.setDescendantFocusability(FOCUS_BEFORE_DESCENDANTS);
-//        vgChild.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 
         ViewGroup.OnHierarchyChangeListener srcHierarchyListener = ViewGroupHook.getOnHierarchyChangeListener(vgChild);
         ViewGroup.OnHierarchyChangeListener hookHierarchyListener = Interceptor.newInstance(srcHierarchyListener, ViewGroup.OnHierarchyChangeListener.class, mListenerInterceptor);
@@ -114,13 +118,15 @@ public class ViewInterceptor {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Ami.log("onTouch : " + v.getClass().getSimpleName() + ":" + v.getId() + " event: " + event.getAction());
-            Ami.log("onTouch : " + v + " event:" + event.getAction());
             if (mOnViewTouchedListener != null) {
                 mOnViewTouchedListener.onViewTouched(v, event);
             }
             return false;
         }
+    }
+
+    View.OnLongClickListener findLongClickListener(View view) {
+        return mLongClickMap.get(view);
     }
 
     public void setOnViewLongClickListener(OnViewLongClickListener listener) {

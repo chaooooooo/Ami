@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="common_background_color">#5a9192</color>
+    <color name="transparent_red">#44440000</color>
 </resources>

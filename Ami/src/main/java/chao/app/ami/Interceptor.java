@@ -11,12 +11,15 @@ import java.lang.reflect.Proxy;
 
 public class Interceptor<T> implements InvocationHandler {
 
-    private T mTarget;
+    private T mTargetListener;
 
     private OnInterceptorListener mInterceptorListener;
 
+    private boolean mIntercept;
+
     public interface OnInterceptorListener {
         Object onBeforeInterceptor(Object proxy, Method method, Object[] args);
+
         Object onAfterInterceptor(Object proxy, Method method, Object[] args);
     }
 
@@ -25,18 +28,23 @@ public class Interceptor<T> implements InvocationHandler {
     }
 
     private Interceptor(T target) {
-        mTarget = target;
+        mTargetListener = target;
     }
 
     public static <T> T newInstance(Class<T> interfaceClass, OnInterceptorListener listener) {
-        return (T) newInstance(null, new Class[]{interfaceClass}, listener);
+        return (T) newInstance(null, new Class[]{interfaceClass}, listener, false);
     }
 
     public static <T> T newInstance(T source, Class<T> interfaceClass, OnInterceptorListener listener) {
-       return (T) newInstance(source, new Class[]{interfaceClass}, listener);
+        return (T) newInstance(source, new Class[]{interfaceClass}, listener, false);
     }
 
-    public static <T> T newInstance(T source, Class<T>[] interfaces, OnInterceptorListener listener) {
+    public static <T> T newInstance(T source, Class<T> interfaces, OnInterceptorListener listener, boolean intercept) {
+        return (T) newInstance(source, new Class[]{interfaces}, listener, intercept);
+    }
+
+
+    public static <T> T newInstance(T source, Class<T>[] interfaces, OnInterceptorListener listener, boolean intercept) {
         ClassLoader classLoader = null;
         if (source != null) {
             classLoader = source.getClass().getClassLoader();
@@ -46,6 +54,7 @@ public class Interceptor<T> implements InvocationHandler {
         }
         Interceptor<T> interceptor = new Interceptor<>(source);
         interceptor.setOnInterceptorListener(listener);
+        interceptor.mIntercept = intercept;
         return (T) Proxy.newProxyInstance(classLoader, interfaces, interceptor);
     }
 
@@ -55,8 +64,8 @@ public class Interceptor<T> implements InvocationHandler {
         if (mInterceptorListener != null) {
             result = mInterceptorListener.onBeforeInterceptor(proxy, method, args);
         }
-        if (mTarget != null) {
-            Object invoke = method.invoke(mTarget, args);
+        if (mTargetListener != null && !mIntercept) {
+            Object invoke = method.invoke(mTargetListener, args);
             if (invoke != null) {
                 result = invoke;
             }
@@ -68,5 +77,9 @@ public class Interceptor<T> implements InvocationHandler {
             }
         }
         return result;
+    }
+
+    public T getSourceListener() {
+        return mTargetListener;
     }
 }

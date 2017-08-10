@@ -13,12 +13,12 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import java.lang.ref.WeakReference;
 
+import chao.app.ami.Constants;
 import chao.app.debug.R;
 
 /**
@@ -26,10 +26,10 @@ import chao.app.debug.R;
  * @since 2017/8/8
  */
 
-public class InterceptorFrameLayout extends FrameLayout implements ViewGroup.OnHierarchyChangeListener, ViewInterceptor.OnViewTouchedListener {
+public class InterceptorFrameLayout extends FrameLayout implements ViewInterceptor.OnViewTouchedListener {
 
-    private static final int ACTION_VIEW_WIDTH = 300;
-    private static final int ACTION_VIEW_HEIGHT = 700;
+    private static final int ACTION_VIEW_WIDTH = LayoutParams.WRAP_CONTENT;
+    private static final int ACTION_VIEW_HEIGHT = LayoutParams.WRAP_CONTENT;
 
 
     private ViewInterceptor mInterceptor;
@@ -77,25 +77,12 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewGroup.OnH
         mDrawPaint.setStyle(Paint.Style.STROKE);
         mDrawPaint.setStrokeWidth(4);
         setWillNotDraw(false);
-        setOnHierarchyChangeListener(this);
     }
 
     public void setInterceptor(ViewInterceptor interceptor) {
         mInterceptor = interceptor;
         mInterceptor.setOnViewTouchedListener(this);
         mInterceptor.injectListeners(this);
-    }
-
-    @Override
-    public void onChildViewAdded(View parent, View child) {
-        if (mInterceptor != null) {
-            mInterceptor.injectListeners(child);
-        }
-    }
-
-    @Override
-    public void onChildViewRemoved(View parent, View child) {
-        //do nothing
     }
 
     RectF getBoundaryOnLayout(View view, RectF rectF) {
@@ -114,6 +101,10 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewGroup.OnH
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                if (isActionDialogShowed()) {
+                    hideActionDialog();
+                    return;
+                }
                 mTouchedView = new WeakReference<>(view);
                 mDownPoint.x = (int) event.getRawX();
                 mDownPoint.y = (int) event.getRawY();
@@ -146,7 +137,16 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewGroup.OnH
         canvas.drawRoundRect(mFocusRect, 10, 10, mDrawPaint);
     }
 
-    public void cleanFocusDraw() {
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+    }
+
+    View getTouchedView() {
+        return mTouchedView.get();
+    }
+
+    public void cleanSelected() {
         mCleanDraw = true;
         invalidate();
     }
@@ -166,7 +166,15 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewGroup.OnH
                 continue;
             }
             LayoutParams params = (LayoutParams) mActionListView.getLayoutParams();
-            mActionListView.layout(params.left, params.top, params.left + mActionListView.getWidth(), params.top + mActionListView.getHeight());
+            int width = mActionListView.getMeasuredWidth();
+            int height = mActionListView.getMeasuredHeight();
+            width = Math.min(width, Constants.MAX_LIST_WIDTH);
+            height = Math.min(height, Constants.MAX_LIST_HEIGHT);
+            int listLeft = params.left;
+            int listTop = params.top;
+            int listRight = params.left + width;
+            int listBottom = params.top + height;
+            mActionListView.layout(listLeft, listTop, listRight, listBottom);
         }
 
     }
@@ -175,12 +183,23 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewGroup.OnH
         return mActionListView;
     }
 
-    public void showAction() {
+    boolean isActionDialogShowed() {
+        return mActionListView.getVisibility() == VISIBLE && mActionListView.getParent() != null;
+    }
+
+    public void showActionDialog() {
         getLocationOnScreen(mFrameViewLocation);
         mActionParams.left = mDownPoint.x - mFrameViewLocation[0];
         mActionParams.top = mDownPoint.y - mFrameViewLocation[1];
+        mActionParams.width = LayoutParams.WRAP_CONTENT;
+        mActionParams.height = LayoutParams.WRAP_CONTENT;
         removeView(mActionListView);
         addView(mActionListView, mActionParams);
+    }
+
+    public void hideActionDialog() {
+        mActionListView.getAdapter();
+        removeView(mActionListView);
     }
 
 

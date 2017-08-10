@@ -33,12 +33,11 @@ import chao.app.ami.classes.ClassesManager;
 import chao.app.ami.classes.Frame;
 import chao.app.ami.classes.FrameAdapter;
 import chao.app.ami.hooks.FragmentLifecycle;
-import chao.app.ami.viewinfo.InterceptorFrameLayout;
 import chao.app.ami.viewinfo.InterceptorLayerManager;
 import chao.app.debug.R;
 
 
-public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, ClassesManager.TopFrameChangedListener {
+public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, ClassesManager.TopFrameChangedListener, ViewGroup.OnHierarchyChangeListener {
 
     private static DrawerManager sDrawerManager;
 
@@ -59,9 +58,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     private int mDrawerId;
 
-    private InterceptorLayerManager mRealContentManager;
-    private InterceptorFrameLayout mRealContent;
-    private View mRealView;
+    private InterceptorLayerManager mInterceptorManager;
+    private ViewGroup mRealView;
     private ViewGroup mDecorView;
 
     private WeakReference<Context> mContext;
@@ -98,8 +96,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         }
 
         if (mDecorView != null) {
-            mRealContent.cleanFocusDraw();
-            mRealContent.removeView(mRealView);
+            mInterceptorManager.cleanSelected();
+            mDrawerLayout.removeView(mRealView);
             mDecorView.removeAllViews();
             if (mRealView != null) {
                 mDecorView.addView(mRealView);
@@ -113,9 +111,12 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         if (mDrawerLayout == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext.get());
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
-            mRealContent = findViewById(R.id.real_content_container);
-            mRealContentManager = new InterceptorLayerManager(mRealContent);
-            
+            FrameLayout content = (FrameLayout) mDrawerLayout.findViewById(R.id.ami_content);
+
+            mInterceptorManager = new InterceptorLayerManager();
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            content.addView(mInterceptorManager.getLayout(),layoutParams);
+
             View componentContent = findViewById(R.id.drawer_component_content);
             mNavigationBackView = (ImageView) componentContent.findViewById(R.id.navigation_back);
             mNavigationBackView.setOnClickListener(this);
@@ -140,13 +141,14 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mDrawerLayout.addDrawerListener(mFrameAdapter);
 
 //            ViewInterceptor interceptor = new ViewInterceptor();
-//            mRealContent.setInterceptor(interceptor);
+//            mInterceptorFrame.setInterceptor(interceptor);
 
             DrawerXmlParser parser = new DrawerXmlParser();
             parser.parseDrawer(mContext.get().getResources().openRawResource(mDrawerId), this);
         }
+        mInterceptorManager.injectListeners(mRealView);
         mDecorView.addView(mDrawerLayout);
-        mRealContent.addView(mRealView, 0);
+        mDrawerLayout.addView(mRealView, 0);
     }
 
     private <T extends View> T findViewById(int resId) {
@@ -198,6 +200,16 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     @Override
     public void onTopFrameChanged(Frame frame, String path) {
         mFrameNavigationPathView.setText(path);
+    }
+
+    @Override
+    public void onChildViewAdded(View parent, View child) {
+        mInterceptorManager.injectListeners(child);
+    }
+
+    @Override
+    public void onChildViewRemoved(View parent, View child) {
+        //do nothing
     }
 
     private class DrawerAdapter extends RecyclerView.Adapter {
@@ -348,7 +360,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             @Override
             public void onActivityStopped(Activity activity) {
                 super.onActivityStopped(activity);
-                sDrawerManager.mRealContent.cleanFocusDraw();
+                sDrawerManager.mInterceptorManager.cleanSelected();
             }
         });
     }
