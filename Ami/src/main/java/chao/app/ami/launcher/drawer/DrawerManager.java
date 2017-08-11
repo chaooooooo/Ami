@@ -113,7 +113,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
             FrameLayout content = (FrameLayout) mDrawerLayout.findViewById(R.id.ami_content);
 
-            mInterceptorManager = new InterceptorLayerManager();
+            mInterceptorManager = InterceptorLayerManager.get();
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             content.addView(mInterceptorManager.getLayout(),layoutParams);
 

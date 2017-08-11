@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import chao.app.ami.Ami;
+import chao.app.ami.AmiException;
 import chao.app.ami.Constants;
 import chao.app.debug.R;
 
@@ -43,8 +44,21 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
 
     private ArrayList<Action> mActionList = new ArrayList<>();
 
+    private static InterceptorLayerManager sInstance;
 
-    public InterceptorLayerManager() {
+    public static InterceptorLayerManager get() {
+        if (sInstance == null) {
+            throw new AmiException("InterceptorLayerManager should have initialization.");
+        }
+        return sInstance;
+    }
+
+    public static void init(boolean interceptorEnabled) {
+        sInstance = new InterceptorLayerManager();
+        sInstance.mInterceptor.setInterceptorEnabled(interceptorEnabled);
+    }
+
+    private InterceptorLayerManager() {
         Context context = Ami.getApp();
         mLayout = new InterceptorFrameLayout(context);
         mLayout.setInterceptor(mInterceptor);
@@ -55,7 +69,6 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         mActionListView.setDivider(new ColorDrawable(context.getResources().getColor(R.color.transparent_red)));
         mActionListView.setDividerHeight(1);
         mActionListView.setOnItemClickListener(this);
-
     }
 
     @Override
@@ -136,4 +149,8 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         }
     }
 
+
+    public void setInterceptorEnabled(boolean enabled) {
+        mInterceptor.setInterceptorEnabled(enabled);
+    }
 }

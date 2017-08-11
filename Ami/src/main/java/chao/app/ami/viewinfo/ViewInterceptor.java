@@ -5,9 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.WeakHashMap;
 
+import chao.app.ami.AMIProxy;
 import chao.app.ami.Ami;
 import chao.app.ami.Interceptor;
 import chao.app.ami.hooks.ViewGroupHook;
@@ -27,6 +27,9 @@ public class ViewInterceptor {
     private OnViewTouchedListener mOnViewTouchedListener;
     private OnViewLongClickListener mOnViewLongClickListener;
 
+    private boolean mInterceptorEnabled = true;
+
+
     private WeakHashMap<View, View.OnLongClickListener> mLongClickMap = new WeakHashMap<>();
 
     public ViewInterceptor() {
@@ -45,6 +48,9 @@ public class ViewInterceptor {
         if (child.getId() == R.id.ami_action_list) {
             return;
         }
+        if (!mInterceptorEnabled) {
+            return;
+        }
         View.OnTouchListener srcTouchListener = ViewHook.getOnTouchListener(child);
         View.OnTouchListener hookTouchListener = Interceptor.newInstance(srcTouchListener, View.OnTouchListener.class, mListenerInterceptor);
         child.setOnTouchListener(hookTouchListener);
@@ -59,7 +65,7 @@ public class ViewInterceptor {
             View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, View.OnLongClickListener.class, mListenerInterceptor, true);
             child.setOnLongClickListener(hookLongClickListener);
             //如果longClick不为空，缓存来通过action选项触发
-            if (srcLongClickListener != null && !(srcLongClickListener instanceof Proxy)) {
+            if (srcLongClickListener != null && !(srcLongClickListener instanceof AMIProxy)) {
                 mLongClickMap.put(child, srcLongClickListener);
             }
             return;
@@ -73,6 +79,10 @@ public class ViewInterceptor {
         for (int i = 0; i < grandChildrenCount; i++) {
             injectListeners(vgChild.getChildAt(i));
         }
+    }
+
+    public void setInterceptorEnabled(boolean enabled) {
+        mInterceptorEnabled = enabled;
     }
 
     private class ListenerInterceptor implements Interceptor.OnInterceptorListener, ViewGroup.OnHierarchyChangeListener,View.OnTouchListener, View.OnLongClickListener {

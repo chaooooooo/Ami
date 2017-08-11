@@ -15,7 +15,10 @@ public class AppApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Ami.init(this, R.raw.drawer);
+//        Ami.init(this, R.raw.drawer);
+        Ami.init(this);
+        Ami.setDrawerId(R.raw.drawer);
+        Ami.setViewInterceptorEnabled(false);
         Ami.enableLeakCanary(this);
         Ami.setLifecycleLevel(Ami.LIFECYCLE_LEVEL_CREATE);
     }

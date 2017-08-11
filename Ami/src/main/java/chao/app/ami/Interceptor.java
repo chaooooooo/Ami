@@ -2,7 +2,6 @@ package chao.app.ami;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 /**
  * @author chao.qin
@@ -55,7 +54,7 @@ public class Interceptor<T> implements InvocationHandler {
         Interceptor<T> interceptor = new Interceptor<>(source);
         interceptor.setOnInterceptorListener(listener);
         interceptor.mIntercept = intercept;
-        return (T) Proxy.newProxyInstance(classLoader, interfaces, interceptor);
+        return (T) AMIProxy.newProxyInstance(classLoader, interfaces, interceptor);
     }
 
     @Override

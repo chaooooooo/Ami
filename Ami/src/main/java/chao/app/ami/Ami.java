@@ -11,6 +11,7 @@ import chao.app.ami.launcher.drawer.DrawerManager;
 import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;
 import chao.app.ami.utils.Util;
+import chao.app.ami.viewinfo.InterceptorLayerManager;
 
 /**
  * @author chao.qin
@@ -37,6 +38,54 @@ public class Ami {
         mApp = app;
     }
 
+    public static void init(Application app) {
+        if (!Util.isHostAppDebugMode(app)) {
+            return;
+        }
+        if (mInstance != null) {
+            return;
+        }
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+//                .penaltyDeath()
+                .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build());
+        mInstance = new Ami(app);
+        ProxyManager.init(app);
+        TextManager.init();
+        ClassesManager.init();
+
+        InterceptorLayerManager.init(true);
+    }
+
+    public static void setViewInterceptorEnabled(boolean enabled) {
+        InterceptorLayerManager.get().setInterceptorEnabled(enabled);
+    }
+
+    /**
+     *
+     * @param drawerId 抽屉配置文件Id, 必须是R.raw.xxxx
+     */
+    public static void setDrawerId(int drawerId) {
+        DrawerManager.init(getApp(), drawerId);
+    }
+
+    /**
+     *  Ami 功能初始化
+     *
+     * @param app application
+     * @param drawerId   抽屉配置文件Id, 必须是R.raw.xxxx
+     *
+     * @Deprecated 独立功能开关
+     * @see #init(Application)
+     * @see #setDrawerId(int)
+     */
+    @Deprecated
     public static void init(Application app, int drawerId) {
         if (!Util.isHostAppDebugMode(app)) {
             return;
