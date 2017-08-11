@@ -10,8 +10,18 @@ import chao.app.ami.Ami;
 public class DeviceUtil {
 
     public static int dp2px(int dp){
-        float density = Ami.getApp().getResources().getDisplayMetrics().density;
-        return (int)(density * dp + 0.5);
+        return (int)(getDeviceDensity() * dp + 0.5);
+    }
 
+    public static int getDeviceWidth() {
+        return Ami.getApp().getResources().getDisplayMetrics().widthPixels;
+    }
+
+    public static int getDeviceHeight() {
+        return Ami.getApp().getResources().getDisplayMetrics().heightPixels;
+    }
+
+    public static float getDeviceDensity() {
+        return Ami.getApp().getResources().getDisplayMetrics().density;
     }
 }

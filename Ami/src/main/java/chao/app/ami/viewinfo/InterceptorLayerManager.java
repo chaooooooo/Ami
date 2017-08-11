@@ -2,6 +2,7 @@ package chao.app.ami.viewinfo;
 
 import android.content.Context;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -51,6 +52,8 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         mActionListView = mLayout.getActionListView();
         mActionListAdapter = new ArrayAdapter<>(context, R.layout.ami_viewinfo_adapter_item, R.id.ami_text);
         mActionListView.setAdapter(mActionListAdapter);
+        mActionListView.setDivider(new ColorDrawable(context.getResources().getColor(R.color.transparent_red)));
+        mActionListView.setDividerHeight(1);
         mActionListView.setOnItemClickListener(this);
 
     }

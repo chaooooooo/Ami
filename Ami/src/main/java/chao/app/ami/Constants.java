@@ -16,6 +16,6 @@ public interface Constants {
     String AMI_ACTION_LONG_CLICK = "长按事件";
     String AMI_ACTION_VIEW_DETAIL = "显示View详细信息";
 
-    int MAX_LIST_WIDTH = DeviceUtil.dp2px(160);
-    int MAX_LIST_HEIGHT = DeviceUtil.dp2px(300);
+    int MAX_LIST_WIDTH = DeviceUtil.dp2px(200);
+    int MAX_LIST_HEIGHT = DeviceUtil.dp2px(360);
 }

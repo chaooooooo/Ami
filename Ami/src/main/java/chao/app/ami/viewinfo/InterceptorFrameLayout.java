@@ -19,6 +19,7 @@ import android.widget.ListView;
 import java.lang.ref.WeakReference;
 
 import chao.app.ami.Constants;
+import chao.app.ami.utils.DeviceUtil;
 import chao.app.debug.R;
 
 /**
@@ -30,6 +31,7 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
 
     private static final int ACTION_VIEW_WIDTH = LayoutParams.WRAP_CONTENT;
     private static final int ACTION_VIEW_HEIGHT = LayoutParams.WRAP_CONTENT;
+    private static final int FIXED_SPACE = DeviceUtil.dp2px(10);
 
 
     private ViewInterceptor mInterceptor;
@@ -127,7 +129,6 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
 
     @Override
     public void draw(Canvas canvas) {
-        super.draw(canvas);
         if (mCleanDraw) {
             mCleanDraw = false;
             return;
@@ -135,6 +136,8 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         mFocusRect.inset(-4, -4);
 
         canvas.drawRoundRect(mFocusRect, 10, 10, mDrawPaint);
+
+        super.draw(canvas);
     }
 
     @Override
@@ -172,8 +175,20 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
             height = Math.min(height, Constants.MAX_LIST_HEIGHT);
             int listLeft = params.left;
             int listTop = params.top;
+
             int listRight = params.left + width;
             int listBottom = params.top + height;
+
+            int layoutWidth = getWidth();
+            int layoutHeight = getHeight();
+            if (listRight > layoutWidth) {
+                listLeft = layoutWidth - width - FIXED_SPACE;
+                listRight = listLeft + width;
+            }
+            if (listBottom > layoutHeight) {
+                listTop = layoutHeight - height - FIXED_SPACE;
+                listBottom = listTop + height;
+            }
             mActionListView.layout(listLeft, listTop, listRight, listBottom);
         }
 
