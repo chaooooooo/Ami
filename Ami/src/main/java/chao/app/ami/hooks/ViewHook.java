@@ -37,13 +37,21 @@ public class ViewHook {
         }
     }
 
-    private static Object getListenerInfo(View view) throws IllegalAccessException {
-        return View_mListenerInfo.get(view);
+    public static Object getListenerInfo(View view) {
+        try {
+            return View_mListenerInfo.get(view);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static View.OnClickListener getOnClickListener(View view) {
         try {
             Object listenerInfo = getListenerInfo(view);
+            if (listenerInfo == null) {
+                return null;
+            }
             return (View.OnClickListener) View_ListenerInfo_mOnClickListener.get(listenerInfo);
 
         } catch (IllegalAccessException e) {

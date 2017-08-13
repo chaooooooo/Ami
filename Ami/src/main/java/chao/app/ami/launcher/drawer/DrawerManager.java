@@ -146,7 +146,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             DrawerXmlParser parser = new DrawerXmlParser();
             parser.parseDrawer(mContext.get().getResources().openRawResource(mDrawerId), this);
         }
-        mInterceptorManager.injectListeners(mRealView);
+        mInterceptorManager.injectListeners(null, mRealView);
         mDecorView.addView(mDrawerLayout);
         mDrawerLayout.addView(mRealView, 0);
     }
@@ -204,7 +204,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     @Override
     public void onChildViewAdded(View parent, View child) {
-        mInterceptorManager.injectListeners(child);
+        mInterceptorManager.injectListeners((ViewGroup) parent, child);
     }
 
     @Override

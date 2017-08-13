@@ -16,25 +16,27 @@ public class TestTouchableFragment extends AMISupportFragment implements View.On
     @Override
     public void setupView(View layout) {
         findView(R.id.lll).setOnClickListener(this);
+//        findView(R.id.lll).setOnClickListener(this);
         findView(R.id.view).setOnTouchListener(this);
+        findView(R.id.view).setOnClickListener(this);
         findView(R.id.view).setOnLongClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        Ami.log("test onclick");
+        Ami.log("test onclick " + v);
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Ami.log("test onTouch");
+        Ami.log("test onTouch " + v);
         return false;
     }
 
 
     @Override
     public boolean onLongClick(View v) {
-        Ami.log("test Long click!");
+        Ami.log("test Long click! " + v);
         return false;
     }
 }

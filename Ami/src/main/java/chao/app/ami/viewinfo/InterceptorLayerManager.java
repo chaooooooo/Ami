@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -72,8 +73,8 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
     }
 
     @Override
-    public boolean onViewLongClicked(View view) {
-        showAction(view);
+    public boolean onViewLongClicked(InterceptorRecord record) {
+        showAction(record.view);
         return true;
     }
 
@@ -106,15 +107,15 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         if (action == null) {
             return;
         }
-        View touchedView = mLayout.getTouchedView();
-        if (touchedView == null) {
+        InterceptorRecord touchedRecord = mLayout.getTouchedRecord();
+        if (touchedRecord == null) {
             return;
         }
         switch (action.actionId) {
             case ACTION_ID_LONG_CLICK:
-                View.OnLongClickListener listener = mInterceptor.findLongClickListener(touchedView);
+                View.OnLongClickListener listener = touchedRecord.getSourceLongClickListener();
                 if (listener != null) {
-                    listener.onLongClick(touchedView);
+                    listener.onLongClick(touchedRecord.view);
                 }
                 break;
             case ACTION_ID_TEXT_INJECT:
@@ -129,8 +130,8 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         mLayout.cleanSelected();
     }
 
-    public void injectListeners(View child) {
-        mInterceptor.injectListeners(child);
+    public void injectListeners(ViewGroup vg, View child) {
+        mInterceptor.injectListeners(vg, child);
     }
 
     private static class Action {

@@ -18,7 +18,7 @@ public class AppApplication extends Application {
 //        Ami.init(this, R.raw.drawer);
         Ami.init(this);
         Ami.setDrawerId(R.raw.drawer);
-        Ami.setViewInterceptorEnabled(false);
+//        Ami.setViewInterceptorEnabled(false);
         Ami.enableLeakCanary(this);
         Ami.setLifecycleLevel(Ami.LIFECYCLE_LEVEL_CREATE);
     }

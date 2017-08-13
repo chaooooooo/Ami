@@ -21,16 +21,34 @@
 
 
 
+
 11. View调试信息
-    1. decorView加一层FrameLayout显示view
-    2. 点击时查找当前点击点对应的最内层的view
-    2. 点击View元素， 屏幕右上角显示该View的相关信息， 并用方框标记该view
+    1. decorView加一层FrameLayout显示view   done
+    2. 点击时查找当前点击点对应的最内层的view    done
+    2. 点击View元素， 屏幕右上角显示该View的相关信息， 并用方框标记该view   done
         包括以下信息：
         1. view的boundary （px）
         2. view的左右上下边距（dp）
         3. view的text
         4. 界面上下滑动可以改变view信息颜色， 解决view信息字体颜色和背景颜色一致导致不可见问题
+        5. id名称
+        6. 响应用户设置的点击事件
     3. 长按弹出action列表，Action列表包括
         1. 文本注入
         2. 右drawer查看view详细信息（frame方式）
-        3. view自身的longClick的action
+        3. view自身的longClick的action       done
+
+
+12. 功能开关
+
+Bugs:
+    AdapterView的ItemClick失去焦点
+
+
+
+
+13. View获取焦点后， 弹出可选菜单
+    1. 如果是个textview， 弹出注入相关文本
+    2. 如果是个Edittext， 注入文本, 清除文本， password显示、隐藏，
+    3. 边间距显示开关（默认关）
+    4.

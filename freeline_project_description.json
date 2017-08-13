@@ -1,0 +1,149 @@
+{
+    "android_gradle_plugin_version": "2.3.3",
+    "apk_path": "/Users/chao/codes/github/mycode/Ami/app/build/outputs/apk/app-debug.apk",
+    "apt": {
+        
+    },
+    "apt_libraries": {
+        "dagger": false,
+        "butterknife": false
+    },
+    "auto_dependency": true,
+    "build_cache_dir": "/Users/chao/codes/github/mycode/Ami/app/build/freeline",
+    "build_directory": "/Users/chao/codes/github/mycode/Ami/app/build",
+    "build_script": "./gradlew :app:assembleDebug",
+    "build_script_work_directory": "",
+    "build_tools_directory": "/Users/chao/android/anroid-sdk-macos/build-tools/25.0.2",
+    "build_tools_version": "25.0.2",
+    "check_sources_md5": [
+        
+    ],
+    "compile_sdk_directory": "/Users/chao/android/anroid-sdk-macos/platforms/android-25",
+    "compile_sdk_version": "android-25",
+    "databinding": [
+        
+    ],
+    "databinding_compiler_jar": "",
+    "databinding_modules": [
+        
+    ],
+    "debug_package": "chao.app.debugtools",
+    "exclude_dep_res_paths": [
+        
+    ],
+    "extra_dep_res_paths": [
+        
+    ],
+    "freeline_cache_dir": "/Users/chao/codes/github/mycode/Ami",
+    "freeline_gradle_plugin_version": "0.8.7",
+    "ignore_resource_ids": [
+        "avd_hide_password_1",
+        "avd_hide_password_2",
+        "avd_hide_password_3",
+        "avd_show_password_1",
+        "avd_show_password_2",
+        "avd_show_password_3"
+    ],
+    "java_home": "/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home",
+    "launcher": "chao.app.debugtools.MainActivity",
+    "main_assets_directory": [
+        "/Users/chao/codes/github/mycode/Ami/app/src/debug/assets",
+        "/Users/chao/codes/github/mycode/Ami/app/src/main/assets"
+    ],
+    "main_jniLibs_directory": [
+        "/Users/chao/codes/github/mycode/Ami/app/src/debug/jniLibs",
+        "/Users/chao/codes/github/mycode/Ami/app/src/main/jniLibs"
+    ],
+    "main_jni_directory": [
+        "/Users/chao/codes/github/mycode/Ami/app/src/debug/jni",
+        "/Users/chao/codes/github/mycode/Ami/app/src/main/jni"
+    ],
+    "main_manifest_path": "/Users/chao/codes/github/mycode/Ami/app/src/main/AndroidManifest.xml",
+    "main_project_dir": "app",
+    "main_project_name": "app",
+    "main_r_path": "/Users/chao/codes/github/mycode/Ami/app/build/generated/source/r/debug/R.java",
+    "main_res_directory": [
+        "/Users/chao/codes/github/mycode/Ami/app/src/debug/res",
+        "/Users/chao/codes/github/mycode/Ami/app/src/main/res"
+    ],
+    "main_src_directory": [
+        "/Users/chao/codes/github/mycode/Ami/app/src/debug/java",
+        "/Users/chao/codes/github/mycode/Ami/app/src/main/java"
+    ],
+    "module_dependencies": {
+        "Ami": [
+            
+        ],
+        "app": [
+            "Ami"
+        ]
+    },
+    "modules": [
+        {
+            "name": "app",
+            "path": "/Users/chao/codes/github/mycode/Ami/app"
+        },
+        {
+            "name": "Ami",
+            "path": "/Users/chao/codes/github/mycode/Ami/Ami"
+        }
+    ],
+    "package": "chao.app.debugtools",
+    "product_flavor": "",
+    "project_source_sets": {
+        "Ami": {
+            "main_assets_directory": [
+                "/Users/chao/codes/github/mycode/Ami/Ami/src/release/assets",
+                "/Users/chao/codes/github/mycode/Ami/Ami/src/main/assets"
+            ],
+            "main_jniLibs_directory": [
+                "/Users/chao/codes/github/mycode/Ami/Ami/src/release/jniLibs",
+                "/Users/chao/codes/github/mycode/Ami/Ami/libs"
+            ],
+            "main_jni_directory": [
+                "/Users/chao/codes/github/mycode/Ami/Ami/src/release/jni",
+                "/Users/chao/codes/github/mycode/Ami/Ami/src/main/jni"
+            ],
+            "main_manifest_path": "/Users/chao/codes/github/mycode/Ami/Ami/src/main/AndroidManifest.xml",
+            "main_res_directory": [
+                "/Users/chao/codes/github/mycode/Ami/Ami/src/release/res",
+                "/Users/chao/codes/github/mycode/Ami/Ami/src/main/res"
+            ],
+            "main_src_directory": [
+                "/Users/chao/codes/github/mycode/Ami/Ami/src/release/java",
+                "/Users/chao/codes/github/mycode/Ami/Ami/src/main/java"
+            ]
+        },
+        "app": {
+            "main_assets_directory": [
+                "/Users/chao/codes/github/mycode/Ami/app/src/debug/assets",
+                "/Users/chao/codes/github/mycode/Ami/app/src/main/assets"
+            ],
+            "main_jniLibs_directory": [
+                "/Users/chao/codes/github/mycode/Ami/app/src/debug/jniLibs",
+                "/Users/chao/codes/github/mycode/Ami/app/src/main/jniLibs"
+            ],
+            "main_jni_directory": [
+                "/Users/chao/codes/github/mycode/Ami/app/src/debug/jni",
+                "/Users/chao/codes/github/mycode/Ami/app/src/main/jni"
+            ],
+            "main_manifest_path": "/Users/chao/codes/github/mycode/Ami/app/src/main/AndroidManifest.xml",
+            "main_res_directory": [
+                "/Users/chao/codes/github/mycode/Ami/app/src/debug/res",
+                "/Users/chao/codes/github/mycode/Ami/app/src/main/res"
+            ],
+            "main_src_directory": [
+                "/Users/chao/codes/github/mycode/Ami/app/src/debug/java",
+                "/Users/chao/codes/github/mycode/Ami/app/src/main/java"
+            ]
+        }
+    },
+    "project_type": "gradle",
+    "retrolambda": {
+        
+    },
+    "root_dir": "/Users/chao/codes/github/mycode/Ami",
+    "sdk_directory": "/Users/chao/android/anroid-sdk-macos",
+    "use_jdk8": true,
+    "use_system_gradle": false
+}

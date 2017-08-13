@@ -2,6 +2,7 @@ package chao.app.ami;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  * @author chao.qin
@@ -43,7 +44,16 @@ public class Interceptor<T> implements InvocationHandler {
     }
 
 
-    public static <T> T newInstance(T source, Class<T>[] interfaces, OnInterceptorListener listener, boolean intercept) {
+    /**
+     *
+     * @param source      被拦截事件
+     * @param interfaces   被拦截的接口
+     * @param listener    回调监听
+     * @param intercept   是否拦截被拦截事件
+     * @param <T>         被拦截事件类型
+     * @return    返回被拦截事件的代理。
+     */
+    public static <T> T newInstance(T source, Class[] interfaces, OnInterceptorListener listener, boolean intercept) {
         ClassLoader classLoader = null;
         if (source != null) {
             classLoader = source.getClass().getClassLoader();
@@ -54,7 +64,7 @@ public class Interceptor<T> implements InvocationHandler {
         Interceptor<T> interceptor = new Interceptor<>(source);
         interceptor.setOnInterceptorListener(listener);
         interceptor.mIntercept = intercept;
-        return (T) AMIProxy.newProxyInstance(classLoader, interfaces, interceptor);
+        return (T) Proxy.newProxyInstance(classLoader, interfaces, interceptor);
     }
 
     @Override

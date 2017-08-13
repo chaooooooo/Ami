@@ -40,7 +40,8 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
     private RectF mFocusRect = new RectF();
     private boolean mCleanDraw = true;
 
-    private WeakReference<View> mTouchedView;
+    private WeakReference<InterceptorRecord> mTouchedRecord;
+    private WeakReference<InterceptorRecord> mLastRecord;
     private int[] mTempViewLocation = new int[2];
     private int[] mFrameViewLocation = new int[2];
 
@@ -50,6 +51,8 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
     private InterceptorFrameLayout.LayoutParams mActionParams;
 
     private Point mDownPoint = new Point();
+
+    private boolean mSecondClickable = false;
 
 
     public InterceptorFrameLayout(@NonNull Context context) {
@@ -84,7 +87,7 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
     public void setInterceptor(ViewInterceptor interceptor) {
         mInterceptor = interceptor;
         mInterceptor.setOnViewTouchedListener(this);
-        mInterceptor.injectListeners(this);
+        mInterceptor.injectListeners(null, this);
     }
 
     RectF getBoundaryOnLayout(View view, RectF rectF) {
@@ -98,8 +101,14 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         return rectF;
     }
 
+    /**
+     *  touch拦截事件不会影响原有的touch， click或longClick等事件触发
+     *  但是有可能会抢夺view的焦点导致原有的事件不触发
+     *
+     *  @see #mSecondClickable
+     */
     @Override
-    public void onViewTouched(View view, MotionEvent event) {
+    public void onViewTouched(InterceptorRecord record, MotionEvent event) {
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -107,24 +116,58 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
                     hideActionDialog();
                     return;
                 }
-                mTouchedView = new WeakReference<>(view);
+                mTouchedRecord = new WeakReference<>(record);
                 mDownPoint.x = (int) event.getRawX();
                 mDownPoint.y = (int) event.getRawY();
             case MotionEvent.ACTION_MOVE:
-                View touchedView = mTouchedView.get();
-                if (touchedView == null) {
+                mSecondClickable = false;
+                InterceptorRecord touchedRecord = mTouchedRecord.get();
+                if (touchedRecord == null) {
                     return;
                 }
-                getBoundaryOnLayout(touchedView, mFocusRect);
+                getBoundaryOnLayout(touchedRecord.view, mFocusRect);
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
+                if (mLastRecord != null && mLastRecord.get() == record) {
+                    mSecondClickable = true;
+                }
+                if (mSecondClickable) {
+                    //如果相关的view连续第二次被点击， 则触发自己的click事件。
+                    //解决onItemClick等不响应的问题
+                    performSecondTouchEvent(record.getParentRecord(), event);
+                    mSecondClickable = false;
+                }
+                mLastRecord = new WeakReference<>(record);
             case MotionEvent.ACTION_CANCEL:
-//                mDownPoint.x = 0;
-//                mDownPoint.y = 0;
                 break;
 
         }
+    }
+
+    private boolean performSecondTouchEvent(InterceptorRecord record, MotionEvent event) {
+        boolean proceed = false;
+        if (record == null) {
+            return false;
+        }
+
+        OnTouchListener touchListener = record.getSourceTouchListener();
+        if (touchListener != null) {
+            touchListener.onTouch(record.view, event);
+            proceed = true;
+        }
+        OnClickListener clickListener = record.getSourceClickListener();
+        if (clickListener != null) {
+            clickListener.onClick(record.view);
+            proceed = true;
+        }
+        if (performSecondTouchEvent(record.getParentRecord(), event)) {
+            proceed = true;
+        }
+        if (proceed) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -145,8 +188,8 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         super.dispatchDraw(canvas);
     }
 
-    View getTouchedView() {
-        return mTouchedView.get();
+    InterceptorRecord getTouchedRecord() {
+        return mTouchedRecord.get();
     }
 
     public void cleanSelected() {
