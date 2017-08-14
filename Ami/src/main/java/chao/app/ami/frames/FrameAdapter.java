@@ -1,4 +1,4 @@
-package chao.app.ami.classes;
+package chao.app.ami.frames;
 
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
@@ -25,7 +25,7 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
     private Context mContext = Ami.getApp();
 
 
-    private FrameProcessor mFrameProcessor = ClassesManager.getInstance().getFrameProcessor();
+    private FrameProcessor mFrameProcessor = FrameManager.getInstance().getFrameProcessor();
 
     public FrameAdapter() {
     }
@@ -39,13 +39,13 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Frame frame = mFrameProcessor.peek();
-        final Frame.Entry entry = frame.getEntry(position);
+        IFrame frame = mFrameProcessor.peek();
+        final ObjectFrame.Entry entry = frame.getEntry(position);
         if (holder.getItemViewType() == ITEM_VIEW_TYPE_INFO) {
             TextView nameView = (TextView) holder.itemView.findViewById(R.id.frame_adapter_item_name);
             TextView valueView = (TextView) holder.itemView.findViewById(R.id.frame_adapter_item_value);
-            nameView.setText(entry.fieldName);
-            valueView.setText(entry.objectText);
+            nameView.setText(entry.title);
+            valueView.setText(entry.value);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -59,7 +59,7 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
             return;
         }
         TextView textView = (TextView) holder.itemView;
-        textView.setText(entry.fieldName);
+        textView.setText(entry.title);
     }
 
     @Override
@@ -69,9 +69,9 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
 
     @Override
     public int getItemViewType(int position) {
-        Frame frame = mFrameProcessor.peek();
-        Frame.Entry entry = frame.getEntry(position);
-        if (Constants.CATEGORY.equals(entry.objectText)) {
+        IFrame frame = mFrameProcessor.peek();
+        ObjectFrame.Entry entry = frame.getEntry(position);
+        if (Constants.CATEGORY.equals(entry.value)) {
             return ITEM_VIEW_TYPE_CATEGORY;
         }
         return ITEM_VIEW_TYPE_INFO;
@@ -88,12 +88,11 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
 
     @Override
     public void onDrawerOpened(View drawerView) {
-        Ami.log("onDrawerOpened : " + drawerView);
+        notifyDataSetChanged();
     }
 
     @Override
     public void onDrawerClosed(View drawerView) {
-        Ami.log("onDrawerClosed : " + drawerView);
     }
 
     @Override

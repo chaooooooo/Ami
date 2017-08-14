@@ -1,4 +1,4 @@
-package chao.app.ami.classes;
+package chao.app.ami.frames;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -11,7 +11,7 @@ import chao.app.ami.Constants;
  * @since 2017/8/2
  */
 
-public class Frame implements Constants {
+public class ObjectFrame implements Constants, IFrame {
 
     private int mSize = 0;
 
@@ -31,19 +31,7 @@ public class Frame implements Constants {
     private ArrayList<String> mSuperClassList = new ArrayList<>();
 
 
-    class Entry {
-        Object object;
-        String fieldName;
-        String objectText;
-
-        Entry(String fieldName, String objectText, Object object) {
-            this.fieldName = fieldName;
-            this.objectText = objectText;
-            this.object = object;
-        }
-    }
-
-    public Frame(Object object) {
+    public ObjectFrame(Object object) {
         mObject = object;
         Class<?> clazz = object.getClass();
         extractFields(clazz);
@@ -111,6 +99,7 @@ public class Frame implements Constants {
         extractFields(superClazz);
     }
 
+    @Override
     public String getName() {
         return mObject.getClass().getSimpleName();
     }
@@ -119,6 +108,7 @@ public class Frame implements Constants {
         return mObject.getClass().getSimpleName();
     }
 
+    @Override
     public Entry getEntry(int position) {
         if (position >= mFinalFields.length) {
             return null;
@@ -144,6 +134,7 @@ public class Frame implements Constants {
         return mDeep;
     }
 
+    @Override
     public int getSize() {
         return mSize;
     }

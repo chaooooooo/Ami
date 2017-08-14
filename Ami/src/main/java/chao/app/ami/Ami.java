@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.squareup.leakcanary.LeakCanary;
 
-import chao.app.ami.classes.ClassesManager;
+import chao.app.ami.frames.FrameManager;
 import chao.app.ami.launcher.drawer.DrawerManager;
 import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;
@@ -58,7 +58,7 @@ public class Ami {
         mInstance = new Ami(app);
         ProxyManager.init(app);
         TextManager.init();
-        ClassesManager.init();
+        FrameManager.init();
 
         InterceptorLayerManager.init(true);
     }
@@ -107,7 +107,7 @@ public class Ami {
         DrawerManager.init(app, drawerId);
         ProxyManager.init(app);
         TextManager.init();
-        ClassesManager.init();
+        FrameManager.init();
     }
 
     public static void enableLeakCanary(Application app) {

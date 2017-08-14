@@ -1,4 +1,4 @@
-package chao.app.ami.classes;
+package chao.app.ami.frames;
 
 import android.app.Activity;
 
@@ -13,35 +13,35 @@ import chao.app.ami.launcher.drawer.DrawerManager;
  *
  */
 
-public class ClassesManager extends ActivitiesLifeCycleAdapter {
+public class FrameManager extends ActivitiesLifeCycleAdapter {
 
-    private static ClassesManager sClassesManager;
+    private static FrameManager sFrameManager;
 
 
     private FrameProcessor mFrameProcessor = new FrameProcessor();
 
-    private ClassesManager() {
+    private FrameManager() {
     }
 
     public static void init() {
-        if (sClassesManager != null) {
+        if (sFrameManager != null) {
             return;
         }
-        sClassesManager = new ClassesManager();
-        Ami.getApp().registerActivityLifecycleCallbacks(sClassesManager);
+        sFrameManager = new FrameManager();
+        Ami.getApp().registerActivityLifecycleCallbacks(sFrameManager);
     }
 
-    public static ClassesManager getInstance() {
-        if (sClassesManager == null) {
+    public static FrameManager getInstance() {
+        if (sFrameManager == null) {
             throw new AmiException("ClassesManager should have initialization.");
         }
-        return sClassesManager;
+        return sFrameManager;
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
         mFrameProcessor.clear();
-        mFrameProcessor.pushInto(activity);
+        mFrameProcessor.pushActivity(activity);
         notifyFrameChanged();
     }
 
@@ -63,6 +63,6 @@ public class ClassesManager extends ActivitiesLifeCycleAdapter {
 
 
     public interface TopFrameChangedListener{
-        void onTopFrameChanged(Frame frame, String path);
+        void onTopFrameChanged(IFrame frame, String path);
     }
 }

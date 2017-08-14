@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -29,15 +28,15 @@ import java.util.Set;
 import chao.app.ami.ActivitiesLifeCycleAdapter;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
-import chao.app.ami.classes.ClassesManager;
-import chao.app.ami.classes.Frame;
-import chao.app.ami.classes.FrameAdapter;
+import chao.app.ami.frames.FrameAdapter;
+import chao.app.ami.frames.FrameManager;
+import chao.app.ami.frames.IFrame;
 import chao.app.ami.hooks.FragmentLifecycle;
 import chao.app.ami.viewinfo.InterceptorLayerManager;
 import chao.app.debug.R;
 
 
-public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, ClassesManager.TopFrameChangedListener, ViewGroup.OnHierarchyChangeListener {
+public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, FrameManager.TopFrameChangedListener, ViewGroup.OnHierarchyChangeListener {
 
     private static DrawerManager sDrawerManager;
 
@@ -126,8 +125,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mDrawerListView.addItemDecoration(new DividerItemDecoration(mContext.get(), LinearLayoutManager.VERTICAL));
 
 
-            ClassesManager classesManager = ClassesManager.getInstance();
-            classesManager.addFrameChangeListener(this);
+            FrameManager frameManager = FrameManager.getInstance();
+            frameManager.addFrameChangeListener(this);
             View frameContent = findViewById(R.id.drawer_frame_content);
             mFrameListView = (RecyclerView) frameContent.findViewById(R.id.frame_list);
             mFrameListView.setLayoutManager(new LinearLayoutManager(mContext.get(), LinearLayoutManager.VERTICAL, false));
@@ -198,7 +197,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     }
 
     @Override
-    public void onTopFrameChanged(Frame frame, String path) {
+    public void onTopFrameChanged(IFrame frame, String path) {
         mFrameNavigationPathView.setText(path);
     }
 
@@ -342,9 +341,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
                     supportManager.registerFragmentLifecycleCallbacks(new FragmentLifecycle(), true);
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    Hooker.hookFragmentManager(activity.getFragmentManager());
-                }
             }
 
             @Override

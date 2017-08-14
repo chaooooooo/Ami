@@ -3,163 +3,82 @@ package chao.app.ami.hooks;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentController;
+import android.app.FragmentHostCallback;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Build;
-import android.os.Bundle;
-import android.support.annotation.IdRes;
-import android.support.annotation.RequiresApi;
 
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
-
-import chao.app.ami.Ami;
-
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 /**
  * @author chao.qin
  * @since 2017/8/3
+ * <p>
+ * <p>
+ * todo 版本兼容性测试
  */
 
-@RequiresApi(api = Build.VERSION_CODES.M)
-public class FragmentManagerHook extends FragmentManager {
+public class FragmentManagerHook {
 
-    private FragmentManager mBase;
+    private static Class<?> FragmentManager_FragmentManagerImpl;
+
+    private static Field Activity_FragmentController; // Android M
+    private static Field FragmentController_FragmentHost;   // Android M
 
 
-    public FragmentManagerHook(FragmentManager fragmentManager) {
-        mBase = fragmentManager;
-    }
+    public static Field mFragmentManagerImpl;
+    public static Field FragmentManager_mActive;
 
-    @Override
-    public FragmentTransaction beginTransaction() {
-        return mBase.beginTransaction();
-    }
 
-    @Override
-    public boolean executePendingTransactions() {
-        return mBase.executePendingTransactions();
-    }
 
-    @Override
-    public Fragment findFragmentById(@IdRes int id) {
-        return mBase.findFragmentById(id);
-    }
-
-    @Override
-    public Fragment findFragmentByTag(String tag) {
-        return mBase.findFragmentByTag(tag);
-    }
-
-    @Override
-    public void popBackStack() {
-        mBase.popBackStack();
-    }
-
-    @Override
-    public boolean popBackStackImmediate() {
-        return mBase.popBackStackImmediate();
-    }
-
-    @Override
-    public void popBackStack(String name, int flags) {
-        mBase.popBackStack();
-    }
-
-    @Override
-    public boolean popBackStackImmediate(String name, int flags) {
-        return mBase.popBackStackImmediate(name, flags);
-    }
-
-    @Override
-    public void popBackStack(int id, int flags) {
-        mBase.popBackStack(id, flags);
-    }
-
-    @Override
-    public boolean popBackStackImmediate(int id, int flags) {
-        return mBase.popBackStackImmediate(id, flags);
-    }
-
-    @Override
-    public int getBackStackEntryCount() {
-        return mBase.getBackStackEntryCount();
-    }
-
-    @Override
-    public BackStackEntry getBackStackEntryAt(int index) {
-        return mBase.getBackStackEntryAt(index);
-    }
-
-    @Override
-    public void addOnBackStackChangedListener(OnBackStackChangedListener listener) {
-        mBase.addOnBackStackChangedListener(listener);
-    }
-
-    @Override
-    public void removeOnBackStackChangedListener(OnBackStackChangedListener listener) {
-        mBase.addOnBackStackChangedListener(listener);
-    }
-
-    @Override
-    public void putFragment(Bundle bundle, String key, Fragment fragment) {
-        mBase.putFragment(bundle, key, fragment);
-    }
-
-    @Override
-    public Fragment getFragment(Bundle bundle, String key) {
-        return mBase.getFragment(bundle, key);
-    }
-
-    @Override
-    public Fragment.SavedState saveFragmentInstanceState(Fragment f) {
-        return mBase.saveFragmentInstanceState(f);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    @Override
-    public boolean isDestroyed() {
-        return mBase.isDestroyed();
-    }
-
-    @Override
-    public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
-        mBase.dump(prefix, fd, writer, args);
-    }
-
-    void moveToState(Fragment f, int newState, int transit, int transitionStyle, boolean keepActive) {
+    static {
         try {
-            Hooker.FragmentManagerImpl_moveToStateFIIIB.invoke(this, f,newState,transit, transitionStyle, keepActive);
-            Ami.log("moveToStateFIIIB invoked");
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Activity_FragmentController = Activity.class.getDeclaredField("mFragments");
+                Activity_FragmentController.setAccessible(true);
+
+                FragmentController_FragmentHost = FragmentController.class.getDeclaredField("mHost");
+                FragmentController_FragmentHost.setAccessible(true);
+
+                mFragmentManagerImpl = FragmentHostCallback.class.getDeclaredField("mFragmentManager");
+                mFragmentManagerImpl.setAccessible(true);
+
+            } else {
+                mFragmentManagerImpl = FragmentManager.class.getDeclaredField("mFragments");
+                mFragmentManagerImpl.setAccessible(true);
+            }
+
+            FragmentManager_FragmentManagerImpl = mFragmentManagerImpl.getType();
+
+            FragmentManager_mActive = FragmentManager_FragmentManagerImpl.getDeclaredField("mActive");
+            FragmentManager_mActive.setAccessible(true);
+
+        } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
     }
 
-    void moveToState(int newState, int transit, int transitStyle, boolean always) {
+    public static Object getFragmentManagerImpl(Activity activity) {
         try {
-            Hooker.FragmentManagerImpl_moveToStateFIIIB.invoke(this,newState,transit, transitStyle, always);
-            Ami.log("moveToStateIIIB invoked");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Object controller = Activity_FragmentController.get(activity);
+                Object host = FragmentController_FragmentHost.get(controller);
+                return mFragmentManagerImpl.get(host);
+            } else {
+                return mFragmentManagerImpl.get(activity);
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
         }
+        return null;
     }
 
-    public static void hook(Activity activity) {
-        FragmentController fragmentController = null;
-        FragmentManager fragmentManager = activity.getFragmentManager();
-        FragmentManagerHook managerHook = new FragmentManagerHook(fragmentManager);
+    public static ArrayList<Fragment> getActiveFragments(Activity activity) {
         try {
-            fragmentController = (FragmentController) Hooker.Activity_FragmentController.get(activity);
-//            FragmentHostCallback host = (FragmentHostCallback) Hooker.FragmentController_FragmentHostCallback.get(fragmentController);
-//            Hooker.FragmentHostCallback_FragmentManagerImpl.set(host, managerHook);
+            return (ArrayList<Fragment>) FragmentManager_mActive.get(getFragmentManagerImpl(activity));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }
