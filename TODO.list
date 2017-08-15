@@ -17,7 +17,9 @@
     1. 右侧drawer显示当前Activity的成员变量列表， 包括父类的成员变量   done
     2. 优化显示样式   done
     3. 点击列表，进入该成员变量的成员变量列表    done
-    4. 第一页显示当前Activity信息列表以及该Activity中的Fragment列表
+    4. 第一页显示当前Activity信息列表以及该Activity中的Fragment列表    done
+    5. ArrayFrame, MapFrame    done
+    6. resId 显示出资源名称
 
 
 

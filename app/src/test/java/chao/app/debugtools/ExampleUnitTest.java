@@ -2,7 +2,7 @@ package chao.app.debugtools;
 
 import org.junit.Test;
 
-import java.lang.reflect.Field;
+import chao.app.ami.utils.Util;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -16,12 +16,7 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
 
-        System.out.println(a);
-
-        Field field = ExampleUnitTest.class.getDeclaredField("a");
-        field.setAccessible(true);
-        field.set(this, new A());
-        System.out.println(a);
+        Util.convert2Resource(2131296420);
     }
 
     private static class A {
