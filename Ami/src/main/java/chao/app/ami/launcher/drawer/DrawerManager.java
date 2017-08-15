@@ -32,6 +32,7 @@ import chao.app.ami.frames.FrameAdapter;
 import chao.app.ami.frames.FrameManager;
 import chao.app.ami.frames.IFrame;
 import chao.app.ami.hooks.FragmentLifecycle;
+import chao.app.ami.hooks.WindowCallbackHook;
 import chao.app.ami.viewinfo.InterceptorLayerManager;
 import chao.app.debug.R;
 
@@ -182,7 +183,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     @Override
     public boolean onDispatchKeyEvent(KeyEvent keyEvent) {
         if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerLayout.isDrawerOpen(GravityCompat.END)) {
                 mDrawerLayout.closeDrawers();
                 return true;
             }

@@ -1,4 +1,4 @@
-package chao.app.ami.launcher.drawer;
+package chao.app.ami.hooks;
 
 import android.app.Activity;
 import android.view.KeyEvent;
@@ -13,7 +13,7 @@ import java.lang.reflect.Proxy;
  * @since 2017/7/26
  */
 
-class WindowCallbackHook implements InvocationHandler {
+public class WindowCallbackHook implements InvocationHandler {
 
     private Window.Callback mCallback;
     private DispatchKeyEventListener mKeyEventListener;
@@ -23,7 +23,7 @@ class WindowCallbackHook implements InvocationHandler {
         mKeyEventListener = listener;
     }
 
-    static Window.Callback newInstance(Activity activity, DispatchKeyEventListener listener) {
+    public static Window.Callback newInstance(Activity activity, DispatchKeyEventListener listener) {
         return (Window.Callback) Proxy.newProxyInstance(activity.getClassLoader(), new Class[]{Window.Callback.class}, new WindowCallbackHook(activity,listener));
     }
 
@@ -39,7 +39,7 @@ class WindowCallbackHook implements InvocationHandler {
     }
 
 
-    interface DispatchKeyEventListener {
+    public interface DispatchKeyEventListener {
         boolean onDispatchKeyEvent(KeyEvent keyEvent);
     }
 }
