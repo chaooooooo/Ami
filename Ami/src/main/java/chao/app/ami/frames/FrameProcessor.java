@@ -4,6 +4,8 @@ package chao.app.ami.frames;
 import android.app.Activity;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -22,15 +24,51 @@ class FrameProcessor {
         BaseFrame baseFrame = new BaseFrame(activity);
         mFrameStack.push(baseFrame);
         for (FrameManager.TopFrameChangedListener listener: mListeners) {
-            listener.onTopFrameChanged(baseFrame, "/" + baseFrame.getName());
+            listener.onTopFrameChanged(baseFrame, "/");
         }
     }
 
-    public void pushInto(Object object) {
-        ObjectFrame frame = new ObjectFrame(object);
+    private boolean isArray(Object object) {
+        return object != null && object.getClass().isArray();
+    }
+
+    private boolean isCollectionObject(Object obj) {
+        return obj != null && obj instanceof Collection;
+    }
+
+    private boolean isMap(Object obj) {
+        return obj != null && obj instanceof Map;
+    }
+
+    public void pushInto(IFrame.Entry entry) {
+        Object object = entry.object;
+        if (object == null) {
+            return;
+        }
+        if (object instanceof Number || object instanceof Boolean || object instanceof String) {
+            return;
+        }
+        if (object instanceof Class) {
+            return;
+        }
+        IFrame frame;
+        if (isArray(object)) {
+            frame = new ArrayFrame(entry.title,object);
+        } else if (isCollectionObject(object)) {
+            Collection collection = (Collection) object;
+            Object[] array = collection.toArray();
+            frame = new ArrayFrame(entry.title, array);
+        } else if (isMap(object)) {
+            frame = new MapFrame(entry.title, (Map)object);
+        } else {
+            frame = new ObjectFrame(object);
+        }
         mFrameStack.push(frame);
         String path = "";
         for (IFrame f: mFrameStack) {
+            if (f instanceof BaseFrame) {
+                continue;
+            }
             path = path + "/" + f.getName();
         }
         for (FrameManager.TopFrameChangedListener listener: mListeners) {
@@ -45,6 +83,9 @@ class FrameProcessor {
         IFrame frame = mFrameStack.pop();
         String path = "";
         for (IFrame f: mFrameStack) {
+            if (f instanceof BaseFrame) {
+                continue;
+            }
             path = path + "/" + f.getName();
         }
         for (FrameManager.TopFrameChangedListener listener: mListeners) {

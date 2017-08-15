@@ -52,7 +52,7 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
                     if (entry.object == null) {
                         return;
                     }
-                    mFrameProcessor.pushInto(entry.object);
+                    mFrameProcessor.pushInto(entry);
                     notifyDataSetChanged();
                 }
             });
@@ -70,7 +70,7 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
     @Override
     public int getItemViewType(int position) {
         IFrame frame = mFrameProcessor.peek();
-        ObjectFrame.Entry entry = frame.getEntry(position);
+        IFrame.Entry entry = frame.getEntry(position);
         if (Constants.CATEGORY.equals(entry.value)) {
             return ITEM_VIEW_TYPE_CATEGORY;
         }
@@ -88,7 +88,6 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
 
     @Override
     public void onDrawerOpened(View drawerView) {
-        notifyDataSetChanged();
     }
 
     @Override

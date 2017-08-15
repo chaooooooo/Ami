@@ -1,11 +1,10 @@
 package chao.app.ami.hooks;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentController;
-import android.app.FragmentHostCallback;
-import android.app.FragmentManager;
 import android.os.Build;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentController;
+import android.support.v4.app.FragmentHostCallback;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
  * todo 版本兼容性测试
  */
 
-public class FragmentManagerHook {
+public class SupportFragmentManagerHook {
 
     private static Class<?> FragmentManager_FragmentManagerImpl;
 
@@ -30,23 +29,17 @@ public class FragmentManagerHook {
     public static Field FragmentManager_mActive;
 
 
-
     static {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Activity_FragmentController = Activity.class.getDeclaredField("mFragments");
-                Activity_FragmentController.setAccessible(true);
+            Activity_FragmentController = FragmentActivity.class.getDeclaredField("mFragments");
+            Activity_FragmentController.setAccessible(true);
 
-                FragmentController_FragmentHost = FragmentController.class.getDeclaredField("mHost");
-                FragmentController_FragmentHost.setAccessible(true);
+            FragmentController_FragmentHost = FragmentController.class.getDeclaredField("mHost");
+            FragmentController_FragmentHost.setAccessible(true);
 
-                mFragmentManagerImpl = FragmentHostCallback.class.getDeclaredField("mFragmentManager");
-                mFragmentManagerImpl.setAccessible(true);
+            mFragmentManagerImpl = FragmentHostCallback.class.getDeclaredField("mFragmentManager");
+            mFragmentManagerImpl.setAccessible(true);
 
-            } else {
-                mFragmentManagerImpl = FragmentManager.class.getDeclaredField("mFragments");
-                mFragmentManagerImpl.setAccessible(true);
-            }
 
             FragmentManager_FragmentManagerImpl = mFragmentManagerImpl.getType();
 
@@ -58,7 +51,7 @@ public class FragmentManagerHook {
         }
     }
 
-    public static Object getFragmentManagerImpl(Activity activity) {
+    public static Object getFragmentManagerImpl(FragmentActivity activity) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 Object controller = Activity_FragmentController.get(activity);
@@ -73,9 +66,8 @@ public class FragmentManagerHook {
         return null;
     }
 
-    public static ArrayList<Fragment> getActiveFragments(Activity activity) {
+    public static ArrayList<Fragment> getActiveFragments(FragmentActivity activity) {
         try {
-            Object fragmentImpl = getFragmentManagerImpl(activity);
             return (ArrayList<Fragment>) FragmentManager_mActive.get(getFragmentManagerImpl(activity));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
