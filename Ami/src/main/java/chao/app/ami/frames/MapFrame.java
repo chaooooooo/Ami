@@ -11,7 +11,7 @@ import chao.app.ami.Constants;
  * @since 2017/8/15
  */
 
-public class MapFrame implements IFrame {
+public class MapFrame extends FrameImpl {
 
     private String mTitle;
     private Map mMap;

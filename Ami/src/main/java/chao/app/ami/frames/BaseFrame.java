@@ -16,7 +16,7 @@ import chao.app.ami.hooks.SupportFragmentManagerHook;
  * @since 2017/8/13
  */
 
-public class BaseFrame implements IFrame{
+public class BaseFrame extends FrameImpl{
     Activity activity;
 
     public BaseFrame(Activity activity) {

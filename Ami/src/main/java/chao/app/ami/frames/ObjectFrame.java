@@ -11,7 +11,7 @@ import chao.app.ami.Constants;
  * @since 2017/8/2
  */
 
-public class ObjectFrame implements Constants, IFrame {
+public class ObjectFrame extends FrameImpl implements Constants {
 
     private int mSize = 0;
 

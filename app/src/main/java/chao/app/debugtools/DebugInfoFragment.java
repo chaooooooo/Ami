@@ -18,7 +18,7 @@ public class DebugInfoFragment extends AMIFragment {
 
     @Override
     public void setupView(View layout) {
-        mText = findView(R.id.ami_item_text);
+        mText = findView(R.id.text);
         text = mText.getText().toString();
     }
 }

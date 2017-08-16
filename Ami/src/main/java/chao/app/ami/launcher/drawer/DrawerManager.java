@@ -132,7 +132,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mFrameListView = (RecyclerView) frameContent.findViewById(R.id.frame_list);
             mFrameListView.setLayoutManager(new LinearLayoutManager(mContext.get(), LinearLayoutManager.VERTICAL, false));
             mFrameListView.addItemDecoration(new DividerItemDecoration(mContext.get(), LinearLayoutManager.VERTICAL));
-            mFrameAdapter = new FrameAdapter();
+            mFrameAdapter = new FrameAdapter(mFrameListView);
             mFrameListView.setAdapter(mFrameAdapter);
             mFrameNavigationBackView = (ImageView) frameContent.findViewById(R.id.navigation_back);
             mFrameNavigationBackView.setOnClickListener(this);

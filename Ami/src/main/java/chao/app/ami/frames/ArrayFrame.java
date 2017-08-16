@@ -9,7 +9,7 @@ import chao.app.ami.Constants;
  * @since 2017/8/15
  */
 
-class ArrayFrame implements IFrame {
+class ArrayFrame extends FrameImpl {
 
     private Object mArray;
     private String mTitle;

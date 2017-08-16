@@ -2,6 +2,7 @@ package chao.app.ami.frames;
 
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,10 +25,14 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
 
     private Context mContext = Ami.getApp();
 
+    private RecyclerView mFrameView;
+    private LinearLayoutManager mLayoutManager;
 
     private FrameProcessor mFrameProcessor = FrameManager.getInstance().getFrameProcessor();
 
-    public FrameAdapter() {
+    public FrameAdapter(RecyclerView recyclerView) {
+        mFrameView = recyclerView;
+        mLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
     }
 
     @Override
@@ -39,7 +44,7 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        IFrame frame = mFrameProcessor.peek();
+        FrameImpl frame = mFrameProcessor.peek();
         final ObjectFrame.Entry entry = frame.getEntry(position);
         if (holder.getItemViewType() == ITEM_VIEW_TYPE_INFO) {
             TextView nameView = (TextView) holder.itemView.findViewById(R.id.frame_adapter_item_name);
@@ -52,7 +57,11 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
                     if (entry.object == null) {
                         return;
                     }
-                    mFrameProcessor.pushInto(entry);
+                    View topView = mLayoutManager.getChildAt(0);
+                    int offset = topView.getTop();
+                    int position = mLayoutManager.findFirstVisibleItemPosition();
+                    mFrameProcessor.pushInto(entry, position, offset);
+                    mLayoutManager.scrollToPositionWithOffset(0,0);
                     notifyDataSetChanged();
                 }
             });
@@ -80,6 +89,7 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
     public void navigationUp() {
         mFrameProcessor.popOut();
         notifyDataSetChanged();
+        restoreOffset();
     }
 
     @Override
@@ -99,5 +109,11 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
         if (newState == DrawerLayout.STATE_DRAGGING) {
             notifyDataSetChanged();
         }
+    }
+
+    public void restoreOffset() {
+        int position = mFrameProcessor.peek().getPosition();
+        int offset = mFrameProcessor.peek().getOffset();
+        mLayoutManager.scrollToPositionWithOffset(position, offset);
     }
 }

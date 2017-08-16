@@ -15,7 +15,7 @@ import java.util.Stack;
 
 class FrameProcessor {
 
-    private Stack<IFrame> mFrameStack = new Stack<>();
+    private Stack<FrameImpl> mFrameStack = new Stack<>();
 
     private ArrayList<FrameManager.TopFrameChangedListener> mListeners = new ArrayList<>();
 
@@ -40,7 +40,7 @@ class FrameProcessor {
         return obj != null && obj instanceof Map;
     }
 
-    public void pushInto(IFrame.Entry entry) {
+    public void pushInto(IFrame.Entry entry, int position, int offset) {
         Object object = entry.object;
         if (object == null) {
             return;
@@ -51,7 +51,10 @@ class FrameProcessor {
         if (object instanceof Class) {
             return;
         }
-        IFrame frame;
+        FrameImpl topFrame = peek();
+        topFrame.setOffset(offset);
+        topFrame.setPosition(position);
+        FrameImpl frame;
         if (isArray(object)) {
             frame = new ArrayFrame(entry.title,object);
         } else if (isCollectionObject(object)) {
@@ -94,7 +97,7 @@ class FrameProcessor {
         return frame;
     }
 
-    public IFrame peek() {
+    public FrameImpl peek() {
         return mFrameStack.peek();
     }
 
