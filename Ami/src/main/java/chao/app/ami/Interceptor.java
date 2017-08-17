@@ -58,6 +58,9 @@ public class Interceptor<T> implements InvocationHandler {
         if (source != null) {
             classLoader = source.getClass().getClassLoader();
         }
+        if (classLoader == null && listener != null) {
+            classLoader = listener.getClass().getClassLoader();
+        }
         if (classLoader == null) {
             classLoader = Ami.getApp().getClassLoader();
         }
