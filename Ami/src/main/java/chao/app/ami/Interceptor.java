@@ -55,10 +55,7 @@ public class Interceptor<T> implements InvocationHandler {
      */
     public static <T> T newInstance(T source, Class[] interfaces, OnInterceptorListener listener, boolean intercept) {
         ClassLoader classLoader = null;
-        if (source != null) {
-            classLoader = source.getClass().getClassLoader();
-        }
-        if (classLoader == null && listener != null) {
+        if (listener != null) {
             classLoader = listener.getClass().getClassLoader();
         }
         if (classLoader == null) {
