@@ -40,6 +40,9 @@ public class ViewInterceptor {
         if (child.getId() == R.id.ami_action_list) {
             return;
         }
+        if (child.getId() == R.id.ami_settings_panel) {
+            return;
+        }
         if (!mInterceptorEnabled) {
             return;
         }

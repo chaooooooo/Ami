@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ami_settings_panel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <View
+        android:id="@+id/ami_drag_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/ami_colorPrimary"
+        />
+    <FrameLayout
+        android:background="@color/common_background_color"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+</LinearLayout>

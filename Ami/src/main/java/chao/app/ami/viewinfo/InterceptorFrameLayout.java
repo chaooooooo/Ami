@@ -10,14 +10,17 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import java.lang.ref.WeakReference;
 
+import chao.app.ami.Ami;
 import chao.app.ami.Constants;
 import chao.app.ami.utils.DeviceUtil;
 import chao.app.debug.R;
@@ -31,6 +34,11 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
 
     private static final int ACTION_VIEW_WIDTH = LayoutParams.WRAP_CONTENT;
     private static final int ACTION_VIEW_HEIGHT = LayoutParams.WRAP_CONTENT;
+
+    private static final int SETTINGS_PANEL_MIN_HEIGHT = ViewSettingsPanel.PANEL_HEIGHT;
+    private static final int DRAG_BAR_HEIGHT = DeviceUtil.dp2px(40);
+
+
     private static final int FIXED_SPACE = DeviceUtil.dp2px(10);
 
 
@@ -55,6 +63,10 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
     private boolean mSecondClickable = false;
 
 
+    private ViewSettingsPanel mSettingsPanel;
+    private View mDragBar;
+
+
     public InterceptorFrameLayout(@NonNull Context context) {
         super(context);
         init();
@@ -74,8 +86,13 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
 
         mInflater = LayoutInflater.from(getContext());
         mActionListView = (ListView) mInflater.inflate(R.layout.ami_layout_actions, this, false);
-
         mActionParams = new InterceptorFrameLayout.LayoutParams(ACTION_VIEW_WIDTH, ACTION_VIEW_HEIGHT);
+
+        mSettingsPanel = new ViewSettingsPanel(this);
+        LayoutParams settingsParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, SETTINGS_PANEL_MIN_HEIGHT);
+        addView(mSettingsPanel, settingsParams);
+        mDragBar = mSettingsPanel.findViewById(R.id.ami_drag_bar);
+
 
         mDrawPaint.setColor(Color.RED);
         mDrawPaint.setDither(true);
@@ -208,33 +225,46 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            if (child != mActionListView) {
-                continue;
+            if (child == mActionListView) {
+                layoutActionList();
+            } else if (child == mSettingsPanel) {
+                layoutSettingsPanel();
             }
-            LayoutParams params = (LayoutParams) mActionListView.getLayoutParams();
-            int width = mActionListView.getMeasuredWidth();
-            int height = mActionListView.getMeasuredHeight();
-            width = Math.min(width, Constants.MAX_LIST_WIDTH);
-            height = Math.min(height, Constants.MAX_LIST_HEIGHT);
-            int listLeft = params.left;
-            int listTop = params.top;
 
-            int listRight = params.left + width;
-            int listBottom = params.top + height;
-
-            int layoutWidth = getWidth();
-            int layoutHeight = getHeight();
-            if (listRight > layoutWidth) {
-                listLeft = layoutWidth - width - FIXED_SPACE;
-                listRight = listLeft + width;
-            }
-            if (listBottom > layoutHeight) {
-                listTop = layoutHeight - height - FIXED_SPACE;
-                listBottom = listTop + height;
-            }
-            mActionListView.layout(listLeft, listTop, listRight, listBottom);
         }
+    }
 
+    private void layoutSettingsPanel() {
+        int layoutHeight = getMeasuredHeight();
+        int layoutWidth = getMeasuredWidth();
+        int dragBarHeight = mDragBar.getMeasuredHeight();
+        int panelTop = layoutHeight - dragBarHeight;
+        mSettingsPanel.layout(0, panelTop, layoutWidth, layoutHeight);
+    }
+
+    private void layoutActionList() {
+        LayoutParams params = (LayoutParams) mActionListView.getLayoutParams();
+        int width = mActionListView.getMeasuredWidth();
+        int height = mActionListView.getMeasuredHeight();
+        width = Math.min(width, Constants.MAX_LIST_WIDTH);
+        height = Math.min(height, Constants.MAX_LIST_HEIGHT);
+        int listLeft = params.left;
+        int listTop = params.top;
+
+        int listRight = params.left + width;
+        int listBottom = params.top + height;
+
+        int layoutWidth = getWidth();
+        int layoutHeight = getHeight();
+        if (listRight > layoutWidth) {
+            listLeft = layoutWidth - width - FIXED_SPACE;
+            listRight = listLeft + width;
+        }
+        if (listBottom > layoutHeight) {
+            listTop = layoutHeight - height - FIXED_SPACE;
+            listBottom = listTop + height;
+        }
+        mActionListView.layout(listLeft, listTop, listRight, listBottom);
     }
 
     public ListView getActionListView() {
@@ -259,7 +289,6 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         mActionListView.getAdapter();
         removeView(mActionListView);
     }
-
 
     public static class LayoutParams extends FrameLayout.LayoutParams {
         int left; //子View相对于InterceptorFrameLayout的x坐标
