@@ -16,7 +16,6 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
 
-        Util.convert2Resource(2131296420);
     }
 
     private static class A {
