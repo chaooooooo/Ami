@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentController;
 import android.app.FragmentHostCallback;
-import android.app.FragmentManager;
 import android.os.Build;
 
 import java.lang.reflect.Field;
@@ -44,7 +43,7 @@ public class FragmentManagerHook {
                 mFragmentManagerImpl.setAccessible(true);
 
             } else {
-                mFragmentManagerImpl = FragmentManager.class.getDeclaredField("mFragments");
+                mFragmentManagerImpl = Activity.class.getDeclaredField("mFragments");
                 mFragmentManagerImpl.setAccessible(true);
             }
 

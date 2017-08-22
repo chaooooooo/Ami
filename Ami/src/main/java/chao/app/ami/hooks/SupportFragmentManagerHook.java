@@ -1,6 +1,6 @@
 package chao.app.ami.hooks;
 
-import android.os.Build;
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentController;
@@ -47,18 +47,24 @@ public class SupportFragmentManagerHook {
             FragmentManager_mActive.setAccessible(true);
 
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            try {
+                mFragmentManagerImpl = Activity.class.getDeclaredField("mFragments");
+                mFragmentManagerImpl.setAccessible(true);
+            } catch (NoSuchFieldException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
     public static Object getFragmentManagerImpl(FragmentActivity activity) {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
                 Object controller = Activity_FragmentController.get(activity);
                 Object host = FragmentController_FragmentHost.get(controller);
                 return mFragmentManagerImpl.get(host);
-            } else {
+            } catch (Throwable e) {
                 return mFragmentManagerImpl.get(activity);
+
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
