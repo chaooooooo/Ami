@@ -64,6 +64,7 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
 
 
     private ViewSettingsPanel mSettingsPanel;
+    private boolean mSettingPanelEnabled = false;
     private View mDragBar;
 
 
@@ -92,6 +93,7 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         LayoutParams settingsParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, SETTINGS_PANEL_MIN_HEIGHT);
         addView(mSettingsPanel, settingsParams);
         mDragBar = mSettingsPanel.findViewById(R.id.ami_drag_bar);
+        mSettingsPanel.setVisibility(mSettingPanelEnabled ? VISIBLE: GONE);
 
 
         mDrawPaint.setColor(Color.RED);
@@ -235,6 +237,9 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
     }
 
     private void layoutSettingsPanel() {
+        if (!mSettingPanelEnabled) {
+            return;
+        }
         int layoutHeight = getMeasuredHeight();
         int layoutWidth = getMeasuredWidth();
         int dragBarHeight = mDragBar.getMeasuredHeight();
