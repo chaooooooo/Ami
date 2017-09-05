@@ -22,7 +22,8 @@
     </item>
     <item name="TouchableFragment" component=".TestTouchableFragment"/>
     <item name="TestListFragment" component=".TestListFragment"/>
-
+    <item name="TestSimpleFragment" component=".TestAmiSimpleFragment"/>
+    <item name="TestSimpleListFragment" component=".TestSimpleListFragment"/>
 
     <group name="fragments">
         <item name="NormalFragment" component=".NormalFragment"/>

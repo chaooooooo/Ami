@@ -60,7 +60,7 @@ public class Ami {
         TextManager.init();
         FrameManager.init();
 
-        InterceptorLayerManager.init(true);
+        InterceptorLayerManager.init(false);
     }
 
     public static void setViewInterceptorEnabled(boolean enabled) {
@@ -127,7 +127,23 @@ public class Ami {
     }
 
     public static void log(String tag, String log) {
-        Log.d(tag, log);
+
+        StackTraceElement[] traces = Thread.currentThread().getStackTrace();
+        String className = null;
+        String method = null;
+        for (StackTraceElement element: traces) {
+            String name = element.getClassName();
+            if (name.contains("dalvik") || name.contains("java.lang")) {
+                continue;
+            }
+            if (!name.contains(Ami.class.getName()) && className == null) {
+                className = element.getClassName();
+                method = element.getMethodName();
+                break;
+            }
+
+        }
+        Log.d(tag, className + "." + method + "() >>> " + log);
     }
 
     public static void lifecycle(String tag, String log, int level) {

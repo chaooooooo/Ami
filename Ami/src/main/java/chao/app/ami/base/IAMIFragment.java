@@ -38,4 +38,6 @@ public interface IAMIFragment {
     <T extends View> T findView(int resId);
 
     void setupView(View layout);
+
+    int getLayoutID();
 }
