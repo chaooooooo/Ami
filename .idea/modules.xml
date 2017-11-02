@@ -5,6 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/Ami.iml" filepath="$PROJECT_DIR$/Ami.iml" />
       <module fileurl="file://$PROJECT_DIR$/Ami/Ami-Ami.iml" filepath="$PROJECT_DIR$/Ami/Ami-Ami.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/injection/injection.iml" filepath="$PROJECT_DIR$/injection/injection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/interfaces/interfaces.iml" filepath="$PROJECT_DIR$/interfaces/interfaces.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sample2/sample2.iml" filepath="$PROJECT_DIR$/sample2/sample2.iml" />
     </modules>
   </component>
 </project>

@@ -1,9 +1,12 @@
 package chao.app.debugtools;
 
+import android.os.Bundle;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import chao.app.ami.UI;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMIActivity;
 
@@ -45,5 +48,11 @@ public class MainActivity extends AMIActivity {
                     "a=" + a +
                     '}';
         }
+    }
+
+    @Override
+    public void setupView(Bundle savedInstanceState) {
+        super.setupView(savedInstanceState);
+        UI.show(this, TestSimpleListFragment.class);
     }
 }

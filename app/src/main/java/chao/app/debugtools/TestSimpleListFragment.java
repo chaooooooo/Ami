@@ -16,6 +16,14 @@ public class TestSimpleListFragment extends AmiSimpleListFragment {
 
     private static final String[] LIST_TITLES = {"1", "2", "3", "4","5"};
 
+    private static final String[] LIST_TITLES2 = {"1", "2", "3", "4","5"};
+
+    int a = 10;
+
+    float b = 10.0f;
+
+    String s = "hello";
+
     @Override
     public Object getObjects() {
         return LIST_TITLES;
@@ -24,5 +32,7 @@ public class TestSimpleListFragment extends AmiSimpleListFragment {
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Ami.log("simple item clicked " + LIST_TITLES[position]);
+
+        Ami.deepLog(this);
     }
 }

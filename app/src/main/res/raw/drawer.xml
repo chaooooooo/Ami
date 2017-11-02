@@ -24,6 +24,7 @@
     <item name="TestListFragment" component=".TestListFragment"/>
     <item name="TestSimpleFragment" component=".TestAmiSimpleFragment"/>
     <item name="TestSimpleListFragment" component=".TestSimpleListFragment"/>
+    <item name="TestInjection" component=".TestClassInjectionFragment"/>
 
     <group name="fragments">
         <item name="NormalFragment" component=".NormalFragment"/>

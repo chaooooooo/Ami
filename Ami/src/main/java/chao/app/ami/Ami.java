@@ -6,8 +6,13 @@ import android.util.Log;
 
 import com.squareup.leakcanary.LeakCanary;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
 import chao.app.ami.frames.FrameManager;
 import chao.app.ami.launcher.drawer.DrawerManager;
+import chao.app.ami.monitor.MonitorManager;
 import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;
 import chao.app.ami.utils.Util;
@@ -59,6 +64,7 @@ public class Ami {
         ProxyManager.init(app);
         TextManager.init();
         FrameManager.init();
+        MonitorManager.init(app);
 
         InterceptorLayerManager.init(false);
     }
@@ -125,6 +131,46 @@ public class Ami {
     public static void log(String log) {
         log(TAG, log);
     }
+
+    public static void deepLog(Object object) {
+        if(object == null) {
+            return;
+        }
+        Class clazz = object.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        StringBuilder builder = new StringBuilder();
+        builder.append(clazz.getSimpleName()).append("{");
+        try {
+            for (Field field: fields) {
+                field.setAccessible(true);
+                appendLog(object, field, builder);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        builder.append("}");
+        Ami.log(builder.toString());
+    }
+
+    private static void appendLog(Object parent, Field field, StringBuilder logs) throws IllegalAccessException {
+
+        Object obj = field.get(parent);
+        logs.append(field.getName()).append(":");
+        if (obj == null) {
+            logs.append("null").append(", ");
+        } else if (obj instanceof Number) {
+            logs.append(obj).append(", ");
+        } else if (obj instanceof String) {
+            logs.append("\"").append(obj).append("\"").append(", ");
+        } else if (obj.getClass() == Object.class) {
+        } else if (obj.getClass().isArray()) {
+            Object array[] = (Object[]) obj;
+            logs.append(Arrays.toString(array)).append(", ");
+        } else {
+            appendLog(obj, field, logs);
+        }
+    }
+
 
     public static void log(String tag, String log) {
 

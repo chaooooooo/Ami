@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':injection', ':sample', ':interfaces', ':sample2'
 include ':Ami'
