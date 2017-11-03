@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.StrictMode;
 import android.util.Log;
 
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.squareup.leakcanary.LeakCanary;
 
 import java.lang.reflect.Array;
@@ -67,6 +68,7 @@ public class Ami {
         MonitorManager.init(app);
 
         InterceptorLayerManager.init(false);
+
     }
 
     public static void setViewInterceptorEnabled(boolean enabled) {

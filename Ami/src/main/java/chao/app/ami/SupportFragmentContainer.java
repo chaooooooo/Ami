@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import chao.app.ami.base.AMIActivity;
 import chao.app.debug.R;
 
 /**
@@ -16,7 +17,7 @@ import chao.app.debug.R;
  * <p>
  * 这个Activity 只存在一个Fragment
  */
-public class SupportFragmentContainer extends FragmentActivity {
+public class SupportFragmentContainer extends AMIActivity {
 
     public static final String KEY_FRAGMENT = "fragment";
 
@@ -30,7 +31,7 @@ public class SupportFragmentContainer extends FragmentActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.container_layout);
 

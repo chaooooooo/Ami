@@ -72,7 +72,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
 
     private void setupView(Activity activity) {
-        FrameLayout decorView = (FrameLayout) activity.findViewById(android.R.id.content);
+        ViewGroup decorView = (ViewGroup) activity.findViewById(android.R.id.content);
         int decorViewChildCount = decorView.getChildCount();
         if (decorViewChildCount == 0) {
             return;

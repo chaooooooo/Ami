@@ -53,6 +53,6 @@ public class MainActivity extends AMIActivity {
     @Override
     public void setupView(Bundle savedInstanceState) {
         super.setupView(savedInstanceState);
-        UI.show(this, TestSimpleListFragment.class);
+//        UI.show(this, TestSimpleListFragment.class);
     }
 }
