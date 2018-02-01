@@ -1,13 +1,8 @@
 package chao.app.ami;
 
 import android.app.Application;
-import android.os.StrictMode;
 import android.util.Log;
 
-import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.squareup.leakcanary.LeakCanary;
-
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -52,20 +47,11 @@ public class Ami {
             return;
         }
 
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-//                .penaltyDeath()
-                .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
         mInstance = new Ami(app);
         ProxyManager.init(app);
         TextManager.init();
         FrameManager.init();
-        MonitorManager.init(app);
+//        MonitorManager.init(app);
 
         InterceptorLayerManager.init(false);
 
@@ -102,15 +88,6 @@ public class Ami {
             return;
         }
 
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-//                .penaltyDeath()
-                .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
         mInstance = new Ami(app);
         DrawerManager.init(app, drawerId);
         ProxyManager.init(app);
@@ -118,9 +95,6 @@ public class Ami {
         FrameManager.init();
     }
 
-    public static void enableLeakCanary(Application app) {
-        LeakCanary.install(app);
-    }
 
     public static Application getApp() {
         return mApp;
