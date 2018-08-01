@@ -23,9 +23,17 @@ import chao.app.ami.viewinfo.InterceptorLayerManager;
 
 public class Ami {
 
+    public static final int DEBUG_MODE_ENABLED = 1;
+
+    public static final int DEBUG_MODE_DISABLED = -1;
+
+    public static final int DEBUG_MODE_UNSET = 0;
+
     private static final String TAG = "AMI";
     private static Application mApp;
     private static Ami mInstance;
+
+    private static int mDebugMode = DEBUG_MODE_UNSET;
 
     public static final int LIFECYCLE_LEVEL_FULL = 3;
     public static final int LIFECYCLE_LEVEL_SIMPLE = 2;
@@ -38,8 +46,20 @@ public class Ami {
         mApp = app;
     }
 
+    private static boolean isDebugMode(Application app) {
+        if (mDebugMode == DEBUG_MODE_UNSET) {
+            boolean enabled = Util.isHostAppDebugMode(app);
+            mDebugMode = enabled ? DEBUG_MODE_ENABLED: DEBUG_MODE_DISABLED;
+        }
+        return mDebugMode == DEBUG_MODE_ENABLED;
+    }
+
+    public static void setDebugMode(int debugMode) {
+        mDebugMode = debugMode;
+    }
+
     public static void init(Application app) {
-        if (!Util.isHostAppDebugMode(app)) {
+        if (!isDebugMode(app)) {
             return;
         }
         if (mInstance != null) {
@@ -64,6 +84,9 @@ public class Ami {
     }
 
     public static void setViewInterceptorEnabled(boolean enabled) {
+        if (!isDebugMode(mApp)) {
+            return;
+        }
         InterceptorLayerManager.get().setInterceptorEnabled(enabled);
     }
 
@@ -72,6 +95,9 @@ public class Ami {
      * @param drawerId 抽屉配置文件Id, 必须是R.raw.xxxx
      */
     public static void setDrawerId(int drawerId) {
+        if (!isDebugMode(mApp)) {
+            return;
+        }
         DrawerManager.init(getApp(), drawerId);
     }
 
@@ -87,7 +113,7 @@ public class Ami {
      */
     @Deprecated
     public static void init(Application app, int drawerId) {
-        if (!Util.isHostAppDebugMode(app)) {
+        if (!isDebugMode(app)) {
             return;
         }
         if (mInstance != null) {
