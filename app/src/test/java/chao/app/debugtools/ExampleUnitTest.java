@@ -2,6 +2,8 @@ package chao.app.debugtools;
 
 import org.junit.Test;
 
+import java.lang.reflect.Array;
+
 import chao.app.ami.utils.Util;
 
 /**
@@ -15,7 +17,10 @@ public class ExampleUnitTest {
 
     @Test
     public void addition_isCorrect() throws Exception {
+        int a[] = {0,1,2,3};
 
+
+        System.out.println("isArray:" + a.getClass().getComponentType());
     }
 
     private static class A {

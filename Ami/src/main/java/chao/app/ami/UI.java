@@ -36,6 +36,9 @@ public class UI {
         if (bundle != null) {
             intent.putExtras(bundle);
         }
+        if (!(context instanceof Activity)) {
+            flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
+        }
         intent.addFlags(flags);
         context.startActivity(intent);
     }
@@ -45,6 +48,9 @@ public class UI {
         if (bundle != null) {
             intent.putExtras(bundle);
         }
+        if (!(context instanceof Activity)) {
+            flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
+        }
         intent.addFlags(flags);
         context.startActivity(intent);
     }
@@ -53,8 +59,10 @@ public class UI {
         if (bundle != null) {
             intent.putExtras(bundle);
         }
+        if (!(context instanceof Activity)) {
+            flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
+        }
         intent.addFlags(flags);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 }

@@ -44,13 +44,21 @@ public class AMIFragmentHelper implements IAMIFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         lifecycle("onCreateView()", Ami.LIFECYCLE_LEVEL_SIMPLE);
-        int layoutId = getLayoutFromAnnotation();
+        int layoutId = getLayoutID();
         if (layoutId == View.NO_ID) {
             return null;
         }
         mLayout = inflater.inflate(layoutId,container,false);
         setupView(mLayout);
         return mLayout;
+    }
+
+    public int getLayoutID() {
+        int id = mFragment.getLayoutID();
+        if (id == View.NO_ID) {
+            id = getLayoutFromAnnotation();
+        }
+        return id;
     }
 
     @Override

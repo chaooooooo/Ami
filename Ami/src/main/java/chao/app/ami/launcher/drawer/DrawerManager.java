@@ -5,14 +5,17 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.os.EnvironmentCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +24,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
@@ -62,9 +68,11 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     private ViewGroup mRealView;
     private ViewGroup mDecorView;
 
-    private WeakReference<Context> mContext;
 
-    private Application mApp;
+
+    private Application mApp = Ami.getApp();
+
+    private Context mContext = Ami.getApp();
 
     DrawerManager(Application app) {
         mApp = app;
@@ -72,7 +80,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
 
     private void setupView(Activity activity) {
-        FrameLayout decorView = (FrameLayout) activity.findViewById(android.R.id.content);
+        ViewGroup decorView = (ViewGroup) activity.findViewById(android.R.id.content);
         int decorViewChildCount = decorView.getChildCount();
         if (decorViewChildCount == 0) {
             return;
@@ -106,10 +114,9 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
         mDecorView = decorView;
         mRealView = realView;
-        mContext = new WeakReference<>(mDecorView.getContext());
 
         if (mDrawerLayout == null) {
-            LayoutInflater inflater = LayoutInflater.from(mContext.get());
+            LayoutInflater inflater = LayoutInflater.from(Ami.getApp());
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
             FrameLayout content = (FrameLayout) mDrawerLayout.findViewById(R.id.ami_content);
 
@@ -122,16 +129,16 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mNavigationBackView.setOnClickListener(this);
             mNavigationPathView = (TextView) componentContent.findViewById(R.id.navigation_title);
             mDrawerListView = (RecyclerView) componentContent.findViewById(R.id.ui_list);
-            mDrawerListView.setLayoutManager(new LinearLayoutManager(mContext.get(), LinearLayoutManager.VERTICAL, false));
-            mDrawerListView.addItemDecoration(new DividerItemDecoration(mContext.get(), LinearLayoutManager.VERTICAL));
+            mDrawerListView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+            mDrawerListView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.VERTICAL));
 
 
             FrameManager frameManager = FrameManager.getInstance();
             frameManager.addFrameChangeListener(this);
             View frameContent = findViewById(R.id.drawer_frame_content);
             mFrameListView = (RecyclerView) frameContent.findViewById(R.id.frame_list);
-            mFrameListView.setLayoutManager(new LinearLayoutManager(mContext.get(), LinearLayoutManager.VERTICAL, false));
-            mFrameListView.addItemDecoration(new DividerItemDecoration(mContext.get(), LinearLayoutManager.VERTICAL));
+            mFrameListView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+            mFrameListView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.VERTICAL));
             mFrameAdapter = new FrameAdapter(mFrameListView);
             mFrameListView.setAdapter(mFrameAdapter);
             mFrameNavigationBackView = (ImageView) frameContent.findViewById(R.id.navigation_back);
@@ -144,7 +151,26 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 //            mInterceptorFrame.setInterceptor(interceptor);
 
             DrawerXmlParser parser = new DrawerXmlParser();
-            parser.parseDrawer(mContext.get().getResources().openRawResource(mDrawerId), this);
+            if (mDrawerId != 0) {
+                parser.parseDrawer(mContext.getResources().openRawResource(mDrawerId), this);
+            }
+
+
+            if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                Ami.log("external sdcard not mounted.");
+                return;
+            }
+            File externalDir = Environment.getExternalStorageDirectory();
+            File amiXml = new File(externalDir, "ami.xml");
+            if (amiXml.exists()) {
+                try {
+                    parser.parseDrawer(new FileInputStream(amiXml), this);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Ami.log("ami xml is not exist: " + amiXml.getParent());
+            }
         }
         mInterceptorManager.injectListeners(null, mRealView);
         mDecorView.addView(mDrawerLayout);
@@ -161,9 +187,15 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     @Override
     public void onXmlParserDone(DrawerNode rootNode) {
-        mDrawerRootNode = rootNode;
-        mDrawerAdapter = new DrawerAdapter(mDrawerRootNode);
-        mDrawerListView.setAdapter(mDrawerAdapter);
+        if (mDrawerRootNode == null) {
+            mDrawerRootNode = rootNode;
+            mDrawerAdapter = new DrawerAdapter(mDrawerRootNode);
+            mDrawerListView.setAdapter(mDrawerAdapter);
+        } else {
+            mDrawerRootNode.addNode(rootNode);
+            mDrawerAdapter.updateNavigation();
+            mDrawerAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -223,7 +255,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new RecyclerView.ViewHolder(LayoutInflater.from(mContext.get()).inflate(R.layout.simpel_drawer_item_layout, parent, false)) {};
+            return new RecyclerView.ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.simpel_drawer_item_layout, parent, false)) {};
         }
 
         @Override
@@ -249,7 +281,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
                         try {
                             mDrawerLayout.closeDrawer(GravityCompat.START, false);
                             Class<?> clazz = componentName(componentNode);
-                            UI.show(mContext.get(), clazz, componentNode.getBundle(), componentNode.getFlags());
+                            UI.show(mContext, clazz, componentNode.getBundle(), componentNode.getFlags());
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }

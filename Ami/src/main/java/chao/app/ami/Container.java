@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import chao.app.ami.base.AMIActivity;
 import chao.app.debug.R;
 
-public class Container extends AppCompatActivity {
+public class Container extends AMIActivity {
 
     public static final String KEY_FRAGMENT = "fragment";
 
@@ -25,7 +26,7 @@ public class Container extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.container_layout);
 

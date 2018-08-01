@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
  *  反射工具类
  *
  *  @author chao.qin
- *  @since 51job6.0 2016/7/13
  */
 public class ReflectUtil {
 

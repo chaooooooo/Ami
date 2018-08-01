@@ -1,12 +1,19 @@
 package chao.app.ami.base;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.content.res.Resources;
+import android.view.Window;
+import android.view.WindowManager;
 
 import chao.app.ami.Ami;
 import chao.app.ami.annotations.LayoutID;
+import chao.app.debug.R;
 
 /**
  * @author chao.qin
@@ -18,6 +25,7 @@ public class AMIActivityHelper implements IAMIActivity {
     private static final String TAG = AMIActivityHelper.class.getSimpleName();
 
     private Activity mActivity;
+
 
     public AMIActivityHelper(AMIActivity activity) {
         mActivity = activity;
@@ -31,6 +39,18 @@ public class AMIActivityHelper implements IAMIActivity {
         if (layoutId != View.NO_ID) {
             mActivity.setContentView(layoutId);
         }
+    }
+
+    public Resources getResource() {
+        return mActivity.getResources();
+    }
+
+    public String getString(int resId) {
+        return mActivity.getString(resId);
+    }
+
+    public String getString(int resId,Object... args) {
+        return mActivity.getString(resId, args);
     }
 
     @Override

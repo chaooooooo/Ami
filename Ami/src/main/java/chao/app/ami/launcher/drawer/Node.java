@@ -36,6 +36,10 @@ public class Node implements DrawerConstants {
         return mName;
     }
 
+    public void setName(String name) {
+        mName = name;
+    }
+
     public void addProperty(Property property) {
         mProperties.add(property);
     }

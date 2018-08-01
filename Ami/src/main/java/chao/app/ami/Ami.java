@@ -1,10 +1,10 @@
 package chao.app.ami;
 
 import android.app.Application;
-import android.os.StrictMode;
 import android.util.Log;
 
-import com.squareup.leakcanary.LeakCanary;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 
 import chao.app.ami.frames.FrameManager;
 import chao.app.ami.launcher.drawer.DrawerManager;
@@ -66,21 +66,14 @@ public class Ami {
             return;
         }
 
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-//                .penaltyDeath()
-                .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
         mInstance = new Ami(app);
         ProxyManager.init(app);
         TextManager.init();
         FrameManager.init();
+//        MonitorManager.init(app);
 
-        InterceptorLayerManager.init(true);
+        InterceptorLayerManager.init(false);
+
     }
 
     public static void setViewInterceptorEnabled(boolean enabled) {
@@ -120,15 +113,6 @@ public class Ami {
             return;
         }
 
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-//                .penaltyDeath()
-                .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
         mInstance = new Ami(app);
         DrawerManager.init(app, drawerId);
         ProxyManager.init(app);
@@ -136,9 +120,6 @@ public class Ami {
         FrameManager.init();
     }
 
-    public static void enableLeakCanary(Application app) {
-        LeakCanary.install(app);
-    }
 
     public static Application getApp() {
         return mApp;
@@ -152,8 +133,64 @@ public class Ami {
         log(TAG, log);
     }
 
+    public static void deepLog(Object object) {
+        if(object == null) {
+            return;
+        }
+        Class clazz = object.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        StringBuilder builder = new StringBuilder();
+        builder.append(clazz.getSimpleName()).append("{");
+        try {
+            for (Field field: fields) {
+                field.setAccessible(true);
+                appendLog(object, field, builder);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        builder.append("}");
+        Ami.log(builder.toString());
+    }
+
+    private static void appendLog(Object parent, Field field, StringBuilder logs) throws IllegalAccessException {
+
+        Object obj = field.get(parent);
+        logs.append(field.getName()).append(":");
+        if (obj == null) {
+            logs.append("null").append(", ");
+        } else if (obj instanceof Number) {
+            logs.append(obj).append(", ");
+        } else if (obj instanceof String) {
+            logs.append("\"").append(obj).append("\"").append(", ");
+        } else if (obj.getClass() == Object.class) {
+        } else if (obj.getClass().isArray()) {
+            Object array[] = (Object[]) obj;
+            logs.append(Arrays.toString(array)).append(", ");
+        } else {
+            appendLog(obj, field, logs);
+        }
+    }
+
+
     public static void log(String tag, String log) {
-        Log.d(tag, log);
+
+        StackTraceElement[] traces = Thread.currentThread().getStackTrace();
+        String className = null;
+        String method = null;
+        for (StackTraceElement element: traces) {
+            String name = element.getClassName();
+            if (name.contains("dalvik") || name.contains("java.lang")) {
+                continue;
+            }
+            if (!name.contains(Ami.class.getName()) && className == null) {
+                className = element.getClassName();
+                method = element.getMethodName();
+                break;
+            }
+
+        }
+        Log.d(tag, className + "." + method + "() >>> " + log);
     }
 
     public static void lifecycle(String tag, String log, int level) {

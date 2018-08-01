@@ -88,4 +88,9 @@ public abstract class AMISupportFragment extends Fragment implements IAMIFragmen
         return mHelper.findView(resId);
     }
 
+
+    @Override
+    public int getLayoutID() {
+        return View.NO_ID;
+    }
 }

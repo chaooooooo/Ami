@@ -42,6 +42,7 @@
 
 
 12. 功能开关
+    事件注入开关！！！！
 
 Bugs:
     AdapterView的ItemClick失去焦点
