@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentController;
 import android.support.v4.app.FragmentHostCallback;
+import android.util.SparseArray;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -74,7 +75,18 @@ public class SupportFragmentManagerHook {
 
     public static ArrayList<Fragment> getActiveFragments(FragmentActivity activity) {
         try {
-            return (ArrayList<Fragment>) FragmentManager_mActive.get(getFragmentManagerImpl(activity));
+            Object active = FragmentManager_mActive.get(getFragmentManagerImpl(activity));
+            if (active instanceof ArrayList) {
+                return (ArrayList<Fragment>) active;
+            }
+            if (active instanceof SparseArray) {
+                ArrayList<Fragment> resultList = new ArrayList<>();
+                SparseArray<Fragment> sparseActive = (SparseArray<Fragment>) active;
+                for (int i=0; i < sparseActive.size() ; i++) {
+                    resultList.add(sparseActive.valueAt(i));
+                }
+                return resultList;
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

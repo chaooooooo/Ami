@@ -2,9 +2,7 @@ package chao.app.debugtools;
 
 import org.junit.Test;
 
-import java.lang.reflect.Array;
-
-import chao.app.ami.utils.Util;
+import java.util.ArrayList;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -19,8 +17,10 @@ public class ExampleUnitTest {
     public void addition_isCorrect() throws Exception {
         int a[] = {0,1,2,3};
 
+        ArrayList<Integer> list = new ArrayList<>();
 
-        System.out.println("isArray:" + a.getClass().getComponentType());
+        System.out.print(list instanceof ArrayList);
+
     }
 
     private static class A {
