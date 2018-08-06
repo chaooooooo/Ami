@@ -48,7 +48,7 @@ public class Ami {
 
     private static boolean isDebugMode(Application app) {
         if (mDebugMode == DEBUG_MODE_UNSET) {
-            boolean enabled = Util.isHostAppDebugMode(app);
+            boolean enabled = Util.isApkDebugable(app);
             mDebugMode = enabled ? DEBUG_MODE_ENABLED: DEBUG_MODE_DISABLED;
         }
         return mDebugMode == DEBUG_MODE_ENABLED;

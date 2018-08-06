@@ -73,6 +73,7 @@ public class SupportFragmentManagerHook {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public static ArrayList<Fragment> getActiveFragments(FragmentActivity activity) {
         try {
             Object active = FragmentManager_mActive.get(getFragmentManagerImpl(activity));

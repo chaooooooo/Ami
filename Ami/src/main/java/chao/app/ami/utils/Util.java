@@ -1,6 +1,8 @@
 package chao.app.ami.utils;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 
 import java.lang.reflect.Field;
@@ -28,6 +30,16 @@ public class Util implements Constants{
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean isApkDebugable(Context context) {
+        try {
+            ApplicationInfo info = context.getApplicationInfo();
+            return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        } catch (Exception e) {
+
         }
         return false;
     }
