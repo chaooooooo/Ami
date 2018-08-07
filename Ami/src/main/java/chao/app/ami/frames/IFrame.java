@@ -19,9 +19,9 @@ public interface IFrame {
         String title;
         String value;
 
-        Entry(String title, String value, Object object) {
+        Entry(String title, String defValue, Object object) {
             this.title = title;
-            this.value = Util.convert2Resource(object, value);
+            this.value = Util.convert2Resource(object, defValue);
             this.object = object;
         }
     }

@@ -36,6 +36,18 @@
 
         <include layout="@layout/navigation_layout" />
 
+        <EditText
+            android:id="@+id/search_bar"
+            android:textSize="14sp"
+            android:background="@drawable/bg_searchbar"
+            android:textColor="#222222"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:hint="@string/ami_frame_searchbar_hint"
+            android:textColorHint="#88888888"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/frame_list"
             android:layout_width="match_parent"

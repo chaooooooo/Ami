@@ -21,10 +21,10 @@ class FrameProcessor {
 
     public void pushActivity(Activity activity) {
         clear();
-        BaseFrame baseFrame = new BaseFrame(activity);
-        mFrameStack.push(baseFrame);
+        FirstFrame firstFrame = new FirstFrame(activity);
+        mFrameStack.push(firstFrame);
         for (FrameManager.TopFrameChangedListener listener: mListeners) {
-            listener.onTopFrameChanged(baseFrame, "/");
+            listener.onTopFrameChanged(firstFrame, "/");
         }
     }
 
@@ -69,7 +69,7 @@ class FrameProcessor {
         mFrameStack.push(frame);
         String path = "";
         for (IFrame f: mFrameStack) {
-            if (f instanceof BaseFrame) {
+            if (f instanceof FirstFrame) {
                 continue;
             }
             path = path + "/" + f.getName();
@@ -86,7 +86,7 @@ class FrameProcessor {
         IFrame frame = mFrameStack.pop();
         String path = "";
         for (IFrame f: mFrameStack) {
-            if (f instanceof BaseFrame) {
+            if (f instanceof FirstFrame) {
                 continue;
             }
             path = path + "/" + f.getName();

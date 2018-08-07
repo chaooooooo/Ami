@@ -2,8 +2,6 @@ package chao.app.debugtools;
 
 import android.app.Application;
 
-import com.squareup.leakcanary.LeakCanary;
-
 import chao.app.ami.Ami;
 
 /**
@@ -18,8 +16,6 @@ public class AppApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        LeakCanary.install(this);
-//        Ami.init(this, R.raw.drawer);
         Ami.init(this);
         Ami.setDrawerId(R.raw.drawer);
         Ami.setViewInterceptorEnabled(false);

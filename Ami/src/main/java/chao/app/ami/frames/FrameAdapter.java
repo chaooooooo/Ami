@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import chao.app.ami.Ami;
@@ -42,15 +43,43 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
         };
     }
 
+
+    private void toggleSpreader(View itemView) {
+        TextView nameView = (TextView) itemView.findViewById(R.id.frame_adapter_item_name);
+        TextView valueView = (TextView) itemView.findViewById(R.id.frame_adapter_item_value);
+        TextView classView = (TextView) itemView.findViewById(R.id.frame_adapter_item_class_name);
+        ImageView spreaderIco = (ImageView) itemView.findViewById(R.id.spreader);
+
+        boolean spread = classView.getVisibility() == View.VISIBLE;
+        if (spread) {
+            //当前已展开， 收缩
+            classView.setVisibility(View.GONE);
+            nameView.setMaxLines(1);
+            valueView.setMaxLines(1);
+            classView.setMaxLines(1);
+            spreaderIco.setImageResource(R.drawable.ami_frame_item_shrink);
+
+        } else {
+            //当前已收缩， 展开
+            classView.setVisibility(View.VISIBLE);
+            nameView.setMaxLines(2);
+            valueView.setMaxLines(2);
+            classView.setMaxLines(2);
+            spreaderIco.setImageResource(R.drawable.ami_frame_item_spread);
+        }
+    }
+
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         FrameImpl frame = mFrameProcessor.peek();
         final ObjectFrame.Entry entry = frame.getEntry(position);
         if (holder.getItemViewType() == ITEM_VIEW_TYPE_INFO) {
             TextView nameView = (TextView) holder.itemView.findViewById(R.id.frame_adapter_item_name);
             TextView valueView = (TextView) holder.itemView.findViewById(R.id.frame_adapter_item_value);
+            TextView classView = (TextView) holder.itemView.findViewById(R.id.frame_adapter_item_class_name);
             nameView.setText(entry.title);
             valueView.setText(entry.value);
+            classView.setText(entry.object.getClass().getName());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -65,8 +94,16 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
                     notifyDataSetChanged();
                 }
             });
+            View spreader = holder.itemView.findViewById(R.id.spreader);
+            spreader.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toggleSpreader(holder.itemView);
+                }
+            });
             return;
         }
+
         TextView textView = (TextView) holder.itemView;
         textView.setText(entry.title);
     }
@@ -86,10 +123,11 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
         return ITEM_VIEW_TYPE_INFO;
     }
 
-    public void navigationUp() {
-        mFrameProcessor.popOut();
+    public IFrame navigationUp() {
+        IFrame frame = mFrameProcessor.popOut();
         notifyDataSetChanged();
         restoreOffset();
+        return frame;
     }
 
     @Override
@@ -115,5 +153,9 @@ public class FrameAdapter extends RecyclerView.Adapter implements DrawerLayout.D
         int position = mFrameProcessor.peek().getPosition();
         int offset = mFrameProcessor.peek().getOffset();
         mLayoutManager.scrollToPositionWithOffset(position, offset);
+    }
+
+    public boolean onBackPressed() {
+        return navigationUp() != null;
     }
 }

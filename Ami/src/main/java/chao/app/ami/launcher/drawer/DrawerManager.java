@@ -8,14 +8,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.os.EnvironmentCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +25,6 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
 
@@ -214,9 +211,21 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     @Override
     public boolean onDispatchKeyEvent(KeyEvent keyEvent) {
+        if (keyEvent.getKeyCode() != KeyEvent.KEYCODE_BACK) {
+            return false;
+        }
         if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-            if (mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerLayout.isDrawerOpen(GravityCompat.END)) {
-                mDrawerLayout.closeDrawers();
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                if (!mDrawerAdapter.onBackPressed()) {
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
+                return true;
+            }
+
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+                if (!mFrameAdapter.onBackPressed()) {
+                    mDrawerLayout.closeDrawer(GravityCompat.END);
+                }
                 return true;
             }
         }
@@ -305,13 +314,15 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             return mCurrentGroup.size();
         }
 
-        public void navigationUp() {
+        public boolean navigationUp() {
             NodeGroup group = mCurrentGroup.getParent();
             if (group != null) {
                 mCurrentGroup = group;
                 notifyDataSetChanged();
                 updateNavigation();
+                return true;
             }
+            return false;
         }
 
         public void navigationTo(NodeGroup groupNode) {
@@ -352,6 +363,9 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             return title;
         }
 
+        public boolean onBackPressed() {
+            return navigationUp();
+        }
     }
 
     public static void init(Application app, int drawerXml) {
