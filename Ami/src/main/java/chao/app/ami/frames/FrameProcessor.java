@@ -40,16 +40,16 @@ class FrameProcessor {
         return obj != null && obj instanceof Map;
     }
 
-    public void pushInto(IFrame.Entry entry) {
+    public boolean pushInto(IFrame.Entry entry) {
         Object object = entry.getValue();
         if (object == null) {
-            return;
+            return false;
         }
         if (object instanceof Number || object instanceof Boolean || object instanceof String) {
-            return;
+            return false;
         }
         if (object instanceof Class) {
-            return;
+            return false;
         }
         FrameImpl frame;
         if (isArray(object)) {
@@ -64,6 +64,7 @@ class FrameProcessor {
             frame = new ObjectFrame(object);
         }
         pushInto(frame);
+        return true;
     }
 
     public void pushInto(FrameImpl frame) {

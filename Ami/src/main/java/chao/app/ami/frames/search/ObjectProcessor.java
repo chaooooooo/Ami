@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,14 +26,30 @@ public class ObjectProcessor implements Constants{
 
     private static final ForegroundColorSpan HIGH_LIGHT_COLOR = new ForegroundColorSpan(Color.RED);
 
-
-
     public static ArrayList<ObjectInfo> infoList = new ArrayList<>();
 
     private ObjectSearchListener objectSearchListener;
 
-    public void searchObject(ArrayList<ObjectInfo> searchRst, String keyword, ObjectInfo targetInfo) {
+    private HashMap<String, Boolean> cancelTaskMap = new HashMap<>();
+
+    public void startSearch(ArrayList<ObjectInfo> searchRst, String keyword, ObjectInfo targetInfo, String taskId) {
+        cancelTaskMap.put(taskId, false);
+        searchObject(searchRst, keyword, targetInfo, taskId);
+    }
+
+    public void stopSearch(String taskId) {
+        cancelTaskMap.put(taskId, true);
+    }
+
+    public void clearTask(String taskId) {
+        cancelTaskMap.remove(taskId);
+    }
+
+    private void searchObject(ArrayList<ObjectInfo> searchRst, String keyword, ObjectInfo targetInfo, String taskId) {
         if (keyword == null || keyword.length() < MIN_SEARCH_LENGTH) {
+            return;
+        }
+        if (cancelTaskMap.get(taskId)) {
             return;
         }
         Object target = targetInfo.getObject();
@@ -63,6 +80,7 @@ public class ObjectProcessor implements Constants{
             superClass = superClass.getSuperclass();
         }
 
+        ArrayList<ObjectInfo> children = new ArrayList<>();
         for (Field field: allFields) {
             //过滤常量
             if (fieldFilter(field)) {
@@ -110,7 +128,11 @@ public class ObjectProcessor implements Constants{
                 continue;
             }
 
-            searchObject(searchRst, keyword, objectInfo);
+            children.add(objectInfo);
+        }
+        //优化搜索算法， 搜索深度由浅到深
+        for (ObjectInfo objectInfo: children) {
+            searchObject(searchRst, keyword, objectInfo, taskId);
         }
 
     }

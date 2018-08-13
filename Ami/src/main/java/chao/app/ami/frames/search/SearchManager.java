@@ -25,8 +25,17 @@ public class SearchManager {
 
     private SearchListener mSearchListener;
 
-    public SearchManager() {
+    private static SearchManager sSearchManager;
+
+    private SearchManager() {
         mProcessor = new ObjectProcessor();
+    }
+
+    public static SearchManager getInstance() {
+        if (sSearchManager == null) {
+            sSearchManager = new SearchManager();
+        }
+        return sSearchManager;
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -57,7 +66,7 @@ public class SearchManager {
         protected Void doInBackground(Void... voids) {
             ObjectInfo parent = new ObjectInfo(target);
             mProcessor.setObjectSearchListener(this);
-            mProcessor.searchObject(searchRst, keyword, parent);
+            mProcessor.startSearch(searchRst, keyword, parent, String.valueOf(hashCode()));
             return null;
         }
 
@@ -88,6 +97,12 @@ public class SearchManager {
         }
 
         @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            mProcessor.clearTask(String.valueOf(hashCode()));
+        }
+
+        @Override
         public void newValueFound(ObjectInfo objectInfo) {
             /*
              * 搜索结果通知到主线程
@@ -100,6 +115,7 @@ public class SearchManager {
     private void startSearch(String keyword, Object searchTarget) {
         if (mTask != null) {
             mTask.cancel(true);
+            mProcessor.stopSearch(String.valueOf(mTask.hashCode()));
         }
         mTask = new SearchTask(keyword, searchTarget);
         mTask.execute();
@@ -109,6 +125,10 @@ public class SearchManager {
     public void cancel() {
         if (mTask != null) {
             mTask.cancel(true);
+            mProcessor.stopSearch(String.valueOf(mTask.hashCode()));
+            if (mSearchListener != null) {
+                mSearchListener.onSearchCanceled();
+            }
         }
     }
 
@@ -131,6 +151,8 @@ public class SearchManager {
         void onSearchChanged(String keyword, @Nullable ObjectInfo newObjectInfo, @NonNull ArrayList<ObjectInfo> searchRst);
 
         void onSearchFinished(String keyword, @NonNull ArrayList<ObjectInfo> searchRst);
+
+        void onSearchCanceled();
     }
 
     public void searchKeyword(String keyword) {

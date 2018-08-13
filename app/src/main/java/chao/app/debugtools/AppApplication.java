@@ -21,6 +21,7 @@ public class AppApplication extends Application {
         Ami.setViewInterceptorEnabled(false);
         Ami.setLifecycleLevel(Ami.LIFECYCLE_LEVEL_CREATE);
 
+//        MonitorManager.init(this);
     }
 
 

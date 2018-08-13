@@ -24,7 +24,7 @@ public class ObjectProcessorTest {
         ObjectProcessor processor = new ObjectProcessor();
         Application application = new Application();
         ArrayList<ObjectInfo> list = new ArrayList<>();
-        processor.searchObject(list, "mDataDir", new ObjectInfo(application));
+        processor.startSearch(list, "mDataDir", new ObjectInfo(application), "main");
 //        for (ObjectInfo objectInfo: list) {
 //            System.out.println();
 //            printObject(objectInfo);

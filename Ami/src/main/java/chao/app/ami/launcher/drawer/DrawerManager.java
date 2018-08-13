@@ -88,9 +88,9 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     private Context mContext = Ami.getApp();
     private View mSearchProgress;
 
-    DrawerManager(Application app) {
+    private DrawerManager(Application app) {
         mApp = app;
-        mSearchManager = new SearchManager();
+        mSearchManager = SearchManager.getInstance();
         mSearchManager.setSearchListener(this);
         mSearchTextListener = new SearchTextListener(mSearchManager);
     }
@@ -305,6 +305,11 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     @Override
     public void onSearchFinished(String keyword, @NonNull ArrayList<ObjectInfo> searchRst) {
         doSearchResult(keyword, searchRst);
+        hideSearchProgress();
+    }
+
+    @Override
+    public void onSearchCanceled() {
         hideSearchProgress();
     }
 

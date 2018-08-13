@@ -33,7 +33,7 @@ public class MonitorManager {
         Log.e("luqin", "new MonitorManager.");
     }
 
-    public static void init(Application app) {
+    public void init(Application app) {
         Log.e("luqin", "Monitor Manager init : " + app);
         mApp = app;
         getThreadMonitor().init(app);

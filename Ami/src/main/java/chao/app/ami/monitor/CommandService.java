@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import chao.app.ami.Ami;
+
 /**
  * Created by qinchao on 2017/9/8.
  */
@@ -38,6 +40,7 @@ public class CommandService extends IntentService {
     public void onCreate() {
         super.onCreate();
         mManager = MonitorManager.getInstance();
+        mManager.init(Ami.getApp());
         for (AbsMonitor monitor: mManager.getMonitors()) {
             monitor.onCreate(getApplication());
         }

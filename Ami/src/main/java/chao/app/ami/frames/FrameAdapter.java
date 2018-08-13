@@ -12,6 +12,7 @@ import chao.app.ami.frames.items.CategoryFrameItem;
 import chao.app.ami.frames.items.FrameItem;
 import chao.app.ami.frames.items.ObjectFrameItem;
 import chao.app.ami.frames.items.SearchFrameItem;
+import chao.app.ami.frames.search.SearchManager;
 
 /**
  * @author chao.qin
@@ -100,52 +101,13 @@ public class FrameAdapter extends RecyclerView.Adapter<FrameAdapter.FrameViewHol
                     int position = mLayoutManager.findFirstVisibleItemPosition();
                     frame.setOffset(offset);
                     frame.setPosition(position);
-                    mFrameProcessor.pushInto(entry);
+                    if (mFrameProcessor.pushInto(entry)) {
+                        SearchManager.getInstance().cancel();
+                    }
                     mLayoutManager.scrollToPositionWithOffset(0,0);
                     notifyDataSetChanged();
                 }
             });
-
-
-//        TextView nameView = (TextView) holder.itemView.findViewById(R.id.frame_adapter_item_name);
-//        TextView valueView = (TextView) holder.itemView.findViewById(R.id.frame_adapter_item_value);
-//        TextView classView = (TextView) holder.itemView.findViewById(R.id.frame_adapter_item_class_name);
-//        if (holder.getItemViewType() == ITEM_VIEW_TYPE_INFO || holder.getItemViewType() == ITEM_VIEW_TYPE_SEARCH) {
-//            nameView.setText(entry.title);
-//            valueView.setText(entry.value);
-//            if (holder.getItemViewType() == ITEM_VIEW_TYPE_INFO) {
-//                classView.setText(entry.object.getClass().getName());
-//            } else {
-//                classView.setText(String.valueOf(entry.object));
-//            }
-//            holder.itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    if (entry.object == null) {
-//                        return;
-//                    }
-//                    View topView = mLayoutManager.getChildAt(0);
-//                    int offset = topView.getTop();
-//                    int position = mLayoutManager.findFirstVisibleItemPosition();
-//                    frame.setOffset(offset);
-//                    frame.setPosition(position);
-//                    mFrameProcessor.pushInto(entry);
-//                    mLayoutManager.scrollToPositionWithOffset(0,0);
-//                    notifyDataSetChanged();
-//                }
-//            });
-//            View spreader = holder.itemView.findViewById(R.id.spreader);
-//            spreader.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    toggleSpreader(holder.itemView);
-//                }
-//            });
-//            return;
-//        }
-//
-//        TextView textView = (TextView) holder.itemView;
-//        textView.setText(entry.title);
     }
 
     @Override
