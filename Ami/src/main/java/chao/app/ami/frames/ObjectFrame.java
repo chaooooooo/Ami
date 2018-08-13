@@ -32,6 +32,7 @@ public class ObjectFrame extends FrameImpl implements Constants {
 
 
     public ObjectFrame(Object object) {
+        super(object);
         mObject = object;
         Class<?> clazz = object.getClass();
         extractFields(clazz);
@@ -113,21 +114,11 @@ public class ObjectFrame extends FrameImpl implements Constants {
         if (position >= mFinalFields.length) {
             return null;
         }
-        String name = getField(position);
-        String text = getObjectText(position);
-        return new Entry(name, text, mFinalObjects[position]);
-    }
-
-    private String getField(int position) {
         if (mFinalFields[position] instanceof Field) {
             Field field = (Field) mFinalFields[position];
-            return field.getName();
+            return new Entry(mFinalObjects[position], field.getName(), field.getType().getName());
         }
-        return mFinalFields[position].toString();
-    }
-
-    private String getObjectText(int position) {
-        return String.valueOf(mFinalObjects[position]);
+        return new Entry(mFinalFields[position].toString(), true);
     }
 
     public int getDeep() {

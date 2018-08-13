@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import chao.app.ami.Ami;
-import chao.app.ami.Constants;
 import chao.app.ami.hooks.FragmentManagerHook;
 import chao.app.ami.hooks.SupportFragmentManagerHook;
 
@@ -24,6 +23,7 @@ public class FirstFrame extends FrameImpl{
     private Activity activity;
 
     public FirstFrame(Activity activity) {
+        super(activity);
         this.activity = activity;
     }
 
@@ -40,33 +40,33 @@ public class FirstFrame extends FrameImpl{
     private ArrayList<Entry> getEntries() {
         ArrayList<Entry> entries = new ArrayList<>();
         //application entry
-        entries.add(new Entry(Application.class.getName(), Constants.CATEGORY,null));
-        entries.add(new Entry(String.valueOf(Ami.getApp()), "", Ami.getApp()));
+        entries.add(new Entry(Application.class.getName(), true));
+        entries.add(new Entry(Ami.getApp(), "Application", Application.class.getName()));
         //activity entry
-        entries.add(new Entry(Activity.class.getName(), Constants.CATEGORY,null));
-        entries.add(new Entry(String.valueOf(activity), "", activity));
+        entries.add(new Entry(Activity.class.getName(), true));
+        entries.add(new Entry(activity, "Activity", activity.getClass().getName()));
         //fragments
-        entries.add(new Entry(Fragment.class.getName(), Constants.CATEGORY, null));
+        entries.add(new Entry(Fragment.class.getName(), true));
         List<Fragment> list = FragmentManagerHook.getActiveFragments(activity);
         if (list != null) {
             for (Fragment fragment: list) {
-                entries.add(new Entry(String.valueOf(fragment), "", fragment));
+                entries.add(new Entry(fragment, "", fragment.getClass().getName()));
             }
         }
         //support fragments
-        entries.add(new Entry(android.support.v4.app.Fragment.class.getName(), Constants.CATEGORY, null));
+        entries.add(new Entry(android.support.v4.app.Fragment.class.getName(), true));
         if (activity instanceof FragmentActivity) {
             ArrayList<android.support.v4.app.Fragment> fragmentList = SupportFragmentManagerHook.getActiveFragments((FragmentActivity) activity);
             if (fragmentList != null) {
                 for (android.support.v4.app.Fragment fragment: fragmentList) {
-                    entries.add(new Entry(String.valueOf(fragment), "", fragment));
+                    entries.add(new Entry(fragment, "", fragment.getClass().getName()));
                 }
             }
         }
         //View
-        entries.add(new Entry(View.class.getName(), Constants.CATEGORY, null));
+        entries.add(new Entry(View.class.getName(), true));
         View decorView = activity.getWindow().getDecorView();
-        entries.add(new Entry(String.valueOf(decorView), "", decorView));
+        entries.add(new Entry(decorView, "mDecorView", decorView.getClass().getName()));
         return entries;
     }
 

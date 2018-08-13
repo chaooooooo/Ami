@@ -76,6 +76,10 @@ public class Ami {
 
     }
 
+    public static boolean inited() {
+        return mInstance != null;
+    }
+
     public static void setViewInterceptorEnabled(boolean enabled) {
         if (!isDebugMode(mApp)) {
             return;

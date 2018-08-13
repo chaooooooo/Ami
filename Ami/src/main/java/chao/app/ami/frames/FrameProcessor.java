@@ -40,8 +40,8 @@ class FrameProcessor {
         return obj != null && obj instanceof Map;
     }
 
-    public void pushInto(IFrame.Entry entry, int position, int offset) {
-        Object object = entry.object;
+    public void pushInto(IFrame.Entry entry) {
+        Object object = entry.getValue();
         if (object == null) {
             return;
         }
@@ -51,32 +51,38 @@ class FrameProcessor {
         if (object instanceof Class) {
             return;
         }
-        FrameImpl topFrame = peek();
-        topFrame.setOffset(offset);
-        topFrame.setPosition(position);
         FrameImpl frame;
         if (isArray(object)) {
-            frame = new ArrayFrame(entry.title,object);
+            frame = new ArrayFrame(String.valueOf(entry.title), object);
         } else if (isCollectionObject(object)) {
             Collection collection = (Collection) object;
             Object[] array = collection.toArray();
-            frame = new ArrayFrame(entry.title, array);
+            frame = new ArrayFrame(String.valueOf(entry.title), array);
         } else if (isMap(object)) {
-            frame = new MapFrame(entry.title, (Map)object);
+            frame = new MapFrame(String.valueOf(entry.title), (Map)object);
         } else {
             frame = new ObjectFrame(object);
         }
+        pushInto(frame);
+    }
+
+    public void pushInto(FrameImpl frame) {
         mFrameStack.push(frame);
-        String path = "";
+        String path = buildPath();
+        for (FrameManager.TopFrameChangedListener listener: mListeners) {
+            listener.onTopFrameChanged(frame, path);
+        }
+    }
+
+    public String buildPath() {
+        StringBuilder path = new StringBuilder();
         for (IFrame f: mFrameStack) {
             if (f instanceof FirstFrame) {
                 continue;
             }
-            path = path + "/" + f.getName();
+            path.append("/").append(f.getName());
         }
-        for (FrameManager.TopFrameChangedListener listener: mListeners) {
-            listener.onTopFrameChanged(frame, path);
-        }
+        return path.toString();
     }
 
     public IFrame popOut() {

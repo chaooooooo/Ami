@@ -61,6 +61,22 @@ public class FrameManager extends ActivitiesLifeCycleAdapter {
         mFrameProcessor.removeFrameChangeListener(listener);
     }
 
+    public void pushInto(SearchFrame searchFrame) {
+        mFrameProcessor.pushInto(searchFrame);
+    }
+
+    public FrameImpl peek() {
+        return mFrameProcessor.peek();
+    }
+
+    /**
+     * 获取stack路径
+     *
+     */
+    public String getPath() {
+        return mFrameProcessor.buildPath();
+    }
+
 
     public interface TopFrameChangedListener{
         void onTopFrameChanged(IFrame frame, String path);

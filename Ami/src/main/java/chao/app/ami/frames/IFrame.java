@@ -1,7 +1,5 @@
 package chao.app.ami.frames;
 
-import chao.app.ami.utils.Util;
-
 /**
  * @author chao.qin
  * @since 2017/8/13
@@ -12,17 +10,61 @@ public interface IFrame {
 
     Entry getEntry(int position);
 
-    String getName();
+    CharSequence getName();
+
+    Object getSource();
+
 
     class Entry {
-        Object object;
-        String title;
-        String value;
+        Object value;
+        CharSequence title;
+        CharSequence className;
+        boolean isCategory;
 
-        Entry(String title, String defValue, Object object) {
+        public Entry(CharSequence className, boolean isCategory) {
+            this.className = className;
+            this.isCategory = isCategory;
+
+        }
+
+        public Entry(Object value, CharSequence title, CharSequence className) {
+            this.value = value;
             this.title = title;
-            this.value = Util.convert2Resource(object, defValue);
-            this.object = object;
+            this.className = className;
+            this.isCategory = false;
+        }
+
+        public CharSequence getTitle() {
+            return title;
+        }
+
+        public void setTitle(CharSequence title) {
+            this.title = title;
+        }
+
+        public CharSequence getClassName() {
+            return className;
+        }
+
+        public void setClassName(CharSequence className) {
+            this.className = className;
+        }
+
+        public boolean isCategory() {
+            return isCategory;
+        }
+
+        public void setCategory(boolean category) {
+            isCategory = category;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(Object value) {
+            this.value = value;
         }
     }
+
 }
