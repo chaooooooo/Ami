@@ -21,6 +21,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </service>
+
+        <activity android:name="chao.app.ami.utils.permission.AmiPermission$PermissionActivity"
+            android:theme="@style/PermissionStyle"/>
     </application>
 
 </manifest>

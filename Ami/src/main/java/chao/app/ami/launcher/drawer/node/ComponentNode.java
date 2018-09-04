@@ -1,4 +1,4 @@
-package chao.app.ami.launcher.drawer;
+package chao.app.ami.launcher.drawer.node;
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -6,7 +6,9 @@ import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
 
+import chao.app.ami.launcher.drawer.DrawerParserException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ComponentNode extends Node {
@@ -26,6 +28,8 @@ public class ComponentNode extends Node {
     private int mFlags;   // Intent.mFlags
     
     private final static ArrayMap<String, Integer> FLAG_CONSTANT_MAP = new ArrayMap<>();
+
+    private static final ArrayList<String> mPermissions = new ArrayList<>();
 
     private HashMap<String, String> mInputMap;
 
@@ -181,4 +185,18 @@ public class ComponentNode extends Node {
         return mFlags;
     }
 
+    public void addPermission(String permission) {
+        permission = permission.replaceFirst("Manifest", "android");
+        mPermissions.add(permission);
+    }
+
+    public ArrayList<String> getPermissions() {
+        return mPermissions;
+    }
+
+    public String[] getPermissionArray() {
+        String[] perArray = new String[mPermissions.size()];
+        mPermissions.toArray(perArray);
+        return perArray;
+    }
 }

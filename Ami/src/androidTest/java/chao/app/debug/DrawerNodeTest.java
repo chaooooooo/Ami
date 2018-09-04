@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.io.Serializable;
 
-import chao.app.ami.launcher.drawer.ComponentNode;
+import chao.app.ami.launcher.drawer.node.ComponentNode;
 
 /**
  * @author chao.qin

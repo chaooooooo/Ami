@@ -1,4 +1,4 @@
-package chao.app.ami.launcher.drawer;
+package chao.app.ami.launcher.drawer.node;
 
 /**
  * @author chao.qin

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 
+import android.os.Build;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
@@ -79,5 +80,12 @@ public class Util implements Constants{
                 "(" +
                 resId +
                 ")";
+    }
+
+    /**
+     * 版本是否在Android6.0 以上
+     */
+    public static boolean isOverMarshmallow() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 }

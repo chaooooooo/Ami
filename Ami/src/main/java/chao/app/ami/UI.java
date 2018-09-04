@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
+import chao.app.ami.utils.permission.PermissionHelper;
+import chao.app.ami.utils.permission.PermissionListener;
 
 
 /**
@@ -22,6 +25,34 @@ public class UI {
     }
 
     public static void show(Context context, Class clazz, Bundle bundle, int flags) {
+        showInner(context, clazz, bundle, flags);
+    }
+
+    /**
+     *
+     * @param permissions 权限
+     */
+    public static void show(final Context context, final Class clazz, final Bundle bundle, final int flags, String... permissions) {
+        if (permissions == null || permissions.length == 0) {
+            showInner(context, clazz, bundle, flags);
+            return;
+        }
+        PermissionHelper.requestPermissions(context, permissions, new PermissionListener() {
+            @Override
+            public void onPassed() {
+                showInner(context, clazz, bundle, flags);
+            }
+
+            @Override
+            public boolean onDenied(boolean neverAsk) {
+                Toast.makeText(context, "当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限", Toast.LENGTH_LONG).show();
+                return super.onDenied(neverAsk);
+            }
+        });
+
+    }
+
+    private static void showInner(Context context, Class clazz, Bundle bundle, int flags) {
         if (android.app.Fragment.class.isAssignableFrom(clazz)) {
             showAppFragment(context,clazz,bundle,flags);
         } else if (android.support.v4.app.Fragment.class.isAssignableFrom(clazz)) {
@@ -31,7 +62,7 @@ public class UI {
         }
     }
 
-    private static void showAppFragment(Context context, Class fragment,Bundle bundle, int flags) {
+    private static void showAppFragment(Context context, Class fragment, Bundle bundle, int flags) {
         Intent intent = FragmentContainer.buildContainerIntent(context, fragment);
         if (bundle != null) {
             intent.putExtras(bundle);

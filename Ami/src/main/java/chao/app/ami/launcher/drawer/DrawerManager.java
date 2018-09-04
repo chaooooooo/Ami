@@ -26,6 +26,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import chao.app.ami.launcher.drawer.node.ComponentNode;
+import chao.app.ami.launcher.drawer.node.DrawerNode;
+import chao.app.ami.launcher.drawer.node.Node;
+import chao.app.ami.launcher.drawer.node.NodeGroup;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -380,7 +384,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
                         try {
                             mDrawerLayout.closeDrawer(GravityCompat.START, false);
                             Class<?> clazz = componentName(componentNode);
-                            UI.show(mContext, clazz, componentNode.getBundle(), componentNode.getFlags());
+                            UI.show(mContext, clazz, componentNode.getBundle(), componentNode.getFlags(), componentNode.getPermissionArray());
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }

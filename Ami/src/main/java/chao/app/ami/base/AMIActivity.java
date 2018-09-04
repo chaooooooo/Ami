@@ -22,7 +22,6 @@ public class AMIActivity extends AppCompatActivity implements IAMIActivity {
     }
 
     public void setupView(Bundle savedInstanceState) {
-
     }
 
 

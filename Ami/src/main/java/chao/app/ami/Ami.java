@@ -134,7 +134,11 @@ public class Ami {
     }
 
     public static void log(String log) {
-        log(TAG, log);
+        log(TAG, " >>> " + log);
+    }
+
+    public static void log() {
+        log(TAG, "");
     }
 
     public static void deepLog(Object object) {
@@ -194,7 +198,7 @@ public class Ami {
             }
 
         }
-        Log.d(tag, className + "." + method + "() >>> " + log);
+        Log.d(tag, className + "." + method + "() " + log);
     }
 
     public static void lifecycle(String tag, String log, int level) {

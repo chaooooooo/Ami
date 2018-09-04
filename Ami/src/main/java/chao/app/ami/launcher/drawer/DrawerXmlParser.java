@@ -3,6 +3,13 @@ package chao.app.ami.launcher.drawer;
 import android.text.TextUtils;
 import android.util.Xml;
 
+import chao.app.ami.launcher.drawer.node.ComponentNode;
+import chao.app.ami.launcher.drawer.node.DrawerNode;
+import chao.app.ami.launcher.drawer.node.Extra;
+import chao.app.ami.launcher.drawer.node.InputNode;
+import chao.app.ami.launcher.drawer.node.Node;
+import chao.app.ami.launcher.drawer.node.NodeGroup;
+import chao.app.ami.launcher.drawer.node.Property;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -22,6 +29,7 @@ public class DrawerXmlParser {
     private static final String XML_EVENT_EXTRA = "extra";
     private static final String XML_EVENT_PROPERTY = "property";
     private static final String XML_EVENT_INPUT = "input";
+    private static final String XML_EVENT_PERMISSION = "permission";
 
     private static final String XML_ATTRIBUTE_NAME = "name";
     private static final String XML_ATTRIBUTE_PACKAGE = "packageName";
@@ -129,6 +137,14 @@ public class DrawerXmlParser {
                                 InputNode inputNode = new InputNode(viewId, text);
                                 componentNode.addInput(inputNode);
                                 break;
+                            case XML_EVENT_PERMISSION:
+                                if (!(current instanceof ComponentNode)) {
+                                    throw new DrawerParserException("xml err: only component has input event.");
+                                }
+                                componentNode = (ComponentNode) current;
+                                String permission = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_NAME);
+                                componentNode.addPermission(permission);
+                                break;
                             default:
                                 throw new IllegalStateException("Unknown xml node name: " + nodeName);
 
@@ -143,6 +159,7 @@ public class DrawerXmlParser {
                             case XML_EVENT_EXTRA:
                             case XML_EVENT_PROPERTY:
                             case XML_EVENT_INPUT:
+                            case XML_EVENT_PERMISSION:
                                 break;
                             default:
                                 current = current.getParent();

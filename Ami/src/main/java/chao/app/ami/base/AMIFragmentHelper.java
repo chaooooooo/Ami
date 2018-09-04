@@ -1,12 +1,13 @@
 package chao.app.ami.base;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import chao.app.ami.Ami;
 import chao.app.ami.AmiException;
 import chao.app.ami.annotations.LayoutID;
@@ -59,6 +60,11 @@ public class AMIFragmentHelper implements IAMIFragment {
             id = getLayoutFromAnnotation();
         }
         return id;
+    }
+
+    @Override
+    public AppCompatActivity getAppCompatActivity() {
+        return mFragment.getAppCompatActivity();
     }
 
     @Override
@@ -115,6 +121,14 @@ public class AMIFragmentHelper implements IAMIFragment {
 
     @Override
     public void setupView(View layout) {
+        ActionBar actionBar = getAppCompatActivity().getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(mFragment.getClass().getSimpleName());
+        }
+        android.support.v7.app.ActionBar supportActionBar = getAppCompatActivity().getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setTitle(mFragment.getClass().getSimpleName());
+        }
         mFragment.setupView(layout);
     }
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NoticeImageView">
+        <attr name="noticeText" format="string" />
+        <attr name="noticeTextSize" format="dimension" />
+        <attr name="noticeTextColor" format="color" />
+        <attr name="noticeCircleSize" format="dimension"/>
+        <attr name="noticeCircleColor" format="color"/>
+    </declare-styleable>
+
+</resources>

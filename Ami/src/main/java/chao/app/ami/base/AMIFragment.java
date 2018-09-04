@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,5 +91,10 @@ public abstract class AMIFragment extends Fragment implements IAMIFragment {
     @Override
     public int getLayoutID() {
         return View.NO_ID;
+    }
+
+    @Override
+    public AppCompatActivity getAppCompatActivity() {
+        return (AppCompatActivity) getActivity();
     }
 }

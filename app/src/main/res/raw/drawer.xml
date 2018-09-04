@@ -2,10 +2,19 @@
 <drawer packageName="chao.app.debugtools">
     <property name="p1" value="v1"/>
     <property name="p2" value="v2"/>
+
+    <item name="TestNoticeImageViewFragment" component=".TestNoticeImageViewFragment"/>
+
+    <item name="PullRecyclerView" component=".PullRecyclerView2TestFragment"/>
+    <item name="HeaderView" component=".TestHeaderFragment"/>
     <item name="TabHostFragment" component=".TestTabHostFragment">
         <input viewId="username.edit" text="chaooooooo"/>
         <input viewId="password.edit" text="abc123!!"/>
         <input viewId="check_code.edit" text="666666"/>
+    </item>
+
+    <item name="TestPermissionFragment" component=".TestPermissionFragment">
+        <permission name="Manifest.permission.READ_CONTACTS"/>
     </item>
     <item name="NormalActivity" component=".NormalActivity"/>
 

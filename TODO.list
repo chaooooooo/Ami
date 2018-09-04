@@ -55,3 +55,12 @@ Bugs:
     2. 如果是个Edittext， 注入文本, 清除文本， password显示、隐藏，
     3. 边间距显示开关（默认关）
     4.
+
+
+
+#2018-8-29
+启动Activity增加权限属性
+
+
+右滑菜单添加tab:
+frame , logcat,
