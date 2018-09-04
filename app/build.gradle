@@ -29,7 +29,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.4.0'
 
     testCompile 'junit:junit:4.12'
-//    implementation  'com.github.chaooooooo:Ami:master-SNAPSHOT'
+//    debugImplementation  'com.github.chaooooooo:Ami:master-SNAPSHOT'
     compile project(':Ami')
 }
 
