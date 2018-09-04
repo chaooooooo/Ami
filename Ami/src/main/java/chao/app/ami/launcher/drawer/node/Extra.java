@@ -6,18 +6,9 @@ package chao.app.ami.launcher.drawer.node;
  */
 
 public class Extra extends Property {
-    private String mFormat;
 
     public Extra(String key, String value, String format) {
-        super(key, value);
-        mFormat = format;
+        super(key, value, format);
     }
 
-    public String getFormat() {
-        return mFormat;
-    }
-
-    public void setFormat(String format) {
-        mFormat = format;
-    }
 }

@@ -59,8 +59,12 @@ Bugs:
 
 
 #2018-8-29
-启动Activity增加权限属性
+启动Activity增加权限属性   #done since 2018-09-03
 
 
 右滑菜单添加tab:
 frame , logcat,
+
+
+#2018-09-04
+extra object参数  #done since 2018-09-04

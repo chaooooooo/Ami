@@ -12,9 +12,12 @@ public class Node implements DrawerConstants {
 
     private ArrayList<Property> mProperties = new ArrayList<>();
 
+    private ArrayList<Node> mChildren = new ArrayList<>();
+
     private String mName;
 
-    private NodeGroup mParent;
+    private Node mParent;
+
 
     public Node(){
 
@@ -24,12 +27,12 @@ public class Node implements DrawerConstants {
         mName = name;
     }
 
-    public void setParent(NodeGroup node) {
+    public void setParent(Node node) {
         mParent = node;
         mParent.addNode(this);
     }
 
-    public NodeGroup getParent() {
+    public Node getParent() {
         return mParent;
     }
 
@@ -43,5 +46,29 @@ public class Node implements DrawerConstants {
 
     public void addProperty(Property property) {
         mProperties.add(property);
+    }
+
+    public void addNode(Node node) {
+        mChildren.add(node);
+    }
+
+    public void remove(Node node) {
+        mChildren.remove(node);
+    }
+
+    public void clear() {
+        mChildren.clear();
+    }
+
+    public int size() {
+        return mChildren.size();
+    }
+
+    public Node getChild(int index) {
+        return mChildren.get(index);
+    }
+
+    public ArrayList<Node> getmChildren() {
+        return mChildren;
     }
 }

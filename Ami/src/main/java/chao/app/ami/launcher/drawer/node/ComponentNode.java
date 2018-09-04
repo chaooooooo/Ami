@@ -5,16 +5,16 @@ import android.os.Parcelable;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
-
 import chao.app.ami.launcher.drawer.DrawerParserException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ComponentNode extends Node {
+public class ComponentNode extends Node implements IObjectExtraParent {
 
     private static final String TAG = ComponentNode.class.getSimpleName();
 
+    private static final String XML_EXTRA_FORMAT_BOOLEAN = "boolean";
     private static final String XML_EXTRA_FORMAT_INT = "int";
     private static final String XML_EXTRA_FORMAT_LONG = "long";
     private static final String XML_EXTRA_FORMAT_DOUBLE = "double";
@@ -33,8 +33,7 @@ public class ComponentNode extends Node {
 
     private HashMap<String, String> mInputMap;
 
-    
-    
+
     static {
         FLAG_CONSTANT_MAP.put("FLAG_GRANT_READ_URI_PERMISSION", 0x00000001);
         FLAG_CONSTANT_MAP.put("FLAG_GRANT_WRITE_URI_PERMISSION", 0x00000002);
@@ -89,16 +88,35 @@ public class ComponentNode extends Node {
         mInputMap.put(inputNode.getViewId(), inputNode.getText());
     }
 
+
+    @Override
+    public void addObjectExtra(ObjectExtra extra) {
+        String key = extra.getName();
+        Object o = extra.getObject();
+        if (o instanceof Serializable) {
+            mBundle.putSerializable(key, (Serializable) o);
+        } else if (o instanceof Parcelable) {
+            mBundle.putParcelable(key, (Parcelable) o);
+        }
+    }
+
     public void addExtra(Extra extra) {
         String key = extra.getKey();
         String extraValue = extra.getValue();
         String format = extra.getFormat();
-        if (TextUtils.isEmpty(key) || TextUtils.isEmpty(extraValue)) {
+        if (TextUtils.isEmpty(key)) {
             return;
+        }
+        if (TextUtils.isEmpty(extraValue)) {
+            extraValue = "";
         }
         Object value = extraValue;
         try {
             switch (format) {
+                case XML_EXTRA_FORMAT_BOOLEAN:
+                    value = Boolean.valueOf(extraValue);
+                    mBundle.putBoolean(key, (Boolean) value);
+                    break;
                 case XML_EXTRA_FORMAT_INT:
                     value = Integer.valueOf(extraValue);
                     mBundle.putInt(key, (int) value);
@@ -199,4 +217,5 @@ public class ComponentNode extends Node {
         mPermissions.toArray(perArray);
         return perArray;
     }
+
 }

@@ -38,13 +38,37 @@
     <group name="fragments">
         <item name="NormalFragment" component=".NormalFragment"/>
 
-        <item name="SupportFragment" component=".SupportFragment"/>
+        <item name="SupportFragment" component=".SupportFragment">
+            <extra name="key1" value="10086" format="int"/>
+            <extra name="key2" value="Hello World!" format="string"/>
+            <object name="testBean" className="chao.app.debugtools.beans.TestBean">
+                <property name="bVar" value="true" format="boolean"/>
+                <property name="iVar" value="100" format="int"/>
+                <property name="sVar" value="hello world" format="String"/>
+                <object name="innerBean" className="chao.app.debugtools.beans.TestInnerBean">
+                    <property name="bInVar" value="true" format="boolean"/>
+                    <property name="iInVar" value="100" format="int"/>
+                    <property name="sInVar" value="hello luqin" format="String"/>
+                </object>
+            </object>
+        </item>
+
 
         <item name="FlagFragment" component=".NormalFragment" flags="FLAG_ACTIVITY_NEW_TASK|FLAG_ACTIVITY_CLEAR_TASK"/>
 
         <item name="ExtrasFragment" component=".SupportFragment">
             <extra name="key1" value="10086" format="int"/>
             <extra name="key2" value="Hello World!" format="string"/>
+            <object name="objKey" className="chao.app.debugtools.beans.TestBean">
+                <property name="bVar" value="true" format="boolean"/>
+                <property name="iVar" value="100" format="int"/>
+                <property name="sVar" value="hello world" format="String"/>
+                <object name="innerBean" className="chao.app.debugtools.beans.TestInnerBean">
+                    <property name="bInVar" value="true" format="boolean"/>
+                    <property name="iInVar" value="100" format="int"/>
+                    <property name="sInVar" value="hello luqin" format="String"/>
+                </object>
+            </object>
         </item>
     </group>
 

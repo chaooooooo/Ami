@@ -6,9 +6,11 @@ import android.util.Xml;
 import chao.app.ami.launcher.drawer.node.ComponentNode;
 import chao.app.ami.launcher.drawer.node.DrawerNode;
 import chao.app.ami.launcher.drawer.node.Extra;
+import chao.app.ami.launcher.drawer.node.IObjectExtraParent;
 import chao.app.ami.launcher.drawer.node.InputNode;
 import chao.app.ami.launcher.drawer.node.Node;
 import chao.app.ami.launcher.drawer.node.NodeGroup;
+import chao.app.ami.launcher.drawer.node.ObjectExtra;
 import chao.app.ami.launcher.drawer.node.Property;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -30,6 +32,7 @@ public class DrawerXmlParser {
     private static final String XML_EVENT_PROPERTY = "property";
     private static final String XML_EVENT_INPUT = "input";
     private static final String XML_EVENT_PERMISSION = "permission";
+    private static final String XML_EVENT_EXTRA_OBJECT = "object";
 
     private static final String XML_ATTRIBUTE_NAME = "name";
     private static final String XML_ATTRIBUTE_PACKAGE = "packageName";
@@ -40,6 +43,7 @@ public class DrawerXmlParser {
     private static final String XML_ATTRIBUTE_EXTRA_FORMAT = "format";
     private static final String XML_ATTRIBUTE_VIEW_ID = "viewId";
     private static final String XML_ATTRIBUTE_TEXT = "text";
+    private static final String XML_ATTRIBUTE_CLASS_NAME = "className";
 
 
     private static final String XML_DEFAULT_NAME = "<unknown>";
@@ -122,10 +126,30 @@ public class DrawerXmlParser {
                                 componentNode.addExtra(extra);
                                 break;
                             case XML_EVENT_PROPERTY:
+                                if (current == null) {
+                                    return;
+                                }
                                 key = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_PROPERTY_KEY);
                                 value = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_PROPERTY_VALUE);
-                                Property property = new Property(key, value);
+                                format = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_EXTRA_FORMAT);
+                                Property property = new Property(key, value, format);
                                 current.addProperty(property);
+                                break;
+                            case XML_EVENT_EXTRA_OBJECT:
+                                key = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_PROPERTY_KEY);
+                                value = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_CLASS_NAME);
+                                if (TextUtils.isEmpty(value)) {
+                                    value = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_PROPERTY_VALUE);
+                                }
+                                ObjectExtra objExtra = new ObjectExtra(key, value);
+
+                                if (current instanceof IObjectExtraParent) {
+                                    IObjectExtraParent parent = (IObjectExtraParent) current;
+                                    parent.addObjectExtra(objExtra);
+                                }
+
+                                objExtra.setParent(current);
+                                current = objExtra;
                                 break;
                             case XML_EVENT_INPUT:
                                 if (!(current instanceof ComponentNode)) {

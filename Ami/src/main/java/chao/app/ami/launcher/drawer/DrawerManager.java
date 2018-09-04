@@ -409,7 +409,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         }
 
         public boolean navigationUp() {
-            NodeGroup group = mCurrentGroup.getParent();
+            NodeGroup group = (NodeGroup) mCurrentGroup.getParent();
             if (group != null) {
                 mCurrentGroup = group;
                 notifyDataSetChanged();
@@ -445,13 +445,13 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             if (title == null) {
                 title = "";
             }
-            NodeGroup parent = node.getParent();
+            NodeGroup parent = (NodeGroup) node.getParent();
             while (parent != null) {
                 String parentName = parent.getName();
                 if (!TextUtils.isEmpty(parentName)) {
                     title = parent.getName() + "/" +  title;
                 }
-                parent = parent.getParent();
+                parent = (NodeGroup) parent.getParent();
             }
 
             return title;

@@ -19,8 +19,12 @@ public class ExampleUnitTest {
 
         ArrayList<Integer> list = new ArrayList<>();
 
-        System.out.print(list instanceof ArrayList);
+        System.out.println('a' - 'A');
 
+        Class clazz = Class.forName("java.lang.Boolean");
+        Class b = boolean.class;
+
+        System.out.println(clazz.getName());
     }
 
     private static class A {
