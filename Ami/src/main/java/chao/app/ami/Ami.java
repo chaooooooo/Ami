@@ -2,16 +2,14 @@ package chao.app.ami;
 
 import android.app.Application;
 import android.util.Log;
-
-import java.lang.reflect.Field;
-import java.util.Arrays;
-
 import chao.app.ami.frames.FrameManager;
 import chao.app.ami.launcher.drawer.DrawerManager;
 import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;
 import chao.app.ami.utils.Util;
 import chao.app.ami.viewinfo.InterceptorLayerManager;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 
 /**
  * @author chao.qin
@@ -133,8 +131,8 @@ public class Ami {
         mLifecycle = level;
     }
 
-    public static void log(String log) {
-        log(TAG, " >>> " + log);
+    public static void log(Object log) {
+        log(TAG, " >>> " + String.valueOf(log));
     }
 
     public static void log() {

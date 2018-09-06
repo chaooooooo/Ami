@@ -21,7 +21,7 @@ public class AmiPermission {
 
     private Builder builder;
 
-    private static AmiPermission axdPermission;
+    private static AmiPermission amiPermission;
 
     public static Builder builder(Context context) {
         return new Builder(context);
@@ -66,11 +66,11 @@ public class AmiPermission {
         }
 
         public void request() {
-            AmiPermission axdPermission = new AmiPermission();
-            axdPermission.builder = this;
-            AmiPermission.axdPermission = axdPermission;
+            AmiPermission permission = new AmiPermission();
+            permission.builder = this;
+            AmiPermission.amiPermission = permission;
             if (permissions != null && permissions.length != 0) {
-                axdPermission.requestPermission();
+                permission.requestPermission();
             }
         }
     }
@@ -113,8 +113,8 @@ public class AmiPermission {
     /**
      *从设置页面返回后
      */
-    public void onSettingResult(@NonNull AmiPermission axdPermission) {
-        axdPermission.requestPermission();
+    public void onSettingResult(@NonNull AmiPermission amiPermission) {
+        amiPermission.requestPermission();
     }
 
     public void destroy() {
@@ -149,8 +149,8 @@ public class AmiPermission {
 
         protected void onSettingResult(int requestCode) {
             Ami.log("permission--" + "setting" + requestCode);
-            if (axdPermission != null) {
-                axdPermission.onSettingResult(axdPermission);
+            if (amiPermission != null) {
+                amiPermission.onSettingResult(amiPermission);
             }
         }
 
@@ -162,8 +162,8 @@ public class AmiPermission {
         public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             Ami.log();
-            if (axdPermission != null && axdPermission.getPermissionListener() != null) {
-                axdPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+            if (amiPermission != null && amiPermission.getPermissionListener() != null) {
+                amiPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
             }
             finish();
         }
@@ -171,9 +171,9 @@ public class AmiPermission {
 
         @Override
         public void onDestroy() {
-            if (axdPermission != null) {
-                axdPermission.destroy();
-                axdPermission = null;
+            if (amiPermission != null) {
+                amiPermission.destroy();
+                amiPermission = null;
             }
             super.onDestroy();
         }

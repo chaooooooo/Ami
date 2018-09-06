@@ -20,4 +20,5 @@
     <string name="string_read_phoneState">为了保证您的正常使用，请点击重新允许。拒绝后应用将无法正常运行。</string>
     <string name="permission_quit">退出</string>
     <string name="permission_dismiss">取消</string>
+    <string name="ami_plugin_logcat_settings_clear">清楚数据</string>
 </resources>

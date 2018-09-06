@@ -22,7 +22,7 @@ public class SearchManagerTest {
 
     @Test
     public void searchTest() {
-        SearchManager searchManager = new SearchManager();
+        SearchManager searchManager = SearchManager.getInstance();
         searchManager.setSearchListener(new SearchManager.SearchListener() {
             @Override
             public void onSearchStarted(String keyword) {
@@ -38,6 +38,11 @@ public class SearchManagerTest {
             @Override
             public void onSearchFinished(String keyword, @NonNull ArrayList<ObjectInfo> searchRst) {
                 Ami.log("onSearchFinished --> " + searchRst);
+            }
+
+            @Override
+            public void onSearchCanceled() {
+
             }
         });
         searchManager.setSearchTarget(new Application());

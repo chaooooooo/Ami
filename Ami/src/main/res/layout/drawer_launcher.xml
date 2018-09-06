@@ -4,18 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <FrameLayout
         android:id="@+id/ami_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </FrameLayout>
+
     <LinearLayout
         android:id="@+id/drawer_component_content"
-        android:orientation="vertical"
-        android:layout_gravity="left"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:orientation="vertical">
 
         <include layout="@layout/navigation_layout" />
 
@@ -23,57 +25,79 @@
             android:id="@+id/ui_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/common_background_color"
-            />
+            android:background="@color/common_background_color" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="#536e6e"
+        android:orientation="vertical">
+
+        <net.lucode.hackware.magicindicator.MagicIndicator
+            android:id="@+id/drawer_plugins_tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+
+        <chao.app.ami.plugin.AmiViewPager
+            android:id="@+id/drawer_plugins_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+
     <LinearLayout
         android:id="@+id/drawer_frame_content"
-        android:layout_gravity="right"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/common_background_color"
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:visibility="gone">
 
         <include layout="@layout/navigation_layout" />
 
         <AutoCompleteTextView
             android:id="@+id/search_bar"
-            android:textSize="14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/bg_searchbar"
-            android:textColor="#222222"
+            android:hint="@string/ami_frame_searchbar_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="textEmailAddress"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:hint="@string/ami_frame_searchbar_hint"
-            android:inputType="textEmailAddress"
-            android:imeOptions="actionSearch"
+            android:textColor="#222222"
             android:textColorHint="#88888888"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:textSize="14sp" />
 
         <LinearLayout
             android:id="@+id/search_progressbar"
-            android:visibility="gone"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="32dp">
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
             <ProgressBar
-                android:indeterminate="false"
-                android:padding="4dp"
-                android:layout_marginLeft="32dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp" />
+                android:layout_marginLeft="32dp"
+                android:layout_marginStart="32dp"
+                android:indeterminate="false"
+                android:padding="4dp" />
 
             <TextView
-                android:text="@string/ami_search_progress"
-                android:gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="@string/ami_search_progress" />
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/frame_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

@@ -1,14 +1,11 @@
 package chao.app.debugtools;
 
 import android.os.Bundle;
-
+import chao.app.ami.annotations.LayoutID;
+import chao.app.ami.base.AMIActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import chao.app.ami.UI;
-import chao.app.ami.annotations.LayoutID;
-import chao.app.ami.base.AMIActivity;
 
 @LayoutID(R.layout.ami_home_layout)
 public class MainActivity extends AMIActivity {
@@ -53,6 +50,6 @@ public class MainActivity extends AMIActivity {
     @Override
     public void setupView(Bundle savedInstanceState) {
         super.setupView(savedInstanceState);
-        UI.show(this, TestPermissionFragment.class);
+//        UI.show(this, TestPermissionFragment.class);
     }
 }

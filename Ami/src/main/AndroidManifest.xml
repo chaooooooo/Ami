@@ -9,8 +9,8 @@
 
     <application android:label="@string/app_name"
         android:supportsRtl="true">
-        <activity android:name="chao.app.ami.SupportFragmentContainer"/>
-        <activity android:name="chao.app.ami.FragmentContainer"/>
+        <activity android:name="chao.app.ami.SupportFragmentContainer" />
+        <activity android:name="chao.app.ami.FragmentContainer" />
 
         <service android:name="chao.app.ami.monitor.CommandService" android:exported="true">
             <intent-filter>
