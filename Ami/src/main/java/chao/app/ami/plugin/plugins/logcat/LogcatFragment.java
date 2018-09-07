@@ -1,9 +1,11 @@
 package chao.app.ami.plugin.plugins.logcat;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import chao.app.ami.plugin.AmiPluginFragment;
 import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.debug.R;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author qinchao
@@ -38,6 +41,12 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
 
     private ToggleButton pauseView;
 
+    private ToggleButton heartView;
+
+    private View zoomIn;
+
+    private View zoomOut;
+
     public LogcatFragment() {
         AmiPluginManager pluginManager = AmiPluginManager.getInstance();
         LogcatPlugin logcatPlugin = (LogcatPlugin) pluginManager.getPlugin(LogcatPlugin.class);
@@ -49,7 +58,6 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
     public void setupView(View layout) {
         super.setupView(layout);
 
-
         logcatView = findView(R.id.logcat_list);
         logcatView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
@@ -59,13 +67,31 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
 
         clearView = findView(R.id.ami_plugin_logcat_settings_clear);
         pauseView = findView(R.id.ami_plugin_logcat_settings_pause);
+        heartView = findView(R.id.ami_plugin_logcat_settings_heart);
+        zoomIn = findView(R.id.ami_plugin_logcat_settings_zoom_in);
+        zoomOut = findView(R.id.ami_plugin_logcat_settings_zoom_out);
+
         clearView.setOnClickListener(this);
         pauseView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 logcatSettings.setPause(isChecked);
+                logcatManager.startLogcat();
             }
         });
+        heartView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                logcatSettings.setHeart(isChecked);
+                if (isChecked) {
+                    logcatManager.notifyHeartBreak();
+                } else {
+                    logcatManager.cancelNotifyHeartBreak();
+                }
+            }
+        });
+        zoomIn.setOnClickListener(this);
+        zoomOut.setOnClickListener(this);
     }
 
     public void notifyDataSetCleared() {
@@ -92,26 +118,66 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
     public void onClick(View v) {
         if (v == clearView) {
             logcatManager.clear();
+        } else if (v == zoomIn) {
+            logcatSettings.zoomIn();
+            mAdapter.notifyDataSetChanged();
+        } else if (v == zoomOut) {
+            logcatSettings.zoomOut();
+            mAdapter.notifyDataSetChanged();
         }
     }
 
-    private class LogcatAdapter extends RecyclerView.Adapter {
+    private class LogcatAdapter extends RecyclerView.Adapter implements View.OnClickListener {
+
+        private float orgTextSize;
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Context context = parent.getContext();
             View itemView = LayoutInflater.from(context).inflate(R.layout.ami_plugin_logcat_item_layout, parent, false);
+            TextView logText = (TextView) itemView.findViewById(R.id.log_text);
+            orgTextSize = logText.getTextSize();
             return new RecyclerView.ViewHolder(itemView) {
             };
+
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             TextView logText = (TextView) holder.itemView.findViewById(R.id.log_text);
+            TextView timestampView = (TextView) holder.itemView.findViewById(R.id.ami_plugin_logcat_item_timestamp);
+            TextView processView = (TextView) holder.itemView.findViewById(R.id.ami_plugin_logcat_item_process);
+
             LogcatLine logcat = caches.get(position);
             String log = logcat.getLog();
+            int textColor = logcat.getLevel().getColor();
             logText.setText(log);
-            logText.setTextColor(logcat.getLevel().getColor());
+            logText.setTextColor(textColor);
+            logText.setTextSize(TypedValue.COMPLEX_UNIT_PX, orgTextSize + logcatSettings.getZoom());
+
+
+            String timestamp = logcat.getDate() + "-" + logcat.getTime();
+            String process = getProcessName(getContext(), Integer.valueOf(logcat.getPid())) + "(" + logcat.getPid() + "/" + logcat.getTid() + ")";
+            timestampView.setText(timestamp);
+            timestampView.setTextColor(textColor);
+            processView.setText(process);
+            processView.setTextColor(textColor);
+
+            holder.itemView.setOnClickListener(this);
+        }
+
+        public String getProcessName(Context cxt, int pid) {
+            ActivityManager am = (ActivityManager) cxt.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningAppProcessInfo> runningApps = am.getRunningAppProcesses();
+            if (runningApps == null) {
+                return null;
+            }
+            for (ActivityManager.RunningAppProcessInfo procInfo : runningApps) {
+                if (procInfo.pid == pid) {
+                    return procInfo.processName;
+                }
+            }
+            return null;
         }
 
         @Override
@@ -127,6 +193,16 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
         @Override
         public long getItemId(int position) {
             return super.getItemId(position);
+        }
+
+        @Override
+        public void onClick(View v) {
+            View view = v.findViewById(R.id.ami_plugin_logcat_item_attaches);
+            if (view.getVisibility() == View.VISIBLE) {
+                view.setVisibility(View.GONE);
+            } else {
+                view.setVisibility(View.VISIBLE);
+            }
         }
     }
 

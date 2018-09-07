@@ -19,6 +19,8 @@ public class LogcatManager {
 
     private static final int HANDLER_WHAT_HEART_BREAK = 2;
 
+    private static final int HEART_BREAK_INTERVAL = 5000;
+
     private ArrayList<LogcatLine> logCaches = new ArrayList<>(300);
 
     private ArrayList<LogcatLine> pendingLogs = new ArrayList<>(50);
@@ -70,26 +72,29 @@ public class LogcatManager {
         mHandler.removeMessages(HANDLER_WHAT_REFRESH);
     }
 
-    private void notifyHeartBreak() {
-        int heart = settings.getHeart();
-        if (heart <= 0) {
+    public void notifyHeartBreak() {
+        if (!settings.isHeart()) {
             return;
         }
         mHandler.removeMessages(HANDLER_WHAT_HEART_BREAK);
         Message message = mHandler.obtainMessage(HANDLER_WHAT_HEART_BREAK);
-        mHandler.sendMessageDelayed(message, heart);
+        mHandler.sendMessageDelayed(message, HEART_BREAK_INTERVAL);
+    }
+
+    public void cancelNotifyHeartBreak() {
+        mHandler.removeMessages(HEART_BREAK_INTERVAL);
     }
 
     public LogcatManager(LogcatPlugin logcatPlugin, LogcatSettings logcatSettings) {
         this.logcatPlugin = logcatPlugin;
         this.settings = logcatSettings;
-        notifyHeartBreak();
     }
 
     public void startLogcat() {
         if (mLogcat != null && mLogcat.isRunning()){
             return;
         }
+        stopLogcat();
         mLogcat = new Shell.Builder()
             .addCommand("locat -c | logcat -v threadtime")
             .setOnStdoutLineListener(new StreamGobbler.OnLineListener() {

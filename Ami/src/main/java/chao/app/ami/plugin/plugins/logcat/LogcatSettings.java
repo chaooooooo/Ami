@@ -8,8 +8,6 @@ public class LogcatSettings {
 
     private static final int DEFAULT_CACHE_SIZE = 500;
 
-    private static final int DEFAULT_HEART_BREAK = 5000;
-
     /**
      * logcat文字大小缩放
      */
@@ -25,7 +23,7 @@ public class LogcatSettings {
      *  心跳间隔，单位ms
      *  间隔<=0表示关闭心跳
      */
-    private int heart = DEFAULT_HEART_BREAK;
+    private boolean heart = false;
 
     /**
      * 暂停，恢复
@@ -41,8 +39,12 @@ public class LogcatSettings {
         return zoom;
     }
 
-    public void setZoom(int zoom) {
-        this.zoom = zoom;
+    public void zoomIn() {
+        this.zoom++;
+    }
+
+    public void zoomOut() {
+        this.zoom--;
     }
 
     public int getCacheSize() {
@@ -53,11 +55,11 @@ public class LogcatSettings {
         this.cacheSize = cacheSize;
     }
 
-    public int getHeart() {
+    public boolean isHeart() {
         return heart;
     }
 
-    public void setHeart(int heart) {
+    public void setHeart(boolean heart) {
         this.heart = heart;
     }
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/logcat_list"
@@ -14,6 +14,8 @@
             android:layout_height="match_parent"/>
 
         <chao.app.ami.plugin.AmiPluginSettingsPane
+            android:id="@+id/ami_plugin_logcat_settings_panel"
+            android:background="#515151"
             android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -34,7 +36,8 @@
                     android:layout_height="24dp"
                     android:background="@drawable/ami_drawable_clear"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp" />
+                    android:layout_marginEnd="10dp"
+                    android:contentDescription="@string/empty_image_description" />
 
                 <ToggleButton
                     android:id="@+id/ami_plugin_logcat_settings_pause"
@@ -46,7 +49,52 @@
                     android:layout_height="24dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
+
+                <ToggleButton
+                    android:id="@+id/ami_plugin_logcat_settings_heart"
+                    android:background="@drawable/ami_bg_heart"
+                    android:textOff="@null"
+                    android:textOn="@null"
+                    android:checked="false"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp" />
             </LinearLayout>
         </chao.app.ami.plugin.AmiPluginSettingsPane>
-    </FrameLayout>
+
+        <chao.app.ami.plugin.AmiPluginSettingsPane
+            android:id="@+id/ami_plugin_logcat_zoom_panel"
+            android:background="@color/transparent"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/ami_plugin_logcat_settings_panel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_height="40dp">
+                <View
+                    android:id="@+id/ami_plugin_logcat_settings_zoom_out"
+                    android:background="@drawable/ami_ic_zoom_out"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp" />
+
+                <View
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"/>
+
+                <View
+                    android:id="@+id/ami_plugin_logcat_settings_zoom_in"
+                    android:background="@drawable/ami_ic_zoom_in"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp" />
+            </LinearLayout>
+        </chao.app.ami.plugin.AmiPluginSettingsPane>
+    </RelativeLayout>
 </HorizontalScrollView>
