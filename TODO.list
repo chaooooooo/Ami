@@ -63,22 +63,29 @@ Bugs:
 
 
 右滑菜单添加tab:
-frame ,
-logcat
+frame:
+#2018-09-07
+frame修改成员变量
+
+
+logcat：
     1. 日志显示  #done since 2018-09-05
-    2. 日志缩放   done
+    2. 日志缩放   #done since 2018-09-07
     3. 日志过滤
           按level
-          按进程
-          按线程
-    4. 日志搜索
-    5. 缓存行数设置d
-    6. 心跳开关     done
-    7. 暂停，恢复    done
-    8. 清除缓存     done
+          按进程   #abandon
+          按线程   #abandon
+    4. 日志搜索         #abandon
+    5. 缓存行数设置  #abandon
+    6. 心跳开关     #done   since 2018-09-07
+    7. 暂停，恢复    #done since 2018-09-06
+    8. 清除缓存     #done   since 2018-09-06
 
-    9. 进程，线程名称、时间戳等显示  done
+    9. 进程，线程名称、时间戳等显示  #done since 2018-09-07  线程名称无法获取
+    10. 全屏logcat
 
 
 #2018-09-04
 extra object参数  #done since 2018-09-04
+
+

@@ -1,5 +1,6 @@
 package chao.app.ami.plugin;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.TextView;
 import chao.app.ami.Ami;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,8 +93,13 @@ public class AmiPluginManager {
 
     private boolean mReSetup = true;
 
-    public void setupPluginTabs(FragmentActivity activity) {
-        mReSetup = true;
+    /**
+     * 只可以是FragmentActivity, 因为：
+     * 1. 只有FragmentActivity有Lifecycle回调
+     * 2. android.support.v4.view.ViewPager只支持android.support.v4.Fragment
+     * @param activity fragmentActivity
+     */
+    public void setupPluginTabs(Activity activity, TextView tipView) {
         if (mActivity != null) {
             FragmentManager oldFm = mActivity.getSupportFragmentManager();
             oldFm.unregisterFragmentLifecycleCallbacks(mLifecycle);
@@ -101,10 +108,17 @@ public class AmiPluginManager {
                 Fragment fragment = plugin.getFragment();
                 transaction.remove(fragment);
             }
-            transaction.commit();
+            transaction.commitAllowingStateLoss();
         }
-        mActivity = activity;
-        FragmentManager fm = activity.getSupportFragmentManager();
+        if (!(activity instanceof FragmentActivity)) {
+            tipView.setVisibility(View.VISIBLE);
+            return;
+        }
+        tipView.setVisibility(View.GONE);
+        FragmentActivity fragmentActivity = (FragmentActivity) activity;
+        mReSetup = true;
+        mActivity = fragmentActivity;
+        FragmentManager fm = fragmentActivity.getSupportFragmentManager();
         fm.registerFragmentLifecycleCallbacks(mLifecycle, false);
         mViewPager.clearOnPageChangeListeners();
         mPageAdapter = new PageAdapter(fm);

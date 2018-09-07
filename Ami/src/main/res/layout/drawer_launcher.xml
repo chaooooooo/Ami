@@ -46,6 +46,16 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/ami_useless_tip_view"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:text="@string/ami_useless_activity_type"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 

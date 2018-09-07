@@ -29,6 +29,14 @@ public abstract class AMISupportFragment extends Fragment implements IAMIFragmen
         mHelper.onCreate(savedInstanceState);
     }
 
+    @Override
+    public void setupTitle() {
+        android.support.v7.app.ActionBar supportActionBar = getAppCompatActivity().getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setTitle(getClass().getSimpleName());
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {

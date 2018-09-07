@@ -12,6 +12,10 @@ import chao.app.debug.R;
 public class AmiPluginFragment extends AMISupportFragment {
 
     @Override
+    public void setupTitle() {
+    }
+
+    @Override
     public void setupView(View layout) {
         int defaultBg = ResourcesCompat.getColor(getResources(), R.color.common_background_color, null);
         layout.setBackgroundColor(defaultBg);

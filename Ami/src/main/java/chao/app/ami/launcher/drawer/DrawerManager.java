@@ -214,9 +214,9 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
                 Ami.log("ami xml is not exist: " + amiXml.getParent());
             }
         }
-
+        TextView tipView = (TextView) mDrawerLayout.findViewById(R.id.ami_useless_tip_view);
         if (mPluginManager != null) {
-            mPluginManager.setupPluginTabs((FragmentActivity) activity);
+            mPluginManager.setupPluginTabs(activity, tipView);
         }
 
         mInterceptorManager.injectListeners(null, mRealView);

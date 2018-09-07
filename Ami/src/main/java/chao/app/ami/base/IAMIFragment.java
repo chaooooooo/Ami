@@ -43,4 +43,6 @@ public interface IAMIFragment {
     int getLayoutID();
 
     AppCompatActivity getAppCompatActivity();
+
+    void setupTitle();
 }

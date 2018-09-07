@@ -189,8 +189,9 @@ public class Ami {
             if (name.contains("dalvik") || name.contains("java.lang")) {
                 continue;
             }
-            if (!name.contains(Ami.class.getName()) && className == null) {
+            if (!name.contains(Ami.class.getName())) {
                 className = element.getClassName();
+                className = className.substring(className.lastIndexOf(".") + 1);
                 method = element.getMethodName();
                 break;
             }

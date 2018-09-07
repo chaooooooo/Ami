@@ -1,5 +1,6 @@
 package chao.app.ami.base;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -27,6 +28,14 @@ public abstract class AMIFragment extends Fragment implements IAMIFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHelper.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void setupTitle() {
+        ActionBar actionBar = getActivity().getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(getClass().getSimpleName());
+        }
     }
 
     @Nullable

@@ -1,9 +1,14 @@
 package chao.app.ami;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.widget.Toast;
 import chao.app.ami.utils.permission.PermissionHelper;
 import chao.app.ami.utils.permission.PermissionListener;
@@ -96,4 +101,34 @@ public class UI {
         intent.addFlags(flags);
         context.startActivity(intent);
     }
+
+    public static XmlResourceParser getXml(int resId) {
+        return getResource().getXml(resId);
+    }
+
+    public static int getColor(int resId) {
+        return ResourcesCompat.getColor(getResource(), resId, getTheme());
+    }
+
+    public static String getString(int resId, Object... args) {
+        return getResource().getString(resId, args);
+    }
+
+    public static Drawable getDrawable(int drawableId) {
+        return ResourcesCompat.getDrawable(getResource(), drawableId, getTheme());
+    }
+
+    public static Resources.Theme getTheme() {
+        return getApp().getTheme();
+    }
+
+    public static Resources getResource() {
+        return getApp().getResources();
+    }
+
+    public static Application getApp() {
+        return Ami.getApp();
+    }
+
+
 }

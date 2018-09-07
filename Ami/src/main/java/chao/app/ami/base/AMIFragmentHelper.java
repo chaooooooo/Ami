@@ -1,6 +1,5 @@
 package chao.app.ami.base;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -68,6 +67,11 @@ public class AMIFragmentHelper implements IAMIFragment {
     }
 
     @Override
+    public void setupTitle() {
+        mFragment.setupTitle();
+    }
+
+    @Override
     public void onStart() {
         lifecycle("onStart()", Ami.LIFECYCLE_LEVEL_SIMPLE);
     }
@@ -121,14 +125,7 @@ public class AMIFragmentHelper implements IAMIFragment {
 
     @Override
     public void setupView(View layout) {
-        ActionBar actionBar = getAppCompatActivity().getActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(mFragment.getClass().getSimpleName());
-        }
-        android.support.v7.app.ActionBar supportActionBar = getAppCompatActivity().getSupportActionBar();
-        if (supportActionBar != null) {
-            supportActionBar.setTitle(mFragment.getClass().getSimpleName());
-        }
+        setupTitle();
         mFragment.setupView(layout);
     }
 
