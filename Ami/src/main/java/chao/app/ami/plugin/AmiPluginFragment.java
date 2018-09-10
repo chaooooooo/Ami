@@ -20,4 +20,13 @@ public class AmiPluginFragment extends AMISupportFragment {
         int defaultBg = ResourcesCompat.getColor(getResources(), R.color.common_background_color, null);
         layout.setBackgroundColor(defaultBg);
     }
+
+    protected AmiPlugin getPlugin(Class plugin) {
+        AmiPluginManager pluginManager = AmiPluginManager.getInstance();
+        return pluginManager.getPlugin(plugin);
+    }
+
+    protected AmiSettings getSettings(Class plugin) {
+        return getPlugin(plugin).getSettings();
+    }
 }

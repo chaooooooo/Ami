@@ -2,6 +2,7 @@ package chao.app.ami.plugin.plugins.logcat;
 
 import android.support.v4.app.Fragment;
 import chao.app.ami.plugin.AmiBasePlugin;
+import chao.app.ami.plugin.AmiSettings;
 import java.util.ArrayList;
 
 /**
@@ -41,15 +42,21 @@ public class LogcatPlugin extends AmiBasePlugin {
         logcatFragment = (LogcatFragment) getFragment();
     }
 
+    @Override
+    public AmiSettings getSettings() {
+        return logcatSettings;
+    }
+
     public void notifyDataSetChanged(ArrayList<LogcatLine> logCaches, int pos, int length) {
-        logcatFragment.notifyDataSetChanged(logCaches, pos, length);
+        if (logcatFragment != null) {
+            logcatFragment.notifyDataSetChanged(logCaches, pos, length);
+        }
     }
 
     public void notifyDataSetCleared() {
-        logcatFragment.notifyDataSetCleared();
+        if (logcatFragment != null) {
+            logcatFragment.notifyDataSetCleared();
+        }
     }
 
-    public LogcatSettings getLogcatSettings() {
-        return logcatSettings;
-    }
 }

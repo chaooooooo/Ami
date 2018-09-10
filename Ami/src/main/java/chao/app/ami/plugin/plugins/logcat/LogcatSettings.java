@@ -1,10 +1,12 @@
 package chao.app.ami.plugin.plugins.logcat;
 
+import chao.app.ami.plugin.AmiSettings;
+
 /**
  * @author qinchao
  * @since 2018/9/6
  */
-public class LogcatSettings {
+public class LogcatSettings extends AmiSettings {
 
     private static final int DEFAULT_CACHE_SIZE = 500;
 

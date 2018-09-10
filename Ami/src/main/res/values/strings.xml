@@ -22,4 +22,6 @@
     <string name="permission_dismiss">取消</string>
     <string name="ami_plugin_logcat_settings_clear">清楚数据</string>
     <string name="ami_useless_activity_type">插件只支持FragmentActivity</string>
+    <string name="ami_info_settings_app">应用信息</string>
+    <string name="ami_fps_settings">fps</string>
 </resources>

@@ -89,3 +89,38 @@ logcat：
 extra object参数  #done since 2018-09-04
 
 
+
+
+#2018-09-10
+ami command
+1. 屏幕尺寸相关
+    density  dm.density
+    width  dm.widthPixels
+    height  dm.heightPixels
+    dpWidth dm.widthPixels/density
+    dpHeight dm.heightPixels/density
+
+    ???dpi
+    屏幕尺寸？
+    每英寸像素值  dm.densityDpi
+
+
+DisplayMetrics dm = new DisplayMetrics();
+getWindowManager().getDefaultDisplay().getMetrics(dm);//display = getWindowManager().getDefaultDisplay();display.getMetrics(dm)（把屏幕尺寸信息赋值给DisplayMetrics dm）;
+width = ;
+height = ;
+xdpi = dm.xdpi;
+ydpi = dm.ydpi;
+density = ;
+fdensity = ;
+
+
+ami计算器
+
+
+ami screen
+1. 帧率             #2018-09-10 done
+2. 基本信息          #2018-09-10 done
+    应用名(包名)
+    version
+    Activity名称

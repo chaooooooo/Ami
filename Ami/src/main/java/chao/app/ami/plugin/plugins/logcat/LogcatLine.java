@@ -6,15 +6,15 @@ package chao.app.ami.plugin.plugins.logcat;
  */
 public class LogcatLine {
 
-    private String date;
+    private String date = "";
 
-    private String time;
+    private String time = "";
 
     private String log;
 
-    private String pid;
+    private String pid = "-1";
 
-    private String tid;
+    private String tid = "-1";
 
     private LogLevel level;
 

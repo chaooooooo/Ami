@@ -17,4 +17,6 @@ public interface AmiPlugin {
     void onCreate();
 
     void onDestroy();
+
+    AmiSettings getSettings();
 }

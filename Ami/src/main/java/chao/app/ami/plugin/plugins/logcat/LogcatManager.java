@@ -3,9 +3,10 @@ package chao.app.ami.plugin.plugins.logcat;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Process;
 import chao.app.ami.Ami;
+import chao.app.ami.logs.LogHelper;
 import chao.app.ami.utils.command.Shell;
-import chao.app.ami.utils.command.StreamGobbler;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import java.util.List;
  * @since 2018/9/5
  */
 public class LogcatManager {
+
+    private static final String TAG = LogcatManager.class.getSimpleName();
 
     private final static int HANDLER_WHAT_REFRESH = 1;
 
@@ -31,9 +34,9 @@ public class LogcatManager {
 
     private LogcatSettings settings;
 
+    private String pid;
 
     private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
-
 
         @Override
         public boolean handleMessage(Message msg) {
@@ -88,6 +91,7 @@ public class LogcatManager {
     public LogcatManager(LogcatPlugin logcatPlugin, LogcatSettings logcatSettings) {
         this.logcatPlugin = logcatPlugin;
         this.settings = logcatSettings;
+        this.pid = String.valueOf(Process.myPid());
     }
 
     public void startLogcat() {
@@ -96,14 +100,24 @@ public class LogcatManager {
         }
         stopLogcat();
         mLogcat = new Shell.Builder()
-            .addCommand("locat -c | logcat -v threadtime")
-            .setOnStdoutLineListener(new StreamGobbler.OnLineListener() {
+            .addCommand("logcat -v threadtime")
+            .setOnStdoutLineListener(new Shell.OnCommandLineListener() {
+                @Override
+                public void onCommandResult(int commandCode, int exitCode) {
+                    LogHelper.d(TAG, "std.onCommandResult: " + commandCode  + ", " + exitCode);
+                }
+
                 @Override
                 public void onLine(String line) {
                     appendLogcat(line);
                 }
             })
-            .setOnStderrLineListener(new StreamGobbler.OnLineListener() {
+            .setOnStderrLineListener(new Shell.OnCommandLineListener() {
+                @Override
+                public void onCommandResult(int commandCode, int exitCode) {
+                    LogHelper.d(TAG, "err.onCommandResult: " + commandCode  + ", " + exitCode);
+                }
+
                 @Override
                 public void onLine(String line) {
                     appendLogcat(line);
@@ -120,6 +134,11 @@ public class LogcatManager {
 
     public void appendLogcat(String line) {
         LogcatLine logcatLine = new LogcatLine(line);
+        if (!pid.equals(logcatLine.getPid())) {
+            //过滤非本进程的log
+            //比如上次运行的log
+            return;
+        }
         if (logcatLine.getLevel().gte(settings.getLevel())) {
             pendingLogs.add(0, logcatLine);
         }

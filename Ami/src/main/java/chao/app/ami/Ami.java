@@ -2,6 +2,7 @@ package chao.app.ami;
 
 import android.app.Application;
 import android.util.Log;
+import chao.app.ami.base.AmiHandlerThread;
 import chao.app.ami.frames.FrameManager;
 import chao.app.ami.launcher.drawer.DrawerManager;
 import chao.app.ami.proxy.ProxyManager;
@@ -30,6 +31,8 @@ public class Ami {
     private static final String TAG = "AMI";
     private static Application mApp;
     private static Ami mInstance;
+
+    private static AmiHandlerThread sHandlerThread;
 
     private static int mDebugMode = DEBUG_MODE_UNSET;
 
@@ -72,6 +75,9 @@ public class Ami {
 
         InterceptorLayerManager.init(false);
 
+
+        sHandlerThread = new AmiHandlerThread();
+        sHandlerThread.start();
     }
 
     public static boolean inited() {
@@ -210,4 +216,7 @@ public class Ami {
         log(tag, log);
     }
 
+    public static AmiHandlerThread getHandlerThread() {
+        return sHandlerThread;
+    }
 }

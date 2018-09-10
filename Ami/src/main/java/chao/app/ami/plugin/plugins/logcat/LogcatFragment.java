@@ -51,7 +51,7 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
         AmiPluginManager pluginManager = AmiPluginManager.getInstance();
         LogcatPlugin logcatPlugin = (LogcatPlugin) pluginManager.getPlugin(LogcatPlugin.class);
         logcatManager = logcatPlugin.getLogcatManager();
-        logcatSettings = logcatPlugin.getLogcatSettings();
+        logcatSettings = (LogcatSettings) logcatPlugin.getSettings();
     }
 
     @Override

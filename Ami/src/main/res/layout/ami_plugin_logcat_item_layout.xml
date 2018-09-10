@@ -13,7 +13,7 @@
 
         <TextView
             android:id="@+id/ami_plugin_logcat_item_timestamp"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:layout_margin="4dp"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
         <TextView
             android:id="@+id/ami_plugin_logcat_item_process"
             android:layout_margin="4dp"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
