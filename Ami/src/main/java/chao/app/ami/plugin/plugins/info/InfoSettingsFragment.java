@@ -3,6 +3,7 @@ package chao.app.ami.plugin.plugins.info;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
 import chao.app.debug.R;
 
@@ -22,8 +23,8 @@ public class InfoSettingsFragment extends AmiPluginFragment implements CompoundB
     private InfoSettings settings;
 
     public InfoSettingsFragment() {
-        settings = (InfoSettings) getSettings(InfoPlugin.class);
-        manager = (InfoManager) getManager(InfoPlugin.class);
+        settings = getSettings();
+        manager = getManager();
     }
 
     @Override
@@ -37,6 +38,11 @@ public class InfoSettingsFragment extends AmiPluginFragment implements CompoundB
 
         fpsCheckbox.setOnCheckedChangeListener(this);
         appInfoCheckbox.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    public Class<? extends AmiPlugin> bindPlugin() {
+        return InfoPlugin.class;
     }
 
     @Override

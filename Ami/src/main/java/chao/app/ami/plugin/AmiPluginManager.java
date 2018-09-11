@@ -3,7 +3,6 @@ package chao.app.ami.plugin;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -37,13 +36,11 @@ public class AmiPluginManager {
 
     private ArrayList<AmiPlugin> mPlugins = new ArrayList<>();
 
-    private HashMap<Class, IPlugin> mPluginMap = new HashMap<>();
+    private HashMap<Class, AmiPlugin> mPluginMap = new HashMap<>();
 
     private PageAdapter mPageAdapter;
 
     private TabAdapter mTabAdapter;
-
-    private FragmentLifecycle mLifecycle;
 
     private CommonNavigator commonNavigator;
 
@@ -67,7 +64,6 @@ public class AmiPluginManager {
         commonNavigator = new CommonNavigator(Ami.getApp());
         commonNavigator.setAdapter(mTabAdapter);
         mMagicIndicator.setNavigator(commonNavigator);
-        mLifecycle = new FragmentLifecycle();
 
         for (AmiPlugin plugin: mPlugins) {
             plugin.onBindView(contentView);
@@ -96,7 +92,7 @@ public class AmiPluginManager {
         }
     }
 
-    public IPlugin getPlugin(Class plugin) {
+    public AmiPlugin getPlugin(Class plugin) {
         return mPluginMap.get(plugin);
     }
 
@@ -107,14 +103,14 @@ public class AmiPluginManager {
 
     /**
      * 只可以是FragmentActivity, 因为：
-     * 1. 只有FragmentActivity有Lifecycle回调
-     * 2. android.support.v4.view.ViewPager只支持android.support.v4.Fragment
+     * 1. FragmentActivity兼容性更强
+     * 2. 只有FragmentActivity有Lifecycle回调
+     * 3. android.support.v4.view.ViewPager只支持android.support.v4.Fragment
      * @param activity fragmentActivity
      */
     public void setupPluginTabs(Activity activity, TextView tipView) {
         if (mActivity != null) {
             FragmentManager oldFm = mActivity.getSupportFragmentManager();
-            oldFm.unregisterFragmentLifecycleCallbacks(mLifecycle);
             FragmentTransaction transaction = oldFm.beginTransaction();
             for (IPlugin plugin: mPlugins) {
                 Fragment fragment = plugin.getFragment();
@@ -131,7 +127,6 @@ public class AmiPluginManager {
         mReSetup = true;
         mActivity = fragmentActivity;
         FragmentManager fm = fragmentActivity.getSupportFragmentManager();
-        fm.registerFragmentLifecycleCallbacks(mLifecycle, false);
         mViewPager.clearOnPageChangeListeners();
         mPageAdapter = new PageAdapter(fm);
         mViewPager.setAdapter(mPageAdapter);
@@ -194,30 +189,6 @@ public class AmiPluginManager {
         @Override
         public int getCount() {
             return mPlugins.size();
-        }
-    }
-
-    private class FragmentLifecycle extends FragmentManager.FragmentLifecycleCallbacks {
-        @Override
-        public void onFragmentCreated(FragmentManager fm, Fragment f, Bundle savedInstanceState) {
-            super.onFragmentCreated(fm, f, savedInstanceState);
-            for (IPlugin plugin: mPlugins) {
-                if (f == plugin.getFragment()) {
-                    plugin.onCreate();
-                    return;
-                }
-            }
-        }
-
-        @Override
-        public void onFragmentDestroyed(FragmentManager fm, Fragment f) {
-            super.onFragmentDestroyed(fm, f);
-            for (IPlugin plugin: mPlugins) {
-                if (f == plugin.getFragment()) {
-                    plugin.onDestroy();
-                    return;
-                }
-            }
         }
     }
 }

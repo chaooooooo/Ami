@@ -9,7 +9,7 @@ import chao.app.debug.R;
  * @author qinchao
  * @since 2018/9/4
  */
-public class AmiPluginFragment extends AMISupportFragment {
+public abstract class AmiPluginFragment extends AMISupportFragment {
 
     @Override
     public void setupTitle() {
@@ -21,16 +21,20 @@ public class AmiPluginFragment extends AMISupportFragment {
         layout.setBackgroundColor(defaultBg);
     }
 
-    protected IPlugin getPlugin(Class plugin) {
+    public abstract Class<? extends AmiPlugin> bindPlugin();
+
+    protected AmiPlugin getPlugin() {
         AmiPluginManager pluginManager = AmiPluginManager.getInstance();
-        return pluginManager.getPlugin(plugin);
+        return pluginManager.getPlugin(bindPlugin());
     }
 
-    protected AmiSettings getSettings(Class plugin) {
-        return getPlugin(plugin).getSettings();
+    @SuppressWarnings("unchecked")
+    protected <T extends AmiSettings> T getSettings() {
+        return (T) getPlugin().getSettings();
     }
 
-    protected Object getManager(Class plugin) {
-        return getPlugin(plugin).getManager();
+    @SuppressWarnings("unchecked")
+    protected <T> T getManager() {
+        return (T) getPlugin().getManager();
     }
 }

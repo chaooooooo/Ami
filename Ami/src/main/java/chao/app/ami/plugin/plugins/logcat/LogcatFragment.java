@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
-import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.debug.R;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +48,8 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
     private View zoomOut;
 
     public LogcatFragment() {
-        AmiPluginManager pluginManager = AmiPluginManager.getInstance();
-        LogcatPlugin logcatPlugin = (LogcatPlugin) pluginManager.getPlugin(LogcatPlugin.class);
-        logcatManager = logcatPlugin.getLogcatManager();
-        logcatSettings = (LogcatSettings) logcatPlugin.getSettings();
+        logcatManager = getManager();
+        logcatSettings = getSettings();
     }
 
     @Override
@@ -92,6 +90,11 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
         });
         zoomIn.setOnClickListener(this);
         zoomOut.setOnClickListener(this);
+    }
+
+    @Override
+    public Class<? extends AmiPlugin> bindPlugin() {
+        return LogcatPlugin.class;
     }
 
     public void notifyDataSetCleared() {

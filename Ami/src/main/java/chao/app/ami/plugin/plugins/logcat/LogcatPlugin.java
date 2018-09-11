@@ -29,7 +29,8 @@ public class LogcatPlugin extends AmiPlugin {
 
     @Override
     public Fragment createFragment() {
-        return new LogcatFragment();
+        logcatFragment = new LogcatFragment();
+        return logcatFragment;
     }
 
     @Override
@@ -45,7 +46,6 @@ public class LogcatPlugin extends AmiPlugin {
     @Override
     public void onCreate() {
         logcatManager.startLogcat();
-        logcatFragment = (LogcatFragment) getFragment();
     }
 
     @Override
