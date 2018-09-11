@@ -21,12 +21,16 @@ public class AmiPluginFragment extends AMISupportFragment {
         layout.setBackgroundColor(defaultBg);
     }
 
-    protected AmiPlugin getPlugin(Class plugin) {
+    protected IPlugin getPlugin(Class plugin) {
         AmiPluginManager pluginManager = AmiPluginManager.getInstance();
         return pluginManager.getPlugin(plugin);
     }
 
     protected AmiSettings getSettings(Class plugin) {
         return getPlugin(plugin).getSettings();
+    }
+
+    protected Object getManager(Class plugin) {
+        return getPlugin(plugin).getManager();
     }
 }

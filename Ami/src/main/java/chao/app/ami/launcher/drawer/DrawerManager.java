@@ -46,7 +46,6 @@ import chao.app.ami.launcher.drawer.node.Node;
 import chao.app.ami.launcher.drawer.node.NodeGroup;
 import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.ami.plugin.plugins.frame.FramePlugin;
-import chao.app.ami.plugin.plugins.info.InfoManager;
 import chao.app.ami.plugin.plugins.info.InfoPlugin;
 import chao.app.ami.plugin.plugins.logcat.LogcatPlugin;
 import chao.app.ami.viewinfo.InterceptorLayerManager;
@@ -103,6 +102,10 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         mSearchManager = SearchManager.getInstance();
         mSearchManager.setSearchListener(this);
         mSearchTextListener = new SearchTextListener(mSearchManager);
+
+        mPluginManager = AmiPluginManager.getInstance();
+        mPluginManager.addPlugin(new LogcatPlugin(), new FramePlugin(), new InfoPlugin());
+
     }
 
     public void setupView(Activity activity) {
@@ -141,13 +144,10 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         mDecorView = decorView;
         mRealView = realView;
 
-        InfoManager infoManager = null;
-
         if (mDrawerLayout == null) {
             LayoutInflater inflater = LayoutInflater.from(Ami.getApp());
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
             AmiContentView content = (AmiContentView) mDrawerLayout.findViewById(R.id.ami_content);
-            infoManager = new InfoManager(content);
 
             mInterceptorManager = InterceptorLayerManager.get();
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -192,8 +192,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             MagicIndicator tableLayout = findViewById(R.id.drawer_plugins_tab_layout);
             ViewPager viewPager = findViewById(R.id.drawer_plugins_view_pager);
 
-            mPluginManager = AmiPluginManager.newInstance(tableLayout, viewPager);
-            mPluginManager.addPlugin(new LogcatPlugin(), new FramePlugin(), new InfoPlugin(infoManager.getSettings()));
+            mPluginManager.initView(content, tableLayout, viewPager);
 
             DrawerXmlParser parser = new DrawerXmlParser();
             if (mDrawerId != 0) {
@@ -221,11 +220,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         if (mPluginManager != null) {
             mPluginManager.setupPluginTabs(activity, tipView);
         }
-
-        if (infoManager != null) {
-            infoManager.setupManager(activity);
-        }
-
         mInterceptorManager.injectListeners(null, mRealView);
         mDecorView.addView(mDrawerLayout);
         mDrawerLayout.addView(mRealView, 0);

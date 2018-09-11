@@ -17,10 +17,13 @@ public class InfoSettingsFragment extends AmiPluginFragment implements CompoundB
 
     private CheckBox appInfoCheckbox;
 
+    private InfoManager manager;
+
     private InfoSettings settings;
 
     public InfoSettingsFragment() {
         settings = (InfoSettings) getSettings(InfoPlugin.class);
+        manager = (InfoManager) getManager(InfoPlugin.class);
     }
 
     @Override
@@ -40,8 +43,10 @@ public class InfoSettingsFragment extends AmiPluginFragment implements CompoundB
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView == fpsCheckbox) {
             settings.setShowFPS(isChecked);
+            manager.updateVisible();
         } else if (buttonView == appInfoCheckbox) {
             settings.setShowAppInfo(isChecked);
+            manager.updateVisible();
         }
     }
 

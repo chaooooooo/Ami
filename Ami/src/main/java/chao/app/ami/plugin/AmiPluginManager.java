@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.TextView;
 import chao.app.ami.Ami;
+import chao.app.ami.base.AmiContentView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import net.lucode.hackware.magicindicator.MagicIndicator;
@@ -36,7 +37,7 @@ public class AmiPluginManager {
 
     private ArrayList<AmiPlugin> mPlugins = new ArrayList<>();
 
-    private HashMap<Class, AmiPlugin> mPluginMap = new HashMap<>();
+    private HashMap<Class, IPlugin> mPluginMap = new HashMap<>();
 
     private PageAdapter mPageAdapter;
 
@@ -46,20 +47,19 @@ public class AmiPluginManager {
 
     private CommonNavigator commonNavigator;
 
+    private AmiContentView contentView;
+
     private static AmiPluginManager sInstance;
 
-    public static AmiPluginManager newInstance(MagicIndicator tabLayout, ViewPager viewPager) {
+    public static AmiPluginManager getInstance() {
         if (sInstance == null) {
-            sInstance = new AmiPluginManager(tabLayout, viewPager);
+            sInstance = new AmiPluginManager();
         }
         return sInstance;
     }
 
-    public static AmiPluginManager getInstance() {
-        return sInstance;
-    }
-
-    private AmiPluginManager(MagicIndicator tabLayout, ViewPager viewPager) {
+    public void initView(AmiContentView content, MagicIndicator tabLayout, ViewPager viewPager) {
+        contentView = content;
         mMagicIndicator = tabLayout;
         mViewPager = viewPager;
 
@@ -68,6 +68,14 @@ public class AmiPluginManager {
         commonNavigator.setAdapter(mTabAdapter);
         mMagicIndicator.setNavigator(commonNavigator);
         mLifecycle = new FragmentLifecycle();
+
+        for (AmiPlugin plugin: mPlugins) {
+            plugin.onBindView(contentView);
+        }
+    }
+
+    private AmiPluginManager() {
+
     }
 
 
@@ -75,6 +83,10 @@ public class AmiPluginManager {
         for (AmiPlugin plugin: plugins) {
             mPlugins.add(plugin);
             mPluginMap.put(plugin.getClass(), plugin);
+            plugin.onCreate();
+            if (contentView != null) {
+                plugin.onBindView(contentView);
+            }
         }
         if (mTabAdapter != null) {
             mTabAdapter.notifyDataSetChanged();
@@ -84,7 +96,7 @@ public class AmiPluginManager {
         }
     }
 
-    public AmiPlugin getPlugin(Class plugin) {
+    public IPlugin getPlugin(Class plugin) {
         return mPluginMap.get(plugin);
     }
 
@@ -104,7 +116,7 @@ public class AmiPluginManager {
             FragmentManager oldFm = mActivity.getSupportFragmentManager();
             oldFm.unregisterFragmentLifecycleCallbacks(mLifecycle);
             FragmentTransaction transaction = oldFm.beginTransaction();
-            for (AmiPlugin plugin: mPlugins) {
+            for (IPlugin plugin: mPlugins) {
                 Fragment fragment = plugin.getFragment();
                 transaction.remove(fragment);
             }
@@ -124,6 +136,9 @@ public class AmiPluginManager {
         mPageAdapter = new PageAdapter(fm);
         mViewPager.setAdapter(mPageAdapter);
         ViewPagerHelper.bind(mMagicIndicator, mViewPager);
+        for (AmiPlugin plugin: mPlugins) {
+            plugin.changeActivity(fragmentActivity);
+        }
     }
 
     private class TabAdapter extends CommonNavigatorAdapter {
@@ -136,7 +151,7 @@ public class AmiPluginManager {
         @Override
         public IPagerTitleView getTitleView(final Context context, final int position) {
             ColorTransitionPagerTitleView titleView = new ColorTransitionPagerTitleView(context);
-            AmiPlugin plugin = mPlugins.get(position);
+            IPlugin plugin = mPlugins.get(position);
             titleView.setText(plugin.getTitle());
             titleView.setNormalColor(Color.parseColor("#aaaaaa"));
             titleView.setSelectedColor(Color.WHITE);
@@ -166,7 +181,7 @@ public class AmiPluginManager {
 
         @Override
         public Fragment getItem(int position) {
-            AmiPlugin plugin = mPlugins.get(position);
+            IPlugin plugin = mPlugins.get(position);
             Fragment fragment;
             if (mReSetup) {
                 fragment = plugin.newFragment();
@@ -186,7 +201,7 @@ public class AmiPluginManager {
         @Override
         public void onFragmentCreated(FragmentManager fm, Fragment f, Bundle savedInstanceState) {
             super.onFragmentCreated(fm, f, savedInstanceState);
-            for (AmiPlugin plugin: mPlugins) {
+            for (IPlugin plugin: mPlugins) {
                 if (f == plugin.getFragment()) {
                     plugin.onCreate();
                     return;
@@ -197,7 +212,7 @@ public class AmiPluginManager {
         @Override
         public void onFragmentDestroyed(FragmentManager fm, Fragment f) {
             super.onFragmentDestroyed(fm, f);
-            for (AmiPlugin plugin: mPlugins) {
+            for (IPlugin plugin: mPlugins) {
                 if (f == plugin.getFragment()) {
                     plugin.onDestroy();
                     return;

@@ -22,8 +22,8 @@ public class InfoManager {
 
     private InfoSettings settings;
 
-    public InfoManager(@NonNull AmiContentView contentView) {
-        settings = new InfoSettings(this);
+    public InfoManager(@NonNull AmiContentView contentView, InfoSettings settings) {
+        this.settings  = settings;
         //fps
         fpsView = (TextView) contentView.findViewById(R.id.ami_content_fps);
         FPSManager fpsManager = new FPSManager(new FPSManager.OnFPSUpdateListener() {
@@ -77,9 +77,5 @@ public class InfoManager {
             e.printStackTrace();
         }
         return buffer.toString();
-    }
-
-    public InfoSettings getSettings() {
-        return settings;
     }
 }

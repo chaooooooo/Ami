@@ -51,7 +51,7 @@ public class FrameAdapter extends RecyclerView.Adapter<FrameAdapter.FrameViewHol
 //                layoutId = R.layout.frame_item_view_search;
 //                break;
 //        }
-//        return new RecyclerView.ViewHolder(LayoutInflater.from(mContext).inflate(layoutId, parent, false)) {
+//        return new RecyclerView.ViewHolder(LayoutInflater.from(mAppContext).inflate(layoutId, parent, false)) {
 //        };
         FrameItem frameItem;
         switch (viewType) {
