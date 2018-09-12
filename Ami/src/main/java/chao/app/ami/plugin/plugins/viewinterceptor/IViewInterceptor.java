@@ -1,4 +1,4 @@
-package chao.app.ami.viewinfo;
+package chao.app.ami.plugin.plugins.viewinterceptor;
 
 /**
  * @author chao.qin

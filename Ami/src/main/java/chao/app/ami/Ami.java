@@ -8,7 +8,6 @@ import chao.app.ami.launcher.drawer.DrawerManager;
 import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;
 import chao.app.ami.utils.Util;
-import chao.app.ami.viewinfo.InterceptorLayerManager;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -73,22 +72,12 @@ public class Ami {
         FrameManager.init();
 //        MonitorManager.init(app);
 
-        InterceptorLayerManager.init(false);
-
-
         sHandlerThread = new AmiHandlerThread();
         sHandlerThread.start();
     }
 
     public static boolean inited() {
         return mInstance != null;
-    }
-
-    public static void setViewInterceptorEnabled(boolean enabled) {
-        if (!isDebugMode(mApp)) {
-            return;
-        }
-        InterceptorLayerManager.get().setInterceptorEnabled(enabled);
     }
 
     /**

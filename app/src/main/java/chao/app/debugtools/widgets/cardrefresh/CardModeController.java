@@ -108,7 +108,6 @@ public class CardModeController extends AbstractModeController{
             return;
         }
         float alpha = (float) cursor()/(float) getCardHight();
-        Ami.log("alpha: " + alpha);
         cardView.setAlpha(alpha);
     }
 

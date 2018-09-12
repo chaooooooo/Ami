@@ -48,7 +48,8 @@ import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.ami.plugin.plugins.frame.FramePlugin;
 import chao.app.ami.plugin.plugins.info.InfoPlugin;
 import chao.app.ami.plugin.plugins.logcat.LogcatPlugin;
-import chao.app.ami.viewinfo.InterceptorLayerManager;
+import chao.app.ami.plugin.plugins.viewinterceptor.ViewInterceptorPlugin;
+import chao.app.ami.plugin.plugins.viewinterceptor.InterceptorLayerManager;
 import chao.app.debug.R;
 import java.io.File;
 import java.io.FileInputStream;
@@ -104,7 +105,10 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         mSearchTextListener = new SearchTextListener(mSearchManager);
 
         mPluginManager = AmiPluginManager.getInstance();
-        mPluginManager.addPlugin(new LogcatPlugin(), new FramePlugin(), new InfoPlugin());
+        mPluginManager.addPlugin(new LogcatPlugin(),
+            new FramePlugin(),
+            new InfoPlugin(),
+            new ViewInterceptorPlugin());
 
     }
 
@@ -149,7 +153,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
             AmiContentView content = (AmiContentView) mDrawerLayout.findViewById(R.id.ami_content);
 
-            mInterceptorManager = InterceptorLayerManager.get();
+            mInterceptorManager = (InterceptorLayerManager) mPluginManager.getPlugin(ViewInterceptorPlugin.class).getManager();
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             content.addView(mInterceptorManager.getLayout(),layoutParams);
 
@@ -554,6 +558,10 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
                 }
             }
         }
+    }
+
+    public View getRealView() {
+        return mRealView;
     }
 
     public static DrawerManager get() {

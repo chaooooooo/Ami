@@ -18,7 +18,6 @@ public class AppApplication extends Application {
 
         Ami.init(this);
         Ami.setDrawerId(R.raw.drawer);
-        Ami.setViewInterceptorEnabled(true);
         Ami.setLifecycleLevel(Ami.LIFECYCLE_LEVEL_CREATE);
 
 //        MonitorManager.init(this);

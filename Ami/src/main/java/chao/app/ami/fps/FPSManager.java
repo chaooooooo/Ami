@@ -8,7 +8,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.view.Choreographer;
-import chao.app.ami.Ami;
 
 /**
  * @author qinchao
@@ -34,7 +33,6 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
     }
 
     private void notifyFPSUpdate(int fps) {
-        Ami.log(fps);
         Message message = handler.obtainMessage(HANDLER_FPS_UPDATE);
         message.arg1 = fps;
         handler.sendMessage(message);
@@ -43,7 +41,7 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
     @Override
     public boolean handleMessage(Message msg) {
         if (msg.what == HANDLER_FPS_UPDATE) {
-            onFPSUpdateListener.onFpsUpdate(msg.arg1 );
+            onFPSUpdateListener.onFpsUpdate(msg.arg1);
         }
         return false;
     }

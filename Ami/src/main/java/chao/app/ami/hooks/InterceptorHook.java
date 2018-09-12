@@ -1,6 +1,7 @@
 package chao.app.ami.hooks;
 
 import android.view.View;
+import chao.app.ami.plugin.plugins.viewinterceptor.ViewInterceptor;
 
 /**
  * @author chao.qin
@@ -8,7 +9,7 @@ import android.view.View;
  *
  *
  *  反射拿动态代理的成员变量h
- *  @see chao.app.ami.viewinfo.ViewInterceptor#injectListeners(View)
+ *  @see ViewInterceptor#injectListeners(View)
  */
 
 public class InterceptorHook {

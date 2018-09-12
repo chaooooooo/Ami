@@ -11,7 +11,7 @@ import java.lang.reflect.Proxy;
 
 public class Interceptor<T> implements InvocationHandler {
 
-    public static final Object RESULT_IGNORE = new Object();
+    public static final Object INTERCEPTOR_IGNORE = new Object();
 
     private T mTargetListener;
 
@@ -81,7 +81,7 @@ public class Interceptor<T> implements InvocationHandler {
         }
         if (mInterceptorListener != null) {
             Object after = mInterceptorListener.onAfterInterceptor(proxy, method, args);
-            if (after != RESULT_IGNORE) {
+            if (after != INTERCEPTOR_IGNORE) {
                 result = after;
             }
         }

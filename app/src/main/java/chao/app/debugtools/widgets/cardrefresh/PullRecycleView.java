@@ -124,7 +124,6 @@ public class PullRecycleView extends RecyclerView {
     }
 
     private void shrink(int dy) {
-        Ami.log("shrink ===> dy = " + dy + ", scrollState = " + scrollState + ", state = " + mState.name() + ", cursor = " + controller.cursor() + ", mode = " + mMode);
         if (!controller.overHeader()) {
             setMode(NORMAL_MODEL);
             setState(State.HIDDEN);
@@ -249,7 +248,6 @@ public class PullRecycleView extends RecyclerView {
     }
 
     private void setMode(int mode) {
-        Ami.log("setMode " + mMode + " --> " + mode);
         if (mMode == mode) {
             return;
         }

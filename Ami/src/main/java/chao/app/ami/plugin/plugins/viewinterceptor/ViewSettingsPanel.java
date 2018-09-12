@@ -1,4 +1,4 @@
-package chao.app.ami.viewinfo;
+package chao.app.ami.plugin.plugins.viewinterceptor;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

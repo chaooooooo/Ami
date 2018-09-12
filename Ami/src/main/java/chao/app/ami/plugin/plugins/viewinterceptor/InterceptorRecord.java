@@ -1,4 +1,4 @@
-package chao.app.ami.viewinfo;
+package chao.app.ami.plugin.plugins.viewinterceptor;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,6 +97,9 @@ public class InterceptorRecord {
     }
 
     public InterceptorRecord getParentRecord() {
+        if (parent == null) {
+            return null;
+        }
         ViewParent viewParent = parent.getParent();
         if (!(viewParent instanceof ViewGroup)) {
             return null;

@@ -1,11 +1,10 @@
-package chao.app.ami.viewinfo;
+package chao.app.ami.plugin.plugins.viewinterceptor;
 
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import chao.app.ami.Ami;
 import chao.app.ami.Interceptor;
-import chao.app.ami.hooks.ViewHook;
 import chao.app.debug.R;
 import java.lang.reflect.Method;
 
@@ -16,24 +15,10 @@ import java.lang.reflect.Method;
 
 public class ViewInterceptor {
 
-
     private OnViewTouchedListener mOnViewTouchedListener;
     private OnViewLongClickListener mOnViewLongClickListener;
 
     private boolean mInterceptorEnabled = true;
-
-    private Interceptor.OnInterceptorListener mInterceptorListener = new Interceptor.OnInterceptorListener() {
-        @Override
-        public Object onBeforeInterceptor(Object proxy, Method method, Object[] args) {
-            return Interceptor.RESULT_IGNORE;
-        }
-
-        @Override
-        public Object onAfterInterceptor(Object proxy, Method method, Object[] args) {
-            return Interceptor.RESULT_IGNORE;
-        }
-    };
-
 
     public ViewInterceptor() {
     }
@@ -67,15 +52,16 @@ public class ViewInterceptor {
 
 
         if (!(child instanceof ViewGroup)) {
-            View.OnClickListener srcClickListener = ViewHook.getOnClickListener(child);
-            View.OnClickListener hookClickListener = Interceptor.newInstance(srcClickListener, View.OnClickListener.class, mInterceptorListener, true);
-            child.setOnClickListener(hookClickListener);
+//            View.OnClickListener srcClickListener = ViewHook.getOnClickListener(child);
+//            View.OnClickListener hookClickListener = Interceptor.newInstance(srcClickListener, View.OnClickListener.class, mInterceptorListener, true);
+//            child.setOnClickListener(hookClickListener);
 
-            View.OnLongClickListener srcLongClickListener = record.getLongClickListener();
-            if (!(srcLongClickListener instanceof IViewInterceptor)) {
-                View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, new Class[]{View.OnLongClickListener.class, IViewInterceptor.class}, listener, true);
-                child.setOnLongClickListener(hookLongClickListener);
-            }
+//            View.OnLongClickListener srcLongClickListener = record.getLongClickListener();
+//            if (!(srcLongClickListener instanceof IViewInterceptor)) {
+//                View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, new Class[]{View.OnLongClickListener.class, IViewInterceptor.class}, listener, true);
+//                child.setOnLongClickListener(hookLongClickListener);
+//            }
+            child.setClickable(true);
             return;
         }
         ViewGroup vgChild = (ViewGroup) child;
@@ -95,13 +81,17 @@ public class ViewInterceptor {
         mInterceptorEnabled = enabled;
     }
 
+    public boolean isInterceptorEnabled() {
+        return mInterceptorEnabled;
+    }
+
     class InterceptorListener implements Interceptor.OnInterceptorListener, ViewGroup.OnHierarchyChangeListener,View.OnTouchListener, View.OnLongClickListener {
 
         private InterceptorRecord mRecord;
 
         @Override
         public Object onBeforeInterceptor(Object proxy, Method method, Object[] args) {
-            Object result = null;
+            Object result = Interceptor.INTERCEPTOR_IGNORE;
             if ("onChildViewAdded".equals(method.getName())) {
                 onChildViewAdded((View)args[0], (View)args[1]);
             } else if ("onChildViewRemoved".equals(method.getName())) {
@@ -116,7 +106,7 @@ public class ViewInterceptor {
 
         @Override
         public Object onAfterInterceptor(Object proxy, Method method, Object[] args) {
-            return null;
+            return Interceptor.INTERCEPTOR_IGNORE;
         }
 
         @Override
@@ -141,7 +131,7 @@ public class ViewInterceptor {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (mOnViewTouchedListener != null) {
-                mOnViewTouchedListener.onViewTouched(mRecord, event);
+                return mOnViewTouchedListener.onViewTouched(mRecord, event);
             }
             return false;
         }
@@ -166,7 +156,7 @@ public class ViewInterceptor {
     }
 
     public interface OnViewTouchedListener {
-        void onViewTouched(InterceptorRecord record, MotionEvent event);
+        boolean onViewTouched(InterceptorRecord record, MotionEvent event);
     }
 
     public interface OnViewLongClickListener {

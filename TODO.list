@@ -56,6 +56,16 @@ Bugs:
     3. 边间距显示开关（默认关）
     4.
 
+#2018-9-12
+className
+resName(resId)
+l,t,r,b
+
+text
+textColor
+textSize (sp, px)
+
+
 
 
 #2018-8-29

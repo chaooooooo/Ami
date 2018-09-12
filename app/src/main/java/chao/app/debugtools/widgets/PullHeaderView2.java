@@ -149,7 +149,6 @@ public class PullHeaderView2 extends ViewGroup implements PullRecycleView.OnPull
         if (!isCardMode) {
             int start = mCardView.getBottom();
             int end = mRefreshView.getBottom();
-            Ami.log("start: " + start + ", end: " + end);
             ValueAnimator valueAnimator = ValueAnimator.ofInt(0, end - start);
             valueAnimator.setDuration(5000);
             valueAnimator.setInterpolator(new LinearInterpolator());
@@ -157,7 +156,6 @@ public class PullHeaderView2 extends ViewGroup implements PullRecycleView.OnPull
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     offset = (int) animation.getAnimatedValue();
-                    Ami.log("offset=" + offset);
                     requestLayout();
                 }
             });

@@ -29,7 +29,9 @@ public class TestTouchableFragment extends AMISupportFragment implements View.On
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Ami.log("test onTouch " + v);
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            Ami.log("test onTouch " + v);
+        }
         return false;
     }
 

@@ -1,7 +1,6 @@
 package chao.app.debugtools.widgets;
 
 import android.view.View;
-import chao.app.ami.Ami;
 
 /**
  * @author qinchao
@@ -58,7 +57,6 @@ public abstract class AbstractModeController implements ModeController{
 
     @Override
     public void allShrink() {
-        Ami.log("allShrink");
         if (!overHeader()) {
             return;
         }

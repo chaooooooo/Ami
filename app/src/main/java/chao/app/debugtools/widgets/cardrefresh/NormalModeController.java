@@ -51,8 +51,6 @@ public class NormalModeController extends AbstractModeController {
         }
         pullRecycleView.setState(PullRecycleView.State.SHRINKING);
         int y = getHeight() - headerView.getCardView().getHeight() - cursor();
-        Ami.log("showRefresh: cursor:" + cursor());
-        Ami.log("showRefresh: y:" + y);
         pullRecycleView.smoothScrollBy(0, -y);
 
     }

@@ -1,4 +1,4 @@
-package chao.app.ami.viewinfo;
+package chao.app.ami.plugin.plugins.viewinterceptor;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,20 +10,16 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-
-import java.lang.ref.WeakReference;
-
-import chao.app.ami.Ami;
 import chao.app.ami.Constants;
 import chao.app.ami.utils.DeviceUtil;
 import chao.app.debug.R;
+import java.lang.ref.WeakReference;
 
 /**
  * @author chao.qin
@@ -127,13 +123,13 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
      *  @see #mSecondClickable
      */
     @Override
-    public void onViewTouched(InterceptorRecord record, MotionEvent event) {
+    public boolean onViewTouched(InterceptorRecord record, MotionEvent event) {
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (isActionDialogShowed()) {
                     hideActionDialog();
-                    return;
+                    return false;
                 }
                 mTouchedRecord = new WeakReference<>(record);
                 mDownPoint.x = (int) event.getRawX();
@@ -142,7 +138,7 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
                 mSecondClickable = false;
                 InterceptorRecord touchedRecord = mTouchedRecord.get();
                 if (touchedRecord == null) {
-                    return;
+                    return false;
                 }
                 getBoundaryOnLayout(touchedRecord.view, mFocusRect);
                 invalidate();
@@ -162,6 +158,7 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
                 break;
 
         }
+        return false;
     }
 
     private boolean performSecondTouchEvent(InterceptorRecord record, MotionEvent event) {
@@ -191,6 +188,9 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
 
     @Override
     public void draw(Canvas canvas) {
+        if (!mInterceptor.isInterceptorEnabled()) {
+            return;
+        }
         if (mCleanDraw) {
             mCleanDraw = false;
             return;

@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import chao.app.ami.Ami;
 
 /**
  * @author qinchao
@@ -79,7 +78,6 @@ public class PullHeaderView extends LinearLayout implements PullRecycleView.OnPu
             return;
         }
         mMode = mode;
-        Ami.log("swap mode and view");
         if (mode == PullRecycleView.CARD_MODE) {
             removeView(mRefreshView);
             addView(mRefreshView, 0);

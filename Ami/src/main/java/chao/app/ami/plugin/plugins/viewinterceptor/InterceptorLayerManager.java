@@ -1,4 +1,4 @@
-package chao.app.ami.viewinfo;
+package chao.app.ami.plugin.plugins.viewinterceptor;
 
 import android.content.Context;
 import android.graphics.RectF;
@@ -10,13 +10,10 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-
 import chao.app.ami.Ami;
-import chao.app.ami.AmiException;
 import chao.app.ami.Constants;
 import chao.app.debug.R;
+import java.util.ArrayList;
 
 /**
  * @author chao.qin
@@ -45,21 +42,7 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
 
     private ArrayList<Action> mActionList = new ArrayList<>();
 
-    private static InterceptorLayerManager sInstance;
-
-    public static InterceptorLayerManager get() {
-        if (sInstance == null) {
-            throw new AmiException("InterceptorLayerManager should have initialization.");
-        }
-        return sInstance;
-    }
-
-    public static void init(boolean interceptorEnabled) {
-        sInstance = new InterceptorLayerManager();
-        sInstance.mInterceptor.setInterceptorEnabled(interceptorEnabled);
-    }
-
-    private InterceptorLayerManager() {
+    public InterceptorLayerManager() {
         Context context = Ami.getApp();
         mLayout = new InterceptorFrameLayout(context);
         mLayout.setInterceptor(mInterceptor);

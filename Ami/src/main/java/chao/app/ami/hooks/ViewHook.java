@@ -1,14 +1,16 @@
 package chao.app.ami.hooks;
 
+import android.annotation.SuppressLint;
 import android.view.View;
-
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * @author chao.qin
  * @since 2017/8/8
  */
-
+@SuppressLint("PrivateApi")
 public class ViewHook {
 
     private static Class<?> View_ListenerInfo;
@@ -17,6 +19,8 @@ public class ViewHook {
     private static Field View_ListenerInfo_mOnClickListener;
     private static Field View_ListenerInfo_mOnLongClickListener;
     private static Field View_ListenerInfo_mOnTouchListener;
+
+    private static Method View_setFlags;
 
     static {
         try {
@@ -32,7 +36,12 @@ public class ViewHook {
 
             View_ListenerInfo_mOnLongClickListener = View_ListenerInfo.getDeclaredField("mOnLongClickListener");
             View_ListenerInfo_mOnLongClickListener.setAccessible(true);
+
+            View_setFlags = View.class.getDeclaredMethod("setFlags", int.class, int.class);
+            View_setFlags.setAccessible(true);
         } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
@@ -87,5 +96,15 @@ public class ViewHook {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void setFlag(View view, int flags, int mask) {
+        try {
+            View_setFlags.invoke(view, flags, mask);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 }
