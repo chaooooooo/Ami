@@ -3,12 +3,11 @@ package chao.app.ami.viewinfo;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.lang.reflect.Method;
-
 import chao.app.ami.Ami;
 import chao.app.ami.Interceptor;
+import chao.app.ami.hooks.ViewHook;
 import chao.app.debug.R;
+import java.lang.reflect.Method;
 
 /**
  * @author chao.qin
@@ -22,6 +21,18 @@ public class ViewInterceptor {
     private OnViewLongClickListener mOnViewLongClickListener;
 
     private boolean mInterceptorEnabled = true;
+
+    private Interceptor.OnInterceptorListener mInterceptorListener = new Interceptor.OnInterceptorListener() {
+        @Override
+        public Object onBeforeInterceptor(Object proxy, Method method, Object[] args) {
+            return Interceptor.RESULT_IGNORE;
+        }
+
+        @Override
+        public Object onAfterInterceptor(Object proxy, Method method, Object[] args) {
+            return Interceptor.RESULT_IGNORE;
+        }
+    };
 
 
     public ViewInterceptor() {
@@ -56,9 +67,9 @@ public class ViewInterceptor {
 
 
         if (!(child instanceof ViewGroup)) {
-//            View.OnClickListener srcClickListener = ViewHook.getOnClickListener(child);
-//            View.OnClickListener hookClickListener = Interceptor.newInstance(srcClickListener, View.OnClickListener.class, mListenerInterceptor);
-//            child.setOnClickListener(hookClickListener);
+            View.OnClickListener srcClickListener = ViewHook.getOnClickListener(child);
+            View.OnClickListener hookClickListener = Interceptor.newInstance(srcClickListener, View.OnClickListener.class, mInterceptorListener, true);
+            child.setOnClickListener(hookClickListener);
 
             View.OnLongClickListener srcLongClickListener = record.getLongClickListener();
             if (!(srcLongClickListener instanceof IViewInterceptor)) {

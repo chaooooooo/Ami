@@ -11,6 +11,8 @@ import java.lang.reflect.Proxy;
 
 public class Interceptor<T> implements InvocationHandler {
 
+    public static final Object RESULT_IGNORE = new Object();
+
     private T mTargetListener;
 
     private OnInterceptorListener mInterceptorListener;
@@ -53,6 +55,7 @@ public class Interceptor<T> implements InvocationHandler {
      * @param <T>         被拦截事件类型
      * @return    返回被拦截事件的代理。
      */
+    @SuppressWarnings("unchecked")
     public static <T> T newInstance(T source, Class[] interfaces, OnInterceptorListener listener, boolean intercept) {
         ClassLoader classLoader = null;
         if (listener != null) {
@@ -74,14 +77,11 @@ public class Interceptor<T> implements InvocationHandler {
             result = mInterceptorListener.onBeforeInterceptor(proxy, method, args);
         }
         if (mTargetListener != null && !mIntercept) {
-            Object invoke = method.invoke(mTargetListener, args);
-            if (invoke != null) {
-                result = invoke;
-            }
+            result = method.invoke(mTargetListener, args);
         }
         if (mInterceptorListener != null) {
             Object after = mInterceptorListener.onAfterInterceptor(proxy, method, args);
-            if (after != null) {
+            if (after != RESULT_IGNORE) {
                 result = after;
             }
         }
