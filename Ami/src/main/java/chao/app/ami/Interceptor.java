@@ -1,5 +1,7 @@
 package chao.app.ami;
 
+import android.support.annotation.NonNull;
+import chao.app.ami.plugin.plugins.viewinterceptor.IViewInterceptor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -29,7 +31,7 @@ public class Interceptor<T> implements InvocationHandler {
         mInterceptorListener = listener;
     }
 
-    private Interceptor(T target) {
+    private Interceptor(@NonNull T target) {
         mTargetListener = target;
     }
 
@@ -88,7 +90,16 @@ public class Interceptor<T> implements InvocationHandler {
         return result;
     }
 
-    public T getSourceListener() {
-        return mTargetListener;
+    @SuppressWarnings("unchecked")
+    public static <T> T getSourceListener(Object hookListener) {
+        if (hookListener == null) {
+            return null;
+        }
+
+        if (Proxy.isProxyClass(hookListener.getClass()) && (hookListener instanceof IViewInterceptor)) {
+            Interceptor interceptor = (Interceptor) Proxy.getInvocationHandler(hookListener);
+            return (T) interceptor.mTargetListener;
+        }
+        return (T) hookListener;
     }
 }

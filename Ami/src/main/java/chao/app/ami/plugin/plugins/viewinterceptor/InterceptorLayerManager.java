@@ -1,13 +1,11 @@
 package chao.app.ami.plugin.plugins.viewinterceptor;
 
 import android.content.Context;
-import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import chao.app.ami.Ami;
@@ -27,24 +25,21 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
     private static final int ACTION_ID_VIEW_DETAIL = 2;
 
 
-    private ViewInterceptor mInterceptor = new ViewInterceptor();
+    private ViewInterceptor mInterceptor;
 
     private InterceptorFrameLayout mLayout;
 
-    private InterceptorFrameLayout mInterceptorFrameLayout;
-
-    private FrameLayout mActionLayout;
-
     private ListView mActionListView;
+
     private ArrayAdapter<Action> mActionListAdapter;
 
-    private RectF mActionBoundary = new RectF();
 
     private ArrayList<Action> mActionList = new ArrayList<>();
 
     public InterceptorLayerManager() {
         Context context = Ami.getApp();
         mLayout = new InterceptorFrameLayout(context);
+        mInterceptor = new ViewInterceptor();
         mLayout.setInterceptor(mInterceptor);
         mInterceptor.setOnViewLongClickListener(this);
         mActionListView = mLayout.getActionListView();

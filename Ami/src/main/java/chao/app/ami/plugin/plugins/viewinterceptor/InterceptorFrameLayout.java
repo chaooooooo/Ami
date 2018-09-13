@@ -102,7 +102,6 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
     public void setInterceptor(ViewInterceptor interceptor) {
         mInterceptor = interceptor;
         mInterceptor.setOnViewTouchedListener(this);
-        mInterceptor.injectListeners(null, this);
     }
 
     RectF getBoundaryOnLayout(View view, RectF rectF) {
@@ -124,6 +123,9 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
      */
     @Override
     public boolean onViewTouched(InterceptorRecord record, MotionEvent event) {
+        if (!mInterceptor.isInterceptorEnabled()) {
+            return false;
+        }
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:

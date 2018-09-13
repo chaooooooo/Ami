@@ -2,7 +2,6 @@ package chao.app.ami.launcher.drawer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -48,8 +47,8 @@ import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.ami.plugin.plugins.frame.FramePlugin;
 import chao.app.ami.plugin.plugins.info.InfoPlugin;
 import chao.app.ami.plugin.plugins.logcat.LogcatPlugin;
-import chao.app.ami.plugin.plugins.viewinterceptor.ViewInterceptorPlugin;
 import chao.app.ami.plugin.plugins.viewinterceptor.InterceptorLayerManager;
+import chao.app.ami.plugin.plugins.viewinterceptor.ViewInterceptorPlugin;
 import chao.app.debug.R;
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,17 +98,10 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     AmiPluginManager mPluginManager;
 
-    private DrawerManager(Application app) {
+    private DrawerManager() {
         mSearchManager = SearchManager.getInstance();
         mSearchManager.setSearchListener(this);
         mSearchTextListener = new SearchTextListener(mSearchManager);
-
-        mPluginManager = AmiPluginManager.getInstance();
-        mPluginManager.addPlugin(new LogcatPlugin(),
-            new FramePlugin(),
-            new InfoPlugin(),
-            new ViewInterceptorPlugin());
-
     }
 
     public void setupView(Activity activity) {
@@ -224,7 +216,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         if (mPluginManager != null) {
             mPluginManager.setupPluginTabs(activity, tipView);
         }
-        mInterceptorManager.injectListeners(null, mRealView);
         mDecorView.addView(mDrawerLayout);
         mDrawerLayout.addView(mRealView, 0);
     }
@@ -484,10 +475,9 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         }
     }
 
-    public static void init(Application app, int drawerXml) {
-        sDrawerManager = new DrawerManager(app);
-        sDrawerManager.setDrawerId(drawerXml);
-        app.registerActivityLifecycleCallbacks(new ActivitiesLifeCycleAdapter(){
+    public static void init(int drawerXml) {
+        get().setDrawerId(drawerXml);
+        Ami.getApp().registerActivityLifecycleCallbacks(new ActivitiesLifeCycleAdapter(){
 
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -566,9 +556,19 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     public static DrawerManager get() {
         if (sDrawerManager == null) {
-            throw new NullPointerException("DrawerManager not initialization.");
+            sDrawerManager = new DrawerManager();
+            sDrawerManager.init();
         }
         return sDrawerManager;
+    }
+
+    private void init() {
+        mPluginManager = AmiPluginManager.getInstance();
+        mPluginManager.addPlugin(new LogcatPlugin(),
+            new FramePlugin(),
+            new InfoPlugin(),
+            new ViewInterceptorPlugin());
+
     }
 
 }

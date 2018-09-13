@@ -88,7 +88,7 @@ public class Ami {
         if (!isDebugMode(mApp)) {
             return;
         }
-        DrawerManager.init(getApp(), drawerId);
+        DrawerManager.init(drawerId);
     }
 
     /**
@@ -111,7 +111,7 @@ public class Ami {
         }
 
         mInstance = new Ami(app);
-        DrawerManager.init(app, drawerId);
+        DrawerManager.init(drawerId);
         ProxyManager.init(app);
         TextManager.init();
         FrameManager.init();

@@ -3,8 +3,10 @@ package chao.app.ami.plugin.plugins.viewinterceptor;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import chao.app.ami.Ami;
 import chao.app.ami.Interceptor;
+import chao.app.ami.hooks.ViewGroupHook;
+import chao.app.ami.hooks.ViewHook;
+import chao.app.ami.launcher.drawer.DrawerManager;
 import chao.app.debug.R;
 import java.lang.reflect.Method;
 
@@ -56,12 +58,14 @@ public class ViewInterceptor {
 //            View.OnClickListener hookClickListener = Interceptor.newInstance(srcClickListener, View.OnClickListener.class, mInterceptorListener, true);
 //            child.setOnClickListener(hookClickListener);
 
-//            View.OnLongClickListener srcLongClickListener = record.getLongClickListener();
-//            if (!(srcLongClickListener instanceof IViewInterceptor)) {
-//                View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, new Class[]{View.OnLongClickListener.class, IViewInterceptor.class}, listener, true);
-//                child.setOnLongClickListener(hookLongClickListener);
-//            }
-            child.setClickable(true);
+            //这里两个作用
+            //1. 注入了longClick事件代理
+            //2. 设置了clickable， 使得每个view都可以被点击到 等同于child.setClickable(true)
+            View.OnLongClickListener srcLongClickListener = record.getLongClickListener();
+            if (!(srcLongClickListener instanceof IViewInterceptor)) {
+                View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, new Class[]{View.OnLongClickListener.class, IViewInterceptor.class}, listener, true);
+                child.setOnLongClickListener(hookLongClickListener);
+            }
             return;
         }
         ViewGroup vgChild = (ViewGroup) child;
@@ -77,8 +81,51 @@ public class ViewInterceptor {
         }
     }
 
+    public void unInjectListeners(View child) {
+        if (child.getId() == R.id.ami_action_list) {
+            return;
+        }
+        if (child.getId() == R.id.ami_settings_panel) {
+            return;
+        }
+        View.OnTouchListener hookTouchListener = ViewHook.getOnTouchListener(child);
+        View.OnTouchListener touchListener = Interceptor.getSourceListener(hookTouchListener);
+        child.setOnTouchListener(touchListener);
+
+
+        View.OnLongClickListener hookLongClickListener = ViewHook.getOnLongClickListener(child);
+        View.OnLongClickListener longClickListener = Interceptor.getSourceListener(hookLongClickListener);
+        child.setOnLongClickListener(longClickListener);
+        if (longClickListener == null) {
+            child.setLongClickable(false);
+        }
+
+        if (!(child instanceof ViewGroup)) {
+            return;
+        }
+        ViewGroup vgChild = (ViewGroup) child;
+        ViewGroup.OnHierarchyChangeListener hookHierarchyListener = ViewGroupHook.getOnHierarchyChangeListener(vgChild);
+        ViewGroup.OnHierarchyChangeListener hierarchyChangeListener = Interceptor.getSourceListener(hookHierarchyListener);
+        vgChild.setOnHierarchyChangeListener(hierarchyChangeListener);
+
+        int grandChildrenCount = vgChild.getChildCount();
+        for (int i = 0; i < grandChildrenCount; i++) {
+            unInjectListeners(vgChild.getChildAt(i));
+        }
+    }
+
+
     public void setInterceptorEnabled(boolean enabled) {
         mInterceptorEnabled = enabled;
+        View layout = DrawerManager.get().getRealView();
+        if (layout == null) {
+            return;
+        }
+        if (enabled) {
+            injectListeners(null, layout);
+        } else {
+            unInjectListeners(layout);
+        }
     }
 
     public boolean isInterceptorEnabled() {
@@ -121,7 +168,6 @@ public class ViewInterceptor {
 
         @Override
         public boolean onLongClick(View v) {
-            Ami.log("onLongClick : " + v);
             if (mOnViewLongClickListener != null) {
                 return mOnViewLongClickListener.onViewLongClicked(mRecord);
             }
