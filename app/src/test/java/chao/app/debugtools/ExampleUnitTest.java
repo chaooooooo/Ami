@@ -24,10 +24,10 @@ public class ExampleUnitTest {
         Class clazz = Class.forName("java.lang.Boolean");
         Class b = boolean.class;
 
-        System.out.println(clazz.getName());
     }
 
     private static class A {
         int a = 0;
     }
+
 }

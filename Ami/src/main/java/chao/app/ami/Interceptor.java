@@ -1,7 +1,6 @@
 package chao.app.ami;
 
 import android.support.annotation.NonNull;
-import chao.app.ami.plugin.plugins.viewinterceptor.IViewInterceptor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -13,40 +12,34 @@ import java.lang.reflect.Proxy;
 
 public class Interceptor<T> implements InvocationHandler {
 
-    public static final Object INTERCEPTOR_IGNORE = new Object();
-
     private T mTargetListener;
 
     private OnInterceptorListener mInterceptorListener;
 
     private boolean mIntercept;
 
-    public interface OnInterceptorListener {
-        Object onBeforeInterceptor(Object proxy, Method method, Object[] args);
+    public interface OnInterceptorListener<T> {
+        T onBeforeInterceptor(Object proxy, Method method, Object[] args);
 
-        Object onAfterInterceptor(Object proxy, Method method, Object[] args);
+        T onAfterInterceptor(Object proxy, Method method, Object[] args, T result);
     }
 
     private void setOnInterceptorListener(OnInterceptorListener listener) {
         mInterceptorListener = listener;
     }
 
-    private Interceptor(@NonNull T target) {
+    private Interceptor(T target) {
         mTargetListener = target;
     }
 
-    public static <T> T newInstance(Class<T> interfaceClass, OnInterceptorListener listener) {
-        return (T) newInstance(null, new Class[]{interfaceClass}, listener, false);
+    public static <T> T newInstance(T source, Class interfaceClass, OnInterceptorListener listener) {
+        return newInstance(source, new Class[]{interfaceClass}, listener, false);
     }
 
-    public static <T> T newInstance(T source, Class<T> interfaceClass, OnInterceptorListener listener) {
-        return (T) newInstance(source, new Class[]{interfaceClass}, listener, false);
-    }
-
+    @SuppressWarnings("unused")
     public static <T> T newInstance(T source, Class<T> interfaces, OnInterceptorListener listener, boolean intercept) {
-        return (T) newInstance(source, new Class[]{interfaces}, listener, intercept);
+        return newInstance(source, new Class[]{interfaces}, listener, intercept);
     }
-
 
     /**
      *
@@ -57,14 +50,11 @@ public class Interceptor<T> implements InvocationHandler {
      * @param <T>         被拦截事件类型
      * @return    返回被拦截事件的代理。
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T newInstance(T source, Class[] interfaces, OnInterceptorListener listener, boolean intercept) {
+    @SuppressWarnings("all")
+    public static <T> T newInstance(@NonNull T source, Class[] interfaces, OnInterceptorListener listener, boolean intercept) {
         ClassLoader classLoader = null;
         if (listener != null) {
             classLoader = listener.getClass().getClassLoader();
-        }
-        if (classLoader == null) {
-            classLoader = Ami.getApp().getClassLoader();
         }
         Interceptor<T> interceptor = new Interceptor<>(source);
         interceptor.setOnInterceptorListener(listener);
@@ -82,23 +72,38 @@ public class Interceptor<T> implements InvocationHandler {
             result = method.invoke(mTargetListener, args);
         }
         if (mInterceptorListener != null) {
-            Object after = mInterceptorListener.onAfterInterceptor(proxy, method, args);
-            if (after != INTERCEPTOR_IGNORE) {
-                result = after;
+            result = mInterceptorListener.onAfterInterceptor(proxy, method, args, result);
+        }
+        Class returnType = method.getReturnType();
+        if (result == null) {
+            if (returnType == boolean.class) {
+                return false;
+            } else if (returnType == int.class
+                || returnType == short.class
+                || returnType == byte.class
+                || returnType == char.class
+                || returnType == long.class
+                || returnType == float.class
+                || returnType == double.class
+                || Number.class.isAssignableFrom(returnType)) {
+                return 0;
             }
         }
         return result;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked | unused")
     public static <T> T getSourceListener(Object hookListener) {
         if (hookListener == null) {
             return null;
         }
-
-        if (Proxy.isProxyClass(hookListener.getClass()) && (hookListener instanceof IViewInterceptor)) {
-            Interceptor interceptor = (Interceptor) Proxy.getInvocationHandler(hookListener);
-            return (T) interceptor.mTargetListener;
+        Interceptor interceptor;
+        if (Proxy.isProxyClass(hookListener.getClass())) {
+            InvocationHandler handler = Proxy.getInvocationHandler(hookListener);
+            if (handler instanceof Interceptor) {
+                interceptor = (Interceptor) handler;
+                return (T) interceptor.mTargetListener;
+            }
         }
         return (T) hookListener;
     }

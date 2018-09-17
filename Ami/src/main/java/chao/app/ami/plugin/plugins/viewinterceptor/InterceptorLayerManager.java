@@ -131,5 +131,6 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
 
     public void setInterceptorEnabled(boolean enabled) {
         mInterceptor.setInterceptorEnabled(enabled);
+        mLayout.setVisibility(enabled?View.VISIBLE:View.GONE);
     }
 }

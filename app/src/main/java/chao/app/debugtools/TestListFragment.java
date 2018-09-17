@@ -1,5 +1,6 @@
 package chao.app.debugtools;
 
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -9,6 +10,7 @@ import chao.app.ami.Ami;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMISupportFragment;
 import chao.app.ami.text.TextManager;
+import java.util.Random;
 
 /**
  * @author chao.qin
@@ -27,5 +29,6 @@ public class TestListFragment extends AMISupportFragment implements AdapterView.
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Ami.log("" + view + ", " + position);
+        SystemClock.sleep((long) (100 + (new Random().nextInt(1000))));
     }
 }

@@ -65,13 +65,12 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
     }
 
 
-    long thisTime = 0;
-    long lastTime = 0;
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private class FPSFrameCallback implements Choreographer.FrameCallback {
         @Override
         public void doFrame(long frameTimeNanos) {
-            thisTime = System.currentTimeMillis();
+
+
             if (lastFrameTimeNanos == 0) {
                 lastFrameTimeNanos = frameTimeNanos;
                 Choreographer.getInstance().postFrameCallback(this);

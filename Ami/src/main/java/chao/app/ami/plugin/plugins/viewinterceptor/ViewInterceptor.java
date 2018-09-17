@@ -138,7 +138,7 @@ public class ViewInterceptor {
 
         @Override
         public Object onBeforeInterceptor(Object proxy, Method method, Object[] args) {
-            Object result = Interceptor.INTERCEPTOR_IGNORE;
+            Object result = null;
             if ("onChildViewAdded".equals(method.getName())) {
                 onChildViewAdded((View)args[0], (View)args[1]);
             } else if ("onChildViewRemoved".equals(method.getName())) {
@@ -152,8 +152,8 @@ public class ViewInterceptor {
         }
 
         @Override
-        public Object onAfterInterceptor(Object proxy, Method method, Object[] args) {
-            return Interceptor.INTERCEPTOR_IGNORE;
+        public Object onAfterInterceptor(Object proxy, Method method, Object[] args, Object result) {
+            return result;
         }
 
         @Override
