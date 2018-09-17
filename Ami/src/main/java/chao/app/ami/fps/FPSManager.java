@@ -41,7 +41,18 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
     @Override
     public boolean handleMessage(Message msg) {
         if (msg.what == HANDLER_FPS_UPDATE) {
-            onFPSUpdateListener.onFpsUpdate(msg.arg1);
+            final int fps = msg.arg1;
+            if (fps < 60) {
+                onFPSUpdateListener.onFpsUpdate(msg.arg1);
+                return true;
+            }
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onFPSUpdateListener.onFpsUpdate(fps);
+                }
+            }, 300);
+            return true;
         }
         return false;
     }
@@ -53,10 +64,14 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
         }
     }
 
+
+    long thisTime = 0;
+    long lastTime = 0;
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private class FPSFrameCallback implements Choreographer.FrameCallback {
         @Override
         public void doFrame(long frameTimeNanos) {
+            thisTime = System.currentTimeMillis();
             if (lastFrameTimeNanos == 0) {
                 lastFrameTimeNanos = frameTimeNanos;
                 Choreographer.getInstance().postFrameCallback(this);

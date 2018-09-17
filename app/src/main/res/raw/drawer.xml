@@ -3,6 +3,8 @@
     <property name="p1" value="v1"/>
     <property name="p2" value="v2"/>
 
+
+    <item name="TestApp" component=".apps.AppsFragment"/>
     <item name="TestNoticeImageViewFragment" component=".TestNoticeImageViewFragment"/>
 
     <item name="PullRecyclerView" component=".PullRecyclerView2TestFragment"/>

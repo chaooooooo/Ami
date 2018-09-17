@@ -132,7 +132,7 @@ public class AmiPluginManager {
         mViewPager.setAdapter(mPageAdapter);
         ViewPagerHelper.bind(mMagicIndicator, mViewPager);
         for (AmiPlugin plugin: mPlugins) {
-            plugin.changeActivity(fragmentActivity);
+            plugin.onActivityChanged(fragmentActivity);
         }
     }
 

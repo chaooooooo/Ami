@@ -1,11 +1,13 @@
 package chao.app.ami.utils;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 
 import android.os.Build;
+import android.text.TextUtils;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
@@ -87,5 +89,37 @@ public class Util implements Constants{
      */
     public static boolean isOverMarshmallow() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    /**
+     * 是否在子进程中
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isMainProcess(Context context) {
+        context = context.getApplicationContext();
+        String processName = getProgressName(context);
+        String packageName = context.getPackageName();
+        return TextUtils.equals(processName, packageName);
+    }
+
+    /**
+     * 取得当前进程的名称
+     *
+     * @param context
+     * @return
+     */
+    public static String getProgressName(Context context) {
+        int pid = android.os.Process.myPid();
+        ActivityManager mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (mActivityManager != null) {
+            for (ActivityManager.RunningAppProcessInfo appProcess : mActivityManager.getRunningAppProcesses()) {
+                if (appProcess.pid == pid) {
+                    return appProcess.processName;
+                }
+            }
+        }
+        return null;
     }
 }

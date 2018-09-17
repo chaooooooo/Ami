@@ -37,8 +37,8 @@ public class ViewInterceptorPlugin extends AmiPlugin {
     }
 
     @Override
-    public void changeActivity(FragmentActivity activity) {
-        super.changeActivity(activity);
+    public void onActivityChanged(FragmentActivity activity) {
+        super.onActivityChanged(activity);
         interceptorManager.setInterceptorEnabled(settings.isEnabled());
     }
 

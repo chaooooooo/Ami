@@ -60,7 +60,7 @@ public abstract class AmiPlugin implements IPlugin {
     }
 
     @CallSuper
-    public void changeActivity(FragmentActivity activity) {
+    public void onActivityChanged(FragmentActivity activity) {
         mActivity = activity;
     }
 

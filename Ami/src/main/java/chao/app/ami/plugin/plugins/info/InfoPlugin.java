@@ -44,8 +44,8 @@ public class InfoPlugin extends AmiPlugin {
     }
 
     @Override
-    public void changeActivity(FragmentActivity activity) {
-        super.changeActivity(activity);
+    public void onActivityChanged(FragmentActivity activity) {
+        super.onActivityChanged(activity);
         manager.setupManager(activity);
     }
 }

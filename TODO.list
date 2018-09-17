@@ -66,7 +66,8 @@ textColor
 textSize (sp, px)
 
 
-
+#2018-9-12
+view元素可拖动
 
 #2018-8-29
 启动Activity增加权限属性   #done since 2018-09-03
@@ -125,12 +126,29 @@ density = ;
 fdensity = ;
 
 
-ami计算器
-
-
 ami screen
 1. 帧率             #2018-09-10 done
 2. 基本信息          #2018-09-10 done
     应用名(包名)
     version
     Activity名称
+
+
+#2018-9-13
+#general settings
+
+
+
+
+#2018-9-14
+邮件发送
+查看db，sp,assets, raw,data cache
+
+
+命令行通信：
+ami connect/disconnect (packageName)
+ami status
+ami计算器 (ami calc)
+ami 数据库操作 (ami sql)
+ami 应用信息查询 (ami show)
+

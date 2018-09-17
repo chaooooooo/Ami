@@ -66,6 +66,11 @@ public class Ami {
             return;
         }
 
+        //只在主进程初始化
+        if (!Util.isMainProcess(app)) {
+            return;
+        }
+
         mInstance = new Ami(app);
         ProxyManager.init(app);
         TextManager.init();
@@ -88,6 +93,9 @@ public class Ami {
         if (!isDebugMode(mApp)) {
             return;
         }
+        if (!Util.isMainProcess(getApp())) {
+            return;
+        }
         DrawerManager.init(drawerId);
     }
 
@@ -107,6 +115,10 @@ public class Ami {
             return;
         }
         if (mInstance != null) {
+            return;
+        }
+
+        if (!Util.isMainProcess(getApp())) {
             return;
         }
 

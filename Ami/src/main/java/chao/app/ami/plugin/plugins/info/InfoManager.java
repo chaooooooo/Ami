@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
+import chao.app.ami.Ami;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.fps.FPSManager;
 import chao.app.debug.R;
@@ -22,7 +23,7 @@ public class InfoManager {
 
     private InfoSettings settings;
 
-    public InfoManager(@NonNull AmiContentView contentView, InfoSettings settings) {
+    public InfoManager(@NonNull AmiContentView contentView, final InfoSettings settings) {
         this.settings  = settings;
         //fps
         fpsView = (TextView) contentView.findViewById(R.id.ami_content_fps);
@@ -30,6 +31,9 @@ public class InfoManager {
             @Override
             public void onFpsUpdate(int fps) {
                 String text = "fps: " + fps;
+                if (settings.logEnabled()) {
+                    Ami.log(text);
+                }
                 fpsView.setText(text);
             }
         });
