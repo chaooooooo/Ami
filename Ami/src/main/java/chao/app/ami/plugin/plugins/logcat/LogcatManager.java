@@ -36,6 +36,7 @@ public class LogcatManager {
 
     private String pid;
 
+
     private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
 
         @Override
@@ -98,7 +99,7 @@ public class LogcatManager {
         if (mLogcat != null && mLogcat.isRunning()){
             return;
         }
-        stopLogcat();
+//        stopLogcat();
         mLogcat = new Shell.Builder()
             .addCommand("logcat -v threadtime")
             .setOnStdoutLineListener(new Shell.OnCommandLineListener() {
@@ -126,6 +127,7 @@ public class LogcatManager {
             .open();
     }
 
+    //会卡死
     public void stopLogcat() {
         if (mLogcat != null) {
             mLogcat.kill();

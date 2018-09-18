@@ -9,6 +9,7 @@ import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.fps.FPSManager;
+import chao.app.ami.plugin.MovementTouch;
 import chao.app.debug.R;
 
 /**
@@ -27,6 +28,7 @@ public class InfoManager {
         this.settings  = settings;
         //fps
         fpsView = (TextView) contentView.findViewById(R.id.ami_content_fps);
+        fpsView.setOnTouchListener(new MovementTouch(fpsView));
         FPSManager fpsManager = new FPSManager(new FPSManager.OnFPSUpdateListener() {
             @Override
             public void onFpsUpdate(int fps) {

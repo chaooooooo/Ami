@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
+import chao.app.ami.plugin.MovementTouch;
 import chao.app.debug.R;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,12 +70,14 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
         zoomIn = findView(R.id.ami_plugin_logcat_settings_zoom_in);
         zoomOut = findView(R.id.ami_plugin_logcat_settings_zoom_out);
 
+        View zoomPane = findView(R.id.ami_plugin_logcat_zoom_panel);
+        zoomPane.setOnTouchListener(new MovementTouch(zoomPane));
+
         clearView.setOnClickListener(this);
         pauseView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                logcatSettings.setPause(isChecked);
-                logcatManager.startLogcat();
+                logcatSettings.setPause(!isChecked);
             }
         });
         heartView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

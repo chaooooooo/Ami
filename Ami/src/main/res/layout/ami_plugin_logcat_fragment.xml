@@ -41,10 +41,10 @@
 
                 <ToggleButton
                     android:id="@+id/ami_plugin_logcat_settings_pause"
-                    android:background="@drawable/ami_bg_pause"
+                    android:background="@drawable/ami_bg_logcat_play"
                     android:textOn="@null"
                     android:textOff="@null"
-                    android:checked="false"
+                    android:checked="true"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginLeft="10dp"

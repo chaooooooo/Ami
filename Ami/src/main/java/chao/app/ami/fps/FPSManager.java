@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.view.Choreographer;
+import java.util.ArrayList;
 
 /**
  * @author qinchao
@@ -19,11 +20,11 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
 
     private Handler handler;
 
-    private long lastFrameTimeNanos = 0; //ns纳秒 1ms = 1000,000ns
-
     private int lastFps = 0;
 
     private OnFPSUpdateListener onFPSUpdateListener;
+
+    private ArrayList<Long> frameTimes = new ArrayList<>();
 
 
     public FPSManager(@NonNull OnFPSUpdateListener listener) {
@@ -69,21 +70,22 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
     private class FPSFrameCallback implements Choreographer.FrameCallback {
         @Override
         public void doFrame(long frameTimeNanos) {
-
-
-            if (lastFrameTimeNanos == 0) {
-                lastFrameTimeNanos = frameTimeNanos;
-                Choreographer.getInstance().postFrameCallback(this);
-                return;
+            int fps;
+            while (frameTimes.size() > 0) {
+                long first = frameTimes.get(0);
+                if (frameTimeNanos - first > 1000 * 1000000) {
+                    frameTimes.remove(0);
+                } else {
+                    break;
+                }
             }
-            long deltaTimeMillis = (frameTimeNanos - lastFrameTimeNanos);
+            frameTimes.add(frameTimeNanos);
+            fps = frameTimes.size();
 
-            int fps = (int) Math.round(1000 /((double)deltaTimeMillis / 1000000));
             if (fps != lastFps) {
                 notifyFPSUpdate(fps);
                 lastFps = fps;
             }
-            lastFrameTimeNanos = frameTimeNanos;
             Choreographer.getInstance().postFrameCallback(this);
         }
     }
