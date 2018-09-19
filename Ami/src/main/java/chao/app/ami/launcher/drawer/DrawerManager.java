@@ -45,6 +45,7 @@ import chao.app.ami.launcher.drawer.node.Node;
 import chao.app.ami.launcher.drawer.node.NodeGroup;
 import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.ami.plugin.plugins.frame.FramePlugin;
+import chao.app.ami.plugin.plugins.general.GeneralPlugin;
 import chao.app.ami.plugin.plugins.info.InfoPlugin;
 import chao.app.ami.plugin.plugins.logcat.LogcatPlugin;
 import chao.app.ami.plugin.plugins.viewinterceptor.InterceptorLayerManager;
@@ -564,11 +565,13 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
     private void init() {
         mPluginManager = AmiPluginManager.getInstance();
+        mPluginManager.addGeneralPlugin(new GeneralPlugin());
         mPluginManager.addPlugin(new LogcatPlugin(),
             new FramePlugin(),
             new InfoPlugin(),
             new ViewInterceptorPlugin());
 
     }
+
 
 }

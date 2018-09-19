@@ -11,6 +11,12 @@ import chao.app.debug.R;
  */
 public abstract class AmiPluginFragment extends AMISupportFragment {
 
+    protected AmiPluginManager mPluginManager;
+
+    public AmiPluginFragment() {
+        mPluginManager = AmiPluginManager.getInstance();
+    }
+
     @Override
     public void setupTitle() {
     }

@@ -1,4 +1,4 @@
-package chao.app.ami.plugin.plugins.frame;
+package chao.app.ami.plugin.plugins.general;
 
 import android.support.v4.app.Fragment;
 import chao.app.ami.base.AmiContentView;
@@ -8,17 +8,12 @@ import chao.app.ami.plugin.AmiGeneralComponent;
 
 /**
  * @author qinchao
- * @since 2018/9/4
+ * @since 2018/9/18
  */
-public class FramePlugin extends AmiPlugin {
-
-
-    public FramePlugin() {
-    }
-
+public class GeneralPlugin extends AmiPlugin {
     @Override
-    public Fragment createFragment() {
-        return new FrameFragment();
+    protected Fragment createFragment() {
+        return new GeneralFragment();
     }
 
     @Override
@@ -27,8 +22,13 @@ public class FramePlugin extends AmiPlugin {
     }
 
     @Override
+    public AmiSettings getSettings() {
+        return null;
+    }
+
+    @Override
     public CharSequence getTitle() {
-        return "frame";
+        return "general";
     }
 
     @Override
@@ -39,10 +39,5 @@ public class FramePlugin extends AmiPlugin {
     @Override
     public void onBindView(AmiContentView contentView) {
 
-    }
-
-    @Override
-    public AmiSettings getSettings() {
-        return null;
     }
 }

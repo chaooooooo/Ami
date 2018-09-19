@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiSettings;
+import chao.app.ami.plugin.AmiGeneralComponent;
 
 /**
  * @author qinchao
@@ -17,7 +18,12 @@ public class ViewInterceptorPlugin extends AmiPlugin {
 
     @Override
     protected Fragment createFragment() {
-        return new ViewInterceptorFragment();
+        return null;
+    }
+
+    @Override
+    public AmiGeneralComponent getComponent() {
+        return new ViewInterceptorComponent(this);
     }
 
     @Override

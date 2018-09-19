@@ -1,18 +1,19 @@
 package chao.app.ami.plugin.plugins.info;
 
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiPluginFragment;
+import chao.app.ami.plugin.AmiGeneralComponent;
 import chao.app.debug.R;
 
 /**
  * @author qinchao
- * @since 2018/9/10
+ * @since 2018/9/19
  */
-public class InfoSettingsFragment extends AmiPluginFragment implements CompoundButton.OnCheckedChangeListener {
-
+public class InfoComponent extends AmiGeneralComponent implements CompoundButton.OnCheckedChangeListener {
 
     private CheckBox fpsCheckbox;
 
@@ -22,14 +23,17 @@ public class InfoSettingsFragment extends AmiPluginFragment implements CompoundB
 
     private InfoSettings settings;
 
-    public InfoSettingsFragment() {
+
+    public InfoComponent(AmiPlugin plugin) {
+        super(plugin);
         settings = getSettings();
         manager = getManager();
     }
 
     @Override
-    public void setupView(View layout) {
-        super.setupView(layout);
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
+        View layout = inflater.inflate(R.layout.ami_plugin_info_settings_fragment, parent, false);
+
         fpsCheckbox = (CheckBox) layout.findViewById(R.id.ami_fps_settings);
         appInfoCheckbox = (CheckBox) layout.findViewById(R.id.ami_info_settings_app);
 
@@ -38,11 +42,8 @@ public class InfoSettingsFragment extends AmiPluginFragment implements CompoundB
 
         fpsCheckbox.setOnCheckedChangeListener(this);
         appInfoCheckbox.setOnCheckedChangeListener(this);
-    }
 
-    @Override
-    public Class<? extends AmiPlugin> bindPlugin() {
-        return InfoPlugin.class;
+        return layout;
     }
 
     @Override
@@ -54,10 +55,5 @@ public class InfoSettingsFragment extends AmiPluginFragment implements CompoundB
             settings.setShowAppInfo(isChecked);
             manager.updateVisible();
         }
-    }
-
-    @Override
-    public int getLayoutID() {
-        return R.layout.ami_plugin_info_settings_fragment;
     }
 }

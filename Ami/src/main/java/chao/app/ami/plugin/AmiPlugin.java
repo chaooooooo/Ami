@@ -50,8 +50,8 @@ public abstract class AmiPlugin implements IPlugin {
     }
 
     @Override
+    @CallSuper
     public void onCreate() {
-
     }
 
     @Override
@@ -70,5 +70,6 @@ public abstract class AmiPlugin implements IPlugin {
 
     protected abstract Fragment createFragment();
 
+    public abstract AmiGeneralComponent getComponent();
 }
 

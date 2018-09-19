@@ -5,8 +5,10 @@
     android:orientation="vertical">
 
     <CheckBox
+        android:layout_marginLeft="14dp"
         android:id="@+id/ami_plugin_view_interceptor_enable"
         android:text="@string/ami_plugin_view_interceptor_enable"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp" />
 </LinearLayout>

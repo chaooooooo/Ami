@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.base.AmiContentView;
+import chao.app.ami.plugin.plugins.general.GeneralPlugin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import net.lucode.hackware.magicindicator.MagicIndicator;
@@ -48,6 +49,15 @@ public class AmiPluginManager {
 
     private static AmiPluginManager sInstance;
 
+    private GeneralPlugin mGeneralPlugin;
+
+    private FragmentActivity mActivity;
+
+    private boolean mReSetup = true;
+
+    ArrayList<AmiPlugin> mFragmentPlugins = new ArrayList<>();
+
+
     public static AmiPluginManager getInstance() {
         if (sInstance == null) {
             sInstance = new AmiPluginManager();
@@ -71,9 +81,12 @@ public class AmiPluginManager {
     }
 
     private AmiPluginManager() {
-
     }
 
+    public void addGeneralPlugin(GeneralPlugin generalPlugin) {
+        mGeneralPlugin = generalPlugin;
+        addPlugin(mGeneralPlugin);
+    }
 
     public void addPlugin(AmiPlugin... plugins) {
         for (AmiPlugin plugin: plugins) {
@@ -82,6 +95,9 @@ public class AmiPluginManager {
             plugin.onCreate();
             if (contentView != null) {
                 plugin.onBindView(contentView);
+            }
+            if (plugin.getFragment() != null) {
+                mFragmentPlugins.add(plugin);
             }
         }
         if (mTabAdapter != null) {
@@ -96,10 +112,9 @@ public class AmiPluginManager {
         return mPluginMap.get(plugin);
     }
 
-
-    private FragmentActivity mActivity;
-
-    private boolean mReSetup = true;
+    public ArrayList<AmiPlugin> getPlugins() {
+        return mPlugins;
+    }
 
     /**
      * 只可以是FragmentActivity, 因为：
@@ -136,17 +151,19 @@ public class AmiPluginManager {
         }
     }
 
+
     private class TabAdapter extends CommonNavigatorAdapter {
+
 
         @Override
         public int getCount() {
-            return mPlugins.size();
+            return mFragmentPlugins.size();
         }
 
         @Override
         public IPagerTitleView getTitleView(final Context context, final int position) {
             ColorTransitionPagerTitleView titleView = new ColorTransitionPagerTitleView(context);
-            IPlugin plugin = mPlugins.get(position);
+            IPlugin plugin = mFragmentPlugins.get(position);
             titleView.setText(plugin.getTitle());
             titleView.setNormalColor(Color.parseColor("#aaaaaa"));
             titleView.setSelectedColor(Color.WHITE);
@@ -176,7 +193,7 @@ public class AmiPluginManager {
 
         @Override
         public Fragment getItem(int position) {
-            IPlugin plugin = mPlugins.get(position);
+            IPlugin plugin = mFragmentPlugins.get(position);
             Fragment fragment;
             if (mReSetup) {
                 fragment = plugin.newFragment();
@@ -188,7 +205,11 @@ public class AmiPluginManager {
 
         @Override
         public int getCount() {
-            return mPlugins.size();
+            return mFragmentPlugins.size();
         }
+    }
+
+    public GeneralPlugin getGeneralPlugin() {
+        return mGeneralPlugin;
     }
 }

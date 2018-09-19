@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiSettings;
+import chao.app.ami.plugin.AmiGeneralComponent;
 
 /**
  * @author qinchao
@@ -19,7 +20,12 @@ public class InfoPlugin extends AmiPlugin {
 
     @Override
     protected Fragment createFragment() {
-        return new InfoSettingsFragment();
+        return null;
+    }
+
+    @Override
+    public AmiGeneralComponent getComponent() {
+        return new InfoComponent(this);
     }
 
     @Override
