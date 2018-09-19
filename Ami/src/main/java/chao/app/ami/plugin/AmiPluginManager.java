@@ -127,7 +127,7 @@ public class AmiPluginManager {
         if (mActivity != null) {
             FragmentManager oldFm = mActivity.getSupportFragmentManager();
             FragmentTransaction transaction = oldFm.beginTransaction();
-            for (IPlugin plugin: mPlugins) {
+            for (IPlugin plugin: mFragmentPlugins) {
                 Fragment fragment = plugin.getFragment();
                 transaction.remove(fragment);
             }
