@@ -94,10 +94,12 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
 
 
     private Context mContext = Ami.getApp();
+
     private View mSearchProgress;
 
+    private Activity mActivity;
 
-    AmiPluginManager mPluginManager;
+    private AmiPluginManager mPluginManager;
 
     private DrawerManager() {
         mSearchManager = SearchManager.getInstance();
@@ -106,6 +108,10 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     }
 
     public void setupView(Activity activity) {
+        if (mActivity != null && mActivity == activity) {
+            return;
+        }
+        mActivity = activity;
         ViewGroup decorView = (ViewGroup) activity.findViewById(android.R.id.content);
         int decorViewChildCount = decorView.getChildCount();
         if (decorViewChildCount == 0) {

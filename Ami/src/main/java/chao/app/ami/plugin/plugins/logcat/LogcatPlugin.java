@@ -15,8 +15,6 @@ public class LogcatPlugin extends AmiPlugin {
 
     private LogcatManager logcatManager;
 
-    private LogcatFragment logcatFragment;
-
     private LogcatSettings logcatSettings;
 
     public LogcatPlugin() {
@@ -24,14 +22,9 @@ public class LogcatPlugin extends AmiPlugin {
         logcatManager = new LogcatManager(this, logcatSettings);
     }
 
-    public LogcatManager getLogcatManager() {
-        return logcatManager;
-    }
-
     @Override
     public Fragment createFragment() {
-        logcatFragment = new LogcatFragment();
-        return logcatFragment;
+        return new LogcatFragment();
     }
 
     @Override
@@ -51,6 +44,7 @@ public class LogcatPlugin extends AmiPlugin {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         logcatManager.startLogcat();
     }
 
@@ -65,15 +59,21 @@ public class LogcatPlugin extends AmiPlugin {
     }
 
     public void notifyDataSetChanged(ArrayList<LogcatLine> logCaches, int pos, int length) {
+        LogcatFragment logcatFragment = getFragment();
         if (logcatFragment != null) {
             logcatFragment.notifyDataSetChanged(logCaches, pos, length);
         }
     }
 
     public void notifyDataSetCleared() {
+        LogcatFragment logcatFragment = getFragment();
         if (logcatFragment != null) {
             logcatFragment.notifyDataSetCleared();
         }
     }
 
+    @Override
+    public LogcatFragment getFragment() {
+        return (LogcatFragment) super.getFragment();
+    }
 }

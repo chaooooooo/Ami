@@ -16,11 +16,13 @@ public abstract class AmiPlugin implements IPlugin {
 
     protected Context mAppContext;
 
-    private Fragment mFragment;
+    protected Fragment mFragment;
 
     private Activity mActivity;
 
     private AmiContentView contentView;
+
+    private int mFragmentIndex;
 
     public AmiPlugin() {
         mAppContext = Ami.getApp();
@@ -33,9 +35,6 @@ public abstract class AmiPlugin implements IPlugin {
 
     @Override
     public Fragment getFragment() {
-        if (mFragment == null) {
-            return newFragment();
-        }
         return mFragment;
     }
 
@@ -50,7 +49,6 @@ public abstract class AmiPlugin implements IPlugin {
     }
 
     @Override
-    @CallSuper
     public void onCreate() {
     }
 
@@ -71,5 +69,13 @@ public abstract class AmiPlugin implements IPlugin {
     protected abstract Fragment createFragment();
 
     public abstract AmiGeneralComponent getComponent();
+
+    public void destroyFragment() {
+        mFragment = null;
+    }
+
+    public void setFragmentIndex(int mIndex) {
+        this.mFragmentIndex = mIndex;
+    }
 }
 

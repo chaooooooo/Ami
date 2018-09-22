@@ -53,8 +53,6 @@ public class AmiPluginManager {
 
     private FragmentActivity mActivity;
 
-    private boolean mReSetup = true;
-
     ArrayList<AmiPlugin> mFragmentPlugins = new ArrayList<>();
 
 
@@ -96,8 +94,9 @@ public class AmiPluginManager {
             if (contentView != null) {
                 plugin.onBindView(contentView);
             }
-            if (plugin.getFragment() != null) {
+            if (plugin.newFragment() != null) {
                 mFragmentPlugins.add(plugin);
+                plugin.setFragmentIndex(mFragmentPlugins.size());
             }
         }
         if (mTabAdapter != null) {
@@ -127,9 +126,13 @@ public class AmiPluginManager {
         if (mActivity != null) {
             FragmentManager oldFm = mActivity.getSupportFragmentManager();
             FragmentTransaction transaction = oldFm.beginTransaction();
-            for (IPlugin plugin: mFragmentPlugins) {
+            for (AmiPlugin plugin: mFragmentPlugins) {
                 Fragment fragment = plugin.getFragment();
+                if (fragment == null) {
+                    continue;
+                }
                 transaction.remove(fragment);
+                plugin.destroyFragment();
             }
             transaction.commitAllowingStateLoss();
         }
@@ -138,16 +141,18 @@ public class AmiPluginManager {
             return;
         }
         tipView.setVisibility(View.GONE);
-        FragmentActivity fragmentActivity = (FragmentActivity) activity;
-        mReSetup = true;
-        mActivity = fragmentActivity;
-        FragmentManager fm = fragmentActivity.getSupportFragmentManager();
+        mActivity = (FragmentActivity) activity;
+        FragmentManager fm = mActivity.getSupportFragmentManager();
         mViewPager.clearOnPageChangeListeners();
         mPageAdapter = new PageAdapter(fm);
         mViewPager.setAdapter(mPageAdapter);
         ViewPagerHelper.bind(mMagicIndicator, mViewPager);
+
+        int position = 0;
         for (AmiPlugin plugin: mPlugins) {
-            plugin.onActivityChanged(fragmentActivity);
+            plugin.onActivityChanged(mActivity);
+            plugin.mFragment = fm.findFragmentByTag(mPageAdapter.makeFragmentName(position));
+            position ++;
         }
     }
 
@@ -187,20 +192,24 @@ public class AmiPluginManager {
 
     private class PageAdapter extends FragmentPagerAdapter {
 
-        public PageAdapter(FragmentManager fm) {
+        PageAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
             IPlugin plugin = mFragmentPlugins.get(position);
-            Fragment fragment;
-            if (mReSetup) {
+            Fragment fragment = plugin.getFragment();
+            if (fragment == null) {
                 fragment = plugin.newFragment();
-            } else {
-                fragment = plugin.getFragment();
             }
             return fragment;
+        }
+
+        public String makeFragmentName(int position) {
+            int viewId = mViewPager.getId();
+            long id = getItemId(position);
+            return "android:switcher:" + viewId + ":" + id;
         }
 
         @Override
@@ -208,6 +217,8 @@ public class AmiPluginManager {
             return mFragmentPlugins.size();
         }
     }
+
+
 
     public GeneralPlugin getGeneralPlugin() {
         return mGeneralPlugin;

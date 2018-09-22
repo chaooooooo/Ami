@@ -12,7 +12,6 @@ import android.os.Bundle;
 public class ActivitiesLifeCycleAdapter implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        Ami.log(activity.getComponentName() + ":onActivityCreated()");
     }
 
     @Override

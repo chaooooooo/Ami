@@ -24,7 +24,7 @@ public class AppApplication extends Application {
 //        Debug.startMethodTracing(traceFile, 30 * 1024 * 1024);
         Ami.init(this);
         Ami.setDrawerId(R.raw.drawer);
-        Ami.setLifecycleLevel(Ami.LIFECYCLE_LEVEL_CREATE);
+        Ami.setLifecycleLevel(Ami.LIFECYCLE_LEVEL_NONE);
 
 //        Debug.stopMethodTracing();
     }
