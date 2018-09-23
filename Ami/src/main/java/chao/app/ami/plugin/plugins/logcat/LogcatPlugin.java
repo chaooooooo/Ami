@@ -58,10 +58,10 @@ public class LogcatPlugin extends AmiPlugin {
         return logcatSettings;
     }
 
-    public void notifyDataSetChanged(ArrayList<LogcatLine> logCaches, int pos, int length) {
+    public void notifyDataSetChanged(ArrayList<LogcatLine> logCaches) {
         LogcatFragment logcatFragment = getFragment();
         if (logcatFragment != null) {
-            logcatFragment.notifyDataSetChanged(logCaches, pos, length);
+            logcatFragment.notifyDataSetChanged(logCaches);
         }
     }
 

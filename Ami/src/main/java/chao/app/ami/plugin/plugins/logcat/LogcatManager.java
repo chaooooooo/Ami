@@ -36,6 +36,10 @@ public class LogcatManager {
 
     private String pid;
 
+    private boolean searchMode = false;
+
+    private SearchParam searchParam;
+
 
     private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
 
@@ -56,7 +60,11 @@ public class LogcatManager {
                     logCaches.addAll(0, pendingLogs);
                 }
                 pendingLogs.clear();
-                logcatPlugin.notifyDataSetChanged(logCaches, 0, count);
+                if (!searchMode) {
+                    logcatPlugin.notifyDataSetChanged(logCaches);
+                    return true;
+                }
+                logcatPlugin.notifyDataSetChanged(filter());
                 return true;
             } else if (msg.what == HANDLER_WHAT_HEART_BREAK) {
                 Ami.log("heart break test " + Math.random());
@@ -65,6 +73,33 @@ public class LogcatManager {
             return false;
         }
     });
+
+    private ArrayList<LogcatLine> filter() {
+        ArrayList<LogcatLine> logs = new ArrayList<>();
+        for(LogcatLine line: logCaches) {
+            LogLevel paramLv = searchParam.getLevel();
+            if (paramLv != null && !paramLv.equals(line.getLevel())) {
+                continue;
+            }
+            String tid = searchParam.getTid();
+            if (tid != null && !tid.equals(line.getTid())) {
+                continue;
+            }
+            String tag = searchParam.getTag();
+            if (tag != null && !tag.equals(line.getTag())) {
+                continue;
+            }
+            logs.add(line);
+        }
+        return logs;
+    }
+
+    public void notifyRefreshUI(int extra) {
+        cancelRefreshUI();
+        Message message = mHandler.obtainMessage(HANDLER_WHAT_REFRESH);
+        message.arg1 = extra;
+        mHandler.sendMessageDelayed(message, 500);
+    }
 
     public void notifyRefreshUI() {
         cancelRefreshUI();
@@ -86,7 +121,7 @@ public class LogcatManager {
     }
 
     public void cancelNotifyHeartBreak() {
-        mHandler.removeMessages(HEART_BREAK_INTERVAL);
+        mHandler.removeMessages(HANDLER_WHAT_HEART_BREAK);
     }
 
     public LogcatManager(LogcatPlugin logcatPlugin, LogcatSettings logcatSettings) {
@@ -154,5 +189,17 @@ public class LogcatManager {
         logCaches.clear();
         pendingLogs.clear();
         logcatPlugin.notifyDataSetCleared();
+    }
+
+    public void startSearch(SearchParam searchParam) {
+        searchMode = true;
+        this.searchParam = searchParam;
+        notifyRefreshUI();
+    }
+
+    public void endSearch() {
+        searchMode = false;
+        searchParam = null;
+        notifyRefreshUI(-100);
     }
 }

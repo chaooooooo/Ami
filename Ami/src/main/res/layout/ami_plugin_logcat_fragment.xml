@@ -60,6 +60,19 @@
                     android:layout_marginRight="10dp"
                     android:layout_width="24dp"
                     android:layout_height="24dp" />
+
+                <TextView
+                    android:id="@+id/ami_plugin_logcat_settings_search_title"
+                    android:textSize="12sp"
+                    android:visibility="invisible"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@android:color/primary_text_light"
+                    android:drawableRight="@drawable/ami_ic_logcat_filter_close"
+                    android:drawablePadding="2dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_logcat_filter"
+                    android:drawableEnd="@drawable/ami_ic_logcat_filter_close" />
             </LinearLayout>
         </chao.app.ami.plugin.AmiPluginSettingsPane>
 

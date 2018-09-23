@@ -8,18 +8,27 @@ import android.content.res.Resources;
 
 import android.os.Build;
 import android.text.TextUtils;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
 import chao.app.ami.Ami;
 import chao.app.ami.Constants;
+import java.util.HashMap;
 
 /**
  * @author chao.qin
  * @since 2017/7/26
  */
 
-public class Util implements Constants{
+public class Util implements Constants {
+
+    private static final int BUFFER_SIZE = 1000;
 
     public static boolean isHostAppDebugMode(Application app) {
         String packageName = app.getPackageName();
@@ -57,7 +66,7 @@ public class Util implements Constants{
         }
         int resId = (int) obj;
         int packageId = (resId & 0x7f000000) >> 24;
-        int resType   = (resId & ~0x7f000000 & 0x00ff0000) >> 16;
+        int resType = (resId & ~0x7f000000 & 0x00ff0000) >> 16;
         int id = resId & 0x0000ffff;
 
         if (resType == 0 || id == 0) {
@@ -79,9 +88,9 @@ public class Util implements Constants{
         }
 
         return resName +
-                "(" +
-                resId +
-                ")";
+            "(" +
+            resId +
+            ")";
     }
 
     /**
@@ -122,4 +131,47 @@ public class Util implements Constants{
         }
         return null;
     }
+
+    private static HashMap<String, String> nameCache = new HashMap<>();
+
+    public static String getThreadName(String pid) {
+        String name = nameCache.get(pid);
+        if (name != null) {
+            return name;
+        }
+        File statFile = new File("/proc/" + pid + "/stat");
+        if (!statFile.exists()) {
+            return String.valueOf(pid);
+        }
+        try {
+            BufferedReader pidReader = new BufferedReader(new InputStreamReader(
+                new FileInputStream(statFile)), BUFFER_SIZE);
+
+            String line = pidReader.readLine();
+            if (line != null) {
+                // 找到第一个'('和最后一个')'
+                int firstQianKuoHao = 0;
+                int lastHouKuoHao = 0;
+                for (int k = 0; k < line.length(); k++) {
+                    if (line.charAt(k) == '(' && firstQianKuoHao == 0) {
+                        firstQianKuoHao = k;
+                    }
+
+                    if (line.charAt(k) == ')' && k > lastHouKuoHao) {
+                        lastHouKuoHao = k;
+                    }
+                }
+                name = line.substring(firstQianKuoHao + 1,lastHouKuoHao);
+                nameCache.put(pid, name);
+                return name;
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return String.valueOf(pid);
+    }
+
 }
