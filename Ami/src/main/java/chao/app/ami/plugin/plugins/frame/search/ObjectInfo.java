@@ -1,4 +1,4 @@
-package chao.app.ami.frames.search;
+package chao.app.ami.plugin.plugins.frame.search;
 
 
 import android.text.SpannableString;

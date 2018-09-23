@@ -1,9 +1,9 @@
-package chao.app.ami.frames.items;
+package chao.app.ami.plugin.plugins.frame.items;
 
 import android.view.View;
 import android.view.ViewGroup;
 
-import chao.app.ami.frames.IFrame;
+import chao.app.ami.plugin.plugins.frame.IFrame;
 
 /**
  * @author chao.qin

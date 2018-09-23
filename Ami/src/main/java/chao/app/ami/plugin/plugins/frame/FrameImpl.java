@@ -1,4 +1,4 @@
-package chao.app.ami.frames;
+package chao.app.ami.plugin.plugins.frame;
 
 public abstract class FrameImpl implements IFrame {
 

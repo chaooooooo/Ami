@@ -1,24 +1,23 @@
 package chao.app.ami.plugin.plugins.frame;
 
-import android.support.v4.app.Fragment;
 import chao.app.ami.base.AmiContentView;
+import chao.app.ami.plugin.AmiGeneralComponent;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiSettings;
-import chao.app.ami.plugin.AmiGeneralComponent;
 
 /**
  * @author qinchao
  * @since 2018/9/4
  */
-public class FramePlugin extends AmiPlugin {
+public class FramePlugin extends AmiPlugin<FramePluginFragment> {
 
 
     public FramePlugin() {
     }
 
     @Override
-    public Fragment createFragment() {
-        return new FrameFragment();
+    public FramePluginFragment createFragment() {
+        return new FramePluginFragment();
     }
 
     @Override
@@ -28,7 +27,7 @@ public class FramePlugin extends AmiPlugin {
 
     @Override
     public CharSequence getTitle() {
-        return "frame";
+        return "对象";
     }
 
     @Override
@@ -44,5 +43,11 @@ public class FramePlugin extends AmiPlugin {
     @Override
     public AmiSettings getSettings() {
         return null;
+    }
+
+    public void notifyFrameChanged() {
+        if (mFragment != null) {
+            mFragment.notifyFrameChanged();
+        }
     }
 }

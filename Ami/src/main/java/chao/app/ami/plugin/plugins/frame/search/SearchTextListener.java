@@ -1,4 +1,4 @@
-package chao.app.ami.frames.search;
+package chao.app.ami.plugin.plugins.frame.search;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -10,7 +10,7 @@ import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
-import chao.app.ami.frames.Constants;
+import chao.app.ami.plugin.plugins.frame.Constants;
 
 
 /**
@@ -40,6 +40,8 @@ public class SearchTextListener implements TextWatcher, TextView.OnEditorActionL
 
         private static final int WHAT_KEYWORD_CHANGED = 1;
 
+        private static final int WHAT_KEYWORD_CLEAR = 2;
+
         private TextHandler(Looper looper) {
             super(looper);
         }
@@ -60,6 +62,11 @@ public class SearchTextListener implements TextWatcher, TextView.OnEditorActionL
             sendMessageDelayed(message, deltaTime);
         }
 
+        private void clearKeyword() {
+            Message message = obtainMessage(WHAT_KEYWORD_CLEAR);
+            sendMessage(message);
+        }
+
         private void cancelKeywordChanged(){
             removeMessages(WHAT_KEYWORD_CHANGED);
         }
@@ -72,6 +79,8 @@ public class SearchTextListener implements TextWatcher, TextView.OnEditorActionL
                     String keyword = String.valueOf(msg.obj);
                     mSearchManager.searchKeyword(keyword);
                     break;
+                case WHAT_KEYWORD_CLEAR:
+                    mSearchManager.cancel();
                 default:
                     break;
             }
@@ -101,6 +110,10 @@ public class SearchTextListener implements TextWatcher, TextView.OnEditorActionL
 
     private void searchText(CharSequence s) {
         String keyword = String.valueOf(s);
+        if (keyword.length() == 0) {
+            mTextHandler.clearKeyword();
+            return;
+        }
         if (keyword.length() <= Constants.MIN_SEARCH_LENGTH) {
             return;
         }

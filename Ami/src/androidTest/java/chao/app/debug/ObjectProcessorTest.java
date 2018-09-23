@@ -7,8 +7,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import chao.app.ami.Ami;
-import chao.app.ami.frames.search.ObjectInfo;
-import chao.app.ami.frames.search.ObjectProcessor;
+import chao.app.ami.plugin.plugins.frame.search.ObjectInfo;
+import chao.app.ami.plugin.plugins.frame.search.ObjectProcessor;
 
 /**
  * @author chao.qin

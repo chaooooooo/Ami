@@ -1,11 +1,10 @@
-package chao.app.ami.frames;
+package chao.app.ami.plugin.plugins.frame;
 
 import android.app.Activity;
-
 import chao.app.ami.ActivitiesLifeCycleAdapter;
 import chao.app.ami.Ami;
 import chao.app.ami.AmiException;
-import chao.app.ami.launcher.drawer.DrawerManager;
+import chao.app.ami.plugin.AmiPluginManager;
 
 /**
  * @author chao.qin
@@ -50,7 +49,8 @@ public class FrameManager extends ActivitiesLifeCycleAdapter {
     }
 
     public void notifyFrameChanged() {
-        DrawerManager.get().notifyFrameChanged();
+        FramePlugin plugin = (FramePlugin) AmiPluginManager.getPlugin(FramePlugin.class);
+        plugin.notifyFrameChanged();
     }
 
     public void addFrameChangeListener(TopFrameChangedListener listener) {

@@ -1,4 +1,4 @@
-package chao.app.ami.frames.search;
+package chao.app.ami.plugin.plugins.frame.search;
 
 import android.graphics.Color;
 import android.text.SpannableString;
@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import chao.app.ami.frames.Constants;
+import chao.app.ami.plugin.plugins.frame.Constants;
 
 /**
  * @author chao.qin

@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -21,7 +19,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,14 +26,6 @@ import chao.app.ami.ActivitiesLifeCycleAdapter;
 import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.app.ami.base.AmiContentView;
-import chao.app.ami.frames.FrameAdapter;
-import chao.app.ami.frames.FrameImpl;
-import chao.app.ami.frames.FrameManager;
-import chao.app.ami.frames.IFrame;
-import chao.app.ami.frames.SearchFrame;
-import chao.app.ami.frames.search.ObjectInfo;
-import chao.app.ami.frames.search.SearchManager;
-import chao.app.ami.frames.search.SearchTextListener;
 import chao.app.ami.hooks.FragmentLifecycle;
 import chao.app.ami.hooks.WindowCallbackHook;
 import chao.app.ami.launcher.drawer.node.ComponentNode;
@@ -55,24 +44,18 @@ import chao.app.debug.R;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import net.lucode.hackware.magicindicator.MagicIndicator;
 
 
-public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, FrameManager.TopFrameChangedListener, ViewGroup.OnHierarchyChangeListener, SearchManager.SearchListener {
+public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, ViewGroup.OnHierarchyChangeListener {
 
     @SuppressLint("StaticFieldLeak")
     private static DrawerManager sDrawerManager;
 
     private RecyclerView mDrawerListView;
     private DrawerAdapter mDrawerAdapter;
-
-    private RecyclerView mFrameListView;
-    private FrameAdapter mFrameAdapter;
-    private ImageView mFrameNavigationBackView;
-    private TextView mFrameNavigationPathView;
 
     private DrawerNode mDrawerRootNode;
 
@@ -87,25 +70,14 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     private ViewGroup mRealView;
     private ViewGroup mDecorView;
 
-    private AutoCompleteTextView mSearchBar;
-
-    private SearchTextListener mSearchTextListener;
-
-    private SearchManager mSearchManager;
-
 
     private Context mContext = Ami.getApp();
-
-    private View mSearchProgress;
 
     private Activity mActivity;
 
     private AmiPluginManager mPluginManager;
 
     private DrawerManager() {
-        mSearchManager = SearchManager.getInstance();
-        mSearchManager.setSearchListener(this);
-        mSearchTextListener = new SearchTextListener(mSearchManager);
     }
 
     public void setupView(Activity activity) {
@@ -164,31 +136,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mDrawerListView = (RecyclerView) componentContent.findViewById(R.id.ui_list);
             mDrawerListView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
             mDrawerListView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.VERTICAL));
-
-
-            FrameManager frameManager = FrameManager.getInstance();
-            frameManager.addFrameChangeListener(this);
-            View frameContent = findViewById(R.id.drawer_frame_content);
-            mFrameListView = (RecyclerView) frameContent.findViewById(R.id.frame_list);
-            mFrameListView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
-            mFrameListView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.VERTICAL));
-            mFrameAdapter = new FrameAdapter(mFrameListView);
-            mFrameListView.setAdapter(mFrameAdapter);
-            mFrameNavigationBackView = (ImageView) frameContent.findViewById(R.id.navigation_back);
-            mFrameNavigationBackView.setOnClickListener(this);
-            mFrameNavigationPathView = (TextView) frameContent.findViewById(R.id.navigation_title);
-
-            mSearchBar = (AutoCompleteTextView) frameContent.findViewById(R.id.search_bar);
-            //处理搜索
-            mSearchBar.addTextChangedListener(mSearchTextListener);
-
-            mDrawerLayout.addDrawerListener(mFrameAdapter);
-
-            mSearchBar.setOnEditorActionListener(mSearchTextListener);
-
-//            mSearchBar.setAdapter();//todo auto compelete
-
-            mSearchProgress = mSearchBar.findViewById(R.id.search_progressbar);
 
 //            ViewInterceptor interceptor = new ViewInterceptor();
 //            mInterceptorFrame.setInterceptor(interceptor);
@@ -258,8 +205,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     public void onClick(View v) {
         if (v == mNavigationBackView) {
             mDrawerAdapter.navigationUp();
-        } else if (v == mFrameNavigationBackView) {
-            mFrameAdapter.navigationUp();
         }
     }
 
@@ -277,12 +222,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             }
 
             if (mDrawerLayout.isDrawerOpen(GravityCompat.END)) {
-                if (mSearchManager != null) {
-                    mSearchManager.cancel();
-                }
-                hideSearchProgress();
-
-                if (!mFrameAdapter.onBackPressed()) {
+                if (!mPluginManager.dispatchKeyEvent(keyEvent)) {
                     mDrawerLayout.closeDrawer(GravityCompat.END);
                 }
                 return true;
@@ -291,21 +231,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         return false;
     }
 
-    public void notifyFrameChanged() {
-        if (mFrameAdapter != null) {
-            mFrameAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onTopFrameChanged(IFrame frame, String path) {
-        mFrameNavigationPathView.setText(path);
-        Object source = frame.getSource();
-        mSearchBar.setEnabled(source != null);
-        if (source != null) {
-            mSearchManager.setSearchTarget(frame.getSource());
-        }
-    }
 
     @Override
     public void onChildViewAdded(View parent, View child) {
@@ -315,57 +240,6 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     @Override
     public void onChildViewRemoved(View parent, View child) {
         //do nothing
-    }
-
-    @Override
-    public void onSearchStarted(String keyword) {
-        showSearchProgress();
-    }
-
-    @Override
-    public void onSearchChanged(String keyword, @Nullable ObjectInfo newObjectInfo, @NonNull ArrayList<ObjectInfo> searchRst) {
-        doSearchResult(keyword, searchRst);
-    }
-
-    @Override
-    public void onSearchFinished(String keyword, @NonNull ArrayList<ObjectInfo> searchRst) {
-        doSearchResult(keyword, searchRst);
-        hideSearchProgress();
-    }
-
-    @Override
-    public void onSearchCanceled() {
-        hideSearchProgress();
-    }
-
-    public void showSearchProgress() {
-        if (mSearchProgress == null) {
-            mSearchProgress = findViewById(R.id.search_progressbar);
-        }
-        mSearchProgress.setVisibility(View.VISIBLE);
-    }
-
-    public void hideSearchProgress() {
-        if (mSearchProgress == null) {
-            mSearchProgress = findViewById(R.id.search_progressbar);
-        }
-        mSearchProgress.setVisibility(View.GONE);
-    }
-
-    private void doSearchResult(String keyword, ArrayList<ObjectInfo> searchRst) {
-        FrameManager frameManager = FrameManager.getInstance();
-        FrameImpl frame = frameManager.peek();
-        SearchFrame searchFrame = null;
-        if (frame instanceof SearchFrame) {
-            searchFrame = (SearchFrame) frame;
-        } else {
-            searchFrame = new SearchFrame(mSearchManager.getSearchTarget());
-            frameManager.pushInto(searchFrame);
-        }
-        searchFrame.setSearchRst(searchRst);
-        searchFrame.setSearchText(keyword);
-        onTopFrameChanged(searchFrame, frameManager.getPath());
-        notifyFrameChanged();
     }
 
     private class DrawerAdapter extends RecyclerView.Adapter {

@@ -1,4 +1,4 @@
-package chao.app.ami.frames;
+package chao.app.ami.plugin.plugins.frame;
 
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -6,7 +6,7 @@ import android.text.style.ForegroundColorSpan;
 
 import java.util.ArrayList;
 
-import chao.app.ami.frames.search.ObjectInfo;
+import chao.app.ami.plugin.plugins.frame.search.ObjectInfo;
 
 /**
  * @author chao.qin

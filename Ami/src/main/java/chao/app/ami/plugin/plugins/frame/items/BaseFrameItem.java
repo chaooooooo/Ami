@@ -1,4 +1,4 @@
-package chao.app.ami.frames.items;
+package chao.app.ami.plugin.plugins.frame.items;
 
 import android.content.Context;
 import android.view.LayoutInflater;

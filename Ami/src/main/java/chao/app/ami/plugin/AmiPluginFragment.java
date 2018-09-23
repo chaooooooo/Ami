@@ -1,6 +1,7 @@
 package chao.app.ami.plugin;
 
 import android.support.v4.content.res.ResourcesCompat;
+import android.view.KeyEvent;
 import android.view.View;
 import chao.app.ami.base.AMISupportFragment;
 import chao.app.debug.R;
@@ -42,5 +43,9 @@ public abstract class AmiPluginFragment extends AMISupportFragment {
     @SuppressWarnings("unchecked")
     protected <T> T getManager() {
         return (T) getPlugin().getManager();
+    }
+
+    public boolean onKeyEvent(KeyEvent keyEvent) {
+        return false;
     }
 }

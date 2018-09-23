@@ -1,4 +1,4 @@
-package chao.app.ami.frames;
+package chao.app.ami.plugin.plugins.frame;
 
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
@@ -8,11 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import chao.app.ami.Ami;
-import chao.app.ami.frames.items.CategoryFrameItem;
-import chao.app.ami.frames.items.FrameItem;
-import chao.app.ami.frames.items.ObjectFrameItem;
-import chao.app.ami.frames.items.SearchFrameItem;
-import chao.app.ami.frames.search.SearchManager;
+import chao.app.ami.plugin.plugins.frame.items.CategoryFrameItem;
+import chao.app.ami.plugin.plugins.frame.items.FrameItem;
+import chao.app.ami.plugin.plugins.frame.items.ObjectFrameItem;
+import chao.app.ami.plugin.plugins.frame.items.SearchFrameItem;
+import chao.app.ami.plugin.plugins.frame.search.SearchManager;
 
 /**
  * @author chao.qin

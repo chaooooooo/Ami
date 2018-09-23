@@ -1,4 +1,4 @@
-package chao.app.ami.frames;
+package chao.app.ami.plugin.plugins.frame;
 
 import java.lang.reflect.Array;
 import java.util.Map;

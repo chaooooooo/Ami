@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import chao.app.ami.Ami;
@@ -29,7 +30,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorT
  * @author qinchao
  * @since 2018/9/4
  */
-public class AmiPluginManager {
+public class AmiPluginManager implements ViewPager.OnPageChangeListener {
 
     private MagicIndicator mMagicIndicator;
 
@@ -37,7 +38,7 @@ public class AmiPluginManager {
 
     private ArrayList<AmiPlugin> mPlugins = new ArrayList<>();
 
-    private HashMap<Class, AmiPlugin> mPluginMap = new HashMap<>();
+    private static HashMap<Class, AmiPlugin> mPluginMap = new HashMap<>();
 
     private PageAdapter mPageAdapter;
 
@@ -53,7 +54,9 @@ public class AmiPluginManager {
 
     private FragmentActivity mActivity;
 
-    ArrayList<AmiPlugin> mFragmentPlugins = new ArrayList<>();
+    private int curIndicator;
+
+    private ArrayList<AmiPlugin> mFragmentPlugins = new ArrayList<>();
 
 
     public static AmiPluginManager getInstance() {
@@ -107,7 +110,7 @@ public class AmiPluginManager {
         }
     }
 
-    public AmiPlugin getPlugin(Class plugin) {
+    public static AmiPlugin getPlugin(Class plugin) {
         return mPluginMap.get(plugin);
     }
 
@@ -154,6 +157,38 @@ public class AmiPluginManager {
             plugin.mFragment = fm.findFragmentByTag(mPageAdapter.makeFragmentName(position));
             position ++;
         }
+        mViewPager.addOnPageChangeListener(this);
+        mViewPager.setCurrentItem(curIndicator);
+    }
+
+    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
+        if (mActivity == null) {
+            return false;
+        }
+        int cur = mViewPager.getCurrentItem();
+        String tag = mPageAdapter.makeFragmentName(cur);
+        FragmentManager fm  = mActivity.getSupportFragmentManager();
+        Fragment f = fm.findFragmentByTag(tag);
+        if (f instanceof AmiPluginFragment) {
+            AmiPluginFragment pluginFragment = (AmiPluginFragment) f;
+            return pluginFragment.onKeyEvent(keyEvent);
+        }
+        return false;
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        curIndicator = position;
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 
 
@@ -176,6 +211,7 @@ public class AmiPluginManager {
                 @Override
                 public void onClick(View v) {
                     mViewPager.setCurrentItem(position);
+                    curIndicator = position;
                 }
             });
             return titleView;

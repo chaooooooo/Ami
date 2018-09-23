@@ -3,7 +3,7 @@ package chao.app.ami;
 import android.app.Application;
 import android.util.Log;
 import chao.app.ami.base.AmiHandlerThread;
-import chao.app.ami.frames.FrameManager;
+import chao.app.ami.plugin.plugins.frame.FrameManager;
 import chao.app.ami.launcher.drawer.DrawerManager;
 import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;

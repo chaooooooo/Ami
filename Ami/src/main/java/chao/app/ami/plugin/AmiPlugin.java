@@ -12,11 +12,11 @@ import chao.app.ami.base.AmiContentView;
  * @author qinchao
  * @since 2018/9/4
  */
-public abstract class AmiPlugin implements IPlugin {
+public abstract class AmiPlugin<PluginFragment extends Fragment> implements IPlugin {
 
     protected Context mAppContext;
 
-    protected Fragment mFragment;
+    protected PluginFragment mFragment;
 
     private Activity mActivity;
 
@@ -34,12 +34,12 @@ public abstract class AmiPlugin implements IPlugin {
 
 
     @Override
-    public Fragment getFragment() {
+    public PluginFragment getFragment() {
         return mFragment;
     }
 
     @Override
-    public Fragment newFragment() {
+    public PluginFragment newFragment() {
         mFragment = createFragment();
         return mFragment;
     }
@@ -66,7 +66,7 @@ public abstract class AmiPlugin implements IPlugin {
         return mActivity;
     }
 
-    protected abstract Fragment createFragment();
+    protected abstract PluginFragment createFragment();
 
     public abstract AmiGeneralComponent getComponent();
 
