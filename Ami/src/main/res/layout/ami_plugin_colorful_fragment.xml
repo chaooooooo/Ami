@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:orientation="vertical">
+
+    <chao.app.ami.plugin.plugins.colorful.ColorfulSeek
+        android:id="@+id/ami_plugin_colorful_hue"
+        app:title="色相(H)"
+        app:max="255"
+        app:min="0"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <chao.app.ami.plugin.plugins.colorful.ColorfulSeek
+        android:id="@+id/ami_plugin_colorful_situation"
+        app:title="饱和度(S)"
+        app:max="1"
+        app:min="0"
+        app:precision="2"
+        app:value="0.5"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <chao.app.ami.plugin.plugins.colorful.ColorfulSeek
+        android:id="@+id/ami_plugin_colorful_lightness"
+        app:title="明度(L)"
+        app:max="1"
+        app:min="0"
+        app:precision="2"
+        app:value="0.5"
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/ami_plugin_colorful_indicator"
+        android:textSize="14sp"
+        android:textColor="@android:color/primary_text_light"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="32dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+</LinearLayout>
