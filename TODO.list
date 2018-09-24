@@ -73,7 +73,7 @@ view元素可拖动  #done
 启动Activity增加权限属性   #done since 2018-09-03
 
 
-右滑菜单添加tab:
+右滑菜单添加tab:  #done
 frame:
 #2018-09-07
 frame修改成员变量
@@ -82,7 +82,7 @@ frame修改成员变量
 logcat：
     1. 日志显示  #done since 2018-09-05
     2. 日志缩放   #done since 2018-09-07
-    3. 日志过滤
+    3. 日志过滤     #done since 2018-09-23
           按level
           按进程   #abandon
           按线程   #abandon

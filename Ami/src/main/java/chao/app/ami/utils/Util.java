@@ -5,9 +5,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
-
 import android.os.Build;
 import android.text.TextUtils;
+import chao.app.ami.Ami;
+import chao.app.ami.Constants;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,9 +17,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.Collection;
-
-import chao.app.ami.Ami;
-import chao.app.ami.Constants;
 import java.util.HashMap;
 
 /**
@@ -133,6 +131,8 @@ public class Util implements Constants {
     }
 
     private static HashMap<String, String> nameCache = new HashMap<>();
+
+    private static String mainThreadName;
 
     public static String getThreadName(String pid) {
         String name = nameCache.get(pid);

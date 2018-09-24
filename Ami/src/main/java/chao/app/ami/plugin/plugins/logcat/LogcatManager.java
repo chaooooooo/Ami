@@ -141,6 +141,8 @@ public class LogcatManager {
                 @Override
                 public void onCommandResult(int commandCode, int exitCode) {
                     LogHelper.d(TAG, "std.onCommandResult: " + commandCode  + ", " + exitCode);
+                    //todo for testing
+                    throw new RuntimeException("logcat stopped!!!");
                 }
 
                 @Override
@@ -152,6 +154,8 @@ public class LogcatManager {
                 @Override
                 public void onCommandResult(int commandCode, int exitCode) {
                     LogHelper.d(TAG, "err.onCommandResult: " + commandCode  + ", " + exitCode);
+                    //todo for testing
+                    throw new RuntimeException("logcat stopped!!!");
                 }
 
                 @Override

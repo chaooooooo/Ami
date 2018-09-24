@@ -76,7 +76,7 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
         commonNavigator.setAdapter(mTabAdapter);
         mMagicIndicator.setNavigator(commonNavigator);
 
-        for (AmiPlugin plugin: mPlugins) {
+        for (AmiPlugin plugin : mPlugins) {
             plugin.onBindView(contentView);
         }
     }
@@ -89,8 +89,28 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
         addPlugin(mGeneralPlugin);
     }
 
+
+    @SuppressWarnings("unused")
+    public void addPlugin(AmiPlugin plugin, int index) {
+        mPluginMap.put(plugin.getClass(), plugin);
+        mPlugins.add(index, plugin);
+        plugin.onCreate();
+        if (contentView != null) {
+            plugin.onBindView(contentView);
+        }
+        if (plugin.newFragment() != null) {
+            mFragmentPlugins.add(plugin);
+        }
+        if (mTabAdapter != null) {
+            mTabAdapter.notifyDataSetChanged();
+        }
+        if (mPageAdapter != null) {
+            mPageAdapter.notifyDataSetChanged();
+        }
+    }
+
     public void addPlugin(AmiPlugin... plugins) {
-        for (AmiPlugin plugin: plugins) {
+        for (AmiPlugin plugin : plugins) {
             mPlugins.add(plugin);
             mPluginMap.put(plugin.getClass(), plugin);
             plugin.onCreate();
@@ -99,7 +119,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
             }
             if (plugin.newFragment() != null) {
                 mFragmentPlugins.add(plugin);
-                plugin.setFragmentIndex(mFragmentPlugins.size());
             }
         }
         if (mTabAdapter != null) {
@@ -123,13 +142,14 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
      * 1. FragmentActivity兼容性更强
      * 2. 只有FragmentActivity有Lifecycle回调
      * 3. android.support.v4.view.ViewPager只支持android.support.v4.Fragment
+     *
      * @param activity fragmentActivity
      */
     public void setupPluginTabs(Activity activity, TextView tipView) {
         if (mActivity != null) {
             FragmentManager oldFm = mActivity.getSupportFragmentManager();
             FragmentTransaction transaction = oldFm.beginTransaction();
-            for (AmiPlugin plugin: mFragmentPlugins) {
+            for (AmiPlugin plugin : mFragmentPlugins) {
                 Fragment fragment = plugin.getFragment();
                 if (fragment == null) {
                     continue;
@@ -152,10 +172,10 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
         ViewPagerHelper.bind(mMagicIndicator, mViewPager);
 
         int position = 0;
-        for (AmiPlugin plugin: mPlugins) {
+        for (AmiPlugin plugin : mPlugins) {
             plugin.onActivityChanged(mActivity);
             plugin.mFragment = fm.findFragmentByTag(mPageAdapter.makeFragmentName(position));
-            position ++;
+            position++;
         }
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setCurrentItem(curIndicator);
@@ -167,7 +187,7 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
         }
         int cur = mViewPager.getCurrentItem();
         String tag = mPageAdapter.makeFragmentName(cur);
-        FragmentManager fm  = mActivity.getSupportFragmentManager();
+        FragmentManager fm = mActivity.getSupportFragmentManager();
         Fragment f = fm.findFragmentByTag(tag);
         if (f instanceof AmiPluginFragment) {
             AmiPluginFragment pluginFragment = (AmiPluginFragment) f;
@@ -253,7 +273,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
             return mFragmentPlugins.size();
         }
     }
-
 
 
     public GeneralPlugin getGeneralPlugin() {

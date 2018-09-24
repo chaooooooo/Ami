@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.os.Process;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -178,7 +179,7 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
 
             String timestamp = logcat.getDate() + "-" + logcat.getTime();
             String process = getProcessName(getContext(), Integer.valueOf(logcat.getPid())) + "(" + logcat.getPid() + ")";
-            String thread = Util.getThreadName(logcat.getTid()) + "(" + logcat.getTid() + ")";
+            String thread = threadName(logcat.getTid()) + "(" + logcat.getTid() + ")";
             timestampView.setText(timestamp);
             timestampView.setTextColor(textColor);
             processView.setText(process);
@@ -300,8 +301,16 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
         return R.layout.ami_plugin_logcat_fragment;
     }
 
+    private String mainThreadName;
 
     public String threadName(String pid) {
-        return Util.getThreadName(pid);
+        if (mainThreadName == null) {
+            mainThreadName = Util.getThreadName(String.valueOf(Process.myPid()));
+        }
+        String name = Util.getThreadName(pid);
+        if (mainThreadName.equals(name)) {
+            return "main";
+        }
+        return name;
     }
 }

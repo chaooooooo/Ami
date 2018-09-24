@@ -22,8 +22,6 @@ public abstract class AmiPlugin<PluginFragment extends Fragment> implements IPlu
 
     private AmiContentView contentView;
 
-    private int mFragmentIndex;
-
     public AmiPlugin() {
         mAppContext = Ami.getApp();
     }
@@ -74,8 +72,5 @@ public abstract class AmiPlugin<PluginFragment extends Fragment> implements IPlu
         mFragment = null;
     }
 
-    public void setFragmentIndex(int mIndex) {
-        this.mFragmentIndex = mIndex;
-    }
 }
 
