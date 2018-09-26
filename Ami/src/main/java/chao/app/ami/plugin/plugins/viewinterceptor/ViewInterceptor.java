@@ -49,7 +49,7 @@ public class ViewInterceptor {
         listener.setInterceptorRecord(record);
 
         View.OnTouchListener srcTouchListener = record.getTouchListener();
-        View.OnTouchListener hookTouchListener = Interceptor.newInstance(srcTouchListener, new Class[]{View.OnTouchListener.class, IViewInterceptor.class}, listener, false);
+        View.OnTouchListener hookTouchListener = Interceptor.newInstance(srcTouchListener, new Class[]{View.OnTouchListener.class, IViewInterceptor.class}, listener, true);
         child.setOnTouchListener(hookTouchListener);
 
 

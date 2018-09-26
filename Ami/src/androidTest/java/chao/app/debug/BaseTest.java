@@ -6,5 +6,7 @@ package chao.app.debug;
  */
 public class BaseTest {
 
+    public BaseTest() {
+    }
 
 }

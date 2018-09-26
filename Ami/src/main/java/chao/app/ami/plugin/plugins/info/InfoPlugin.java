@@ -30,7 +30,7 @@ public class InfoPlugin extends AmiPlugin {
 
     @Override
     public CharSequence getTitle() {
-        return "info";
+        return "Info";
     }
 
     @Override

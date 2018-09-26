@@ -1,11 +1,8 @@
 package chao.app.debugtools;
 
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import chao.app.ami.Ami;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMIActivity;
-import chao.app.ami.command.beans.Screen;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,10 +53,11 @@ public class MainActivity extends AMIActivity {
 //        UI.show(this, TestPermissionFragment.class);
 
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);//display = getWindowManager().getDefaultDisplay();display.getMetrics(dm)（把屏幕尺寸信息赋值给DisplayMetrics dm）;
-        Screen screen = new Screen(dm);
-        Ami.log(screen);
+//        DisplayMetrics dm = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(dm);//display = getWindowManager().getDefaultDisplay();display.getMetrics(dm)（把屏幕尺寸信息赋值给DisplayMetrics dm）;
+//        Screen screen = new Screen(dm);
+//        Ami.log(screen);
+
 
     }
 

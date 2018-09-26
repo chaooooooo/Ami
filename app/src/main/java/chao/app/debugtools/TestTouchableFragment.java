@@ -20,6 +20,8 @@ public class TestTouchableFragment extends AMISupportFragment implements View.On
         findView(R.id.view).setOnTouchListener(this);
         findView(R.id.view).setOnClickListener(this);
         findView(R.id.view).setOnLongClickListener(this);
+
+        findView(R.id.btn).setOnClickListener(this);
     }
 
     @Override

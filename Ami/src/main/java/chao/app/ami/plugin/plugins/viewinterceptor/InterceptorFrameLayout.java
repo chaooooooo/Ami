@@ -18,8 +18,10 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import chao.app.ami.Constants;
 import chao.app.ami.utils.DeviceUtil;
+import chao.app.ami.utils.ReflectUtil;
 import chao.app.debug.R;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 
 /**
  * @author chao.qin
@@ -127,6 +129,14 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
             return false;
         }
         int action = event.getAction();
+        boolean result = false;
+        if (mLastRecord != null && mLastRecord.get() == record) {
+            OnTouchListener touchListener = record.getSourceTouchListener();
+            if (touchListener != null) {
+                result = touchListener.onTouch(record.view, event);
+            }
+            return result;
+        }
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (isActionDialogShowed()) {
@@ -144,19 +154,20 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
                 }
                 getBoundaryOnLayout(touchedRecord.view, mFocusRect);
                 invalidate();
-                break;
+                return true;
             case MotionEvent.ACTION_UP:
-                if (mLastRecord != null && mLastRecord.get() == record) {
-                    mSecondClickable = true;
-                }
-                if (mSecondClickable) {
-                    //如果相关的view连续第二次被点击， 则触发自己的click事件。
-                    //解决onItemClick等不响应的问题
-                    performSecondTouchEvent(record.getParentRecord(), event);
-                    mSecondClickable = false;
-                }
-                mLastRecord = new WeakReference<>(record);
+//                if (mLastRecord != null && mLastRecord.get() == record) {
+//                    mSecondClickable = true;
+//                }
+//
+//                if (mSecondClickable) {
+//                    if (performSecondTouchEvent(record, event)) {
+//                        result = true;
+//                    }
+//                    mSecondClickable = false;
+//                }
             case MotionEvent.ACTION_CANCEL:
+                mLastRecord = new WeakReference<>(record);
                 break;
 
         }
@@ -164,28 +175,31 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
     }
 
     private boolean performSecondTouchEvent(InterceptorRecord record, MotionEvent event) {
-        boolean proceed = false;
+        boolean processed = false;
         if (record == null) {
             return false;
         }
 
         OnTouchListener touchListener = record.getSourceTouchListener();
         if (touchListener != null) {
-            touchListener.onTouch(record.view, event);
-            proceed = true;
+            processed = touchListener.onTouch(record.view, event);
         }
         OnClickListener clickListener = record.getSourceClickListener();
         if (clickListener != null) {
-            clickListener.onClick(record.view);
-            proceed = true;
+            Method setPressed = ReflectUtil.getMethod(View.class, "setPressed", boolean.class, float.class, float.class);
+            if (setPressed != null) {
+                //点击特效
+                ReflectUtil.callMethod(setPressed, record.view, true, event.getX(), event.getY());
+                //点击事件
+                record.view.performClick();
+                processed = true;
+            }
         }
+
         if (performSecondTouchEvent(record.getParentRecord(), event)) {
-            proceed = true;
+            processed = true;
         }
-        if (proceed) {
-            return true;
-        }
-        return false;
+        return processed;
     }
 
     @Override

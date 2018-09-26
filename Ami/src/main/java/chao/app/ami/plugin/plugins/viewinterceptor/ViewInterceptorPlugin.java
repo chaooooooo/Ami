@@ -50,7 +50,7 @@ public class ViewInterceptorPlugin extends AmiPlugin {
 
     @Override
     public CharSequence getTitle() {
-        return "View";
+        return "View Interceptor";
     }
 
     @Override
