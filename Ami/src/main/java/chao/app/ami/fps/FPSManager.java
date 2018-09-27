@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.view.Choreographer;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author qinchao
@@ -23,8 +25,6 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
     private int lastFps = 0;
 
     private OnFPSUpdateListener onFPSUpdateListener;
-
-    private ArrayList<Long> frameTimes = new ArrayList<>();
 
 
     public FPSManager(@NonNull OnFPSUpdateListener listener) {
@@ -70,6 +70,25 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
     private class FPSFrameCallback implements Choreographer.FrameCallback {
         @Override
         public void doFrame(long frameTimeNanos) {
+            executorService.execute(new CalcFrameTask(frameTimeNanos));
+            Choreographer.getInstance().postFrameCallback(this);
+        }
+    }
+
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    private ArrayList<Long> frameTimes = new ArrayList<>();
+
+    public class CalcFrameTask implements Runnable {
+
+        long frameTimeNanos;
+
+        public CalcFrameTask(long frameTimeNanos) {
+            this.frameTimeNanos = frameTimeNanos;
+        }
+
+        @Override
+        public void run() {
             int fps;
             while (frameTimes.size() > 0) {
                 long first = frameTimes.get(0);
@@ -86,7 +105,6 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
                 notifyFPSUpdate(fps);
                 lastFps = fps;
             }
-            Choreographer.getInstance().postFrameCallback(this);
         }
     }
 
