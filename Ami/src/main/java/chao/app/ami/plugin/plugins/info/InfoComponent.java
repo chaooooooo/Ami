@@ -19,6 +19,8 @@ public class InfoComponent extends AmiGeneralComponent implements CompoundButton
 
     private CheckBox appInfoCheckbox;
 
+    private CheckBox logEnabledCheckbox;
+
     private InfoManager manager;
 
     private InfoSettings settings;
@@ -36,12 +38,15 @@ public class InfoComponent extends AmiGeneralComponent implements CompoundButton
 
         fpsCheckbox = (CheckBox) layout.findViewById(R.id.ami_fps_settings);
         appInfoCheckbox = (CheckBox) layout.findViewById(R.id.ami_info_settings_app);
+        logEnabledCheckbox = (CheckBox) layout.findViewById(R.id.ami_info_settings_log);
 
         fpsCheckbox.setChecked(settings.isShowFPS());
         appInfoCheckbox.setChecked(settings.isShowAppInfo());
+        logEnabledCheckbox.setChecked(settings.logEnabled());
 
         fpsCheckbox.setOnCheckedChangeListener(this);
         appInfoCheckbox.setOnCheckedChangeListener(this);
+        logEnabledCheckbox.setOnCheckedChangeListener(this);
 
         return layout;
     }
@@ -54,6 +59,8 @@ public class InfoComponent extends AmiGeneralComponent implements CompoundButton
         } else if (buttonView == appInfoCheckbox) {
             settings.setShowAppInfo(isChecked);
             manager.updateVisible();
+        } else if (buttonView == logEnabledCheckbox) {
+            settings.setLogEnabled(isChecked);
         }
     }
 }

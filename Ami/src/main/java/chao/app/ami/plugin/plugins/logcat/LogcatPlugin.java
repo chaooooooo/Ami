@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiSettings;
-import chao.app.ami.plugin.AmiGeneralComponent;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +27,8 @@ public class LogcatPlugin extends AmiPlugin {
     }
 
     @Override
-    public AmiGeneralComponent getComponent() {
+    public LogcatComponent createComponent() {
+//        return new LogcatComponent(this);
         return null;
     }
 

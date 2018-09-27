@@ -21,7 +21,7 @@ public class FramePlugin extends AmiPlugin<FramePluginFragment> {
     }
 
     @Override
-    public AmiGeneralComponent getComponent() {
+    public AmiGeneralComponent createComponent() {
         return null;
     }
 

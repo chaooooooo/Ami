@@ -22,7 +22,7 @@ public class ViewInterceptorPlugin extends AmiPlugin {
     }
 
     @Override
-    public AmiGeneralComponent getComponent() {
+    public AmiGeneralComponent createComponent() {
         return new ViewInterceptorComponent(this);
     }
 

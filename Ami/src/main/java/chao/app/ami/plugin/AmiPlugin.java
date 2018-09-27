@@ -18,6 +18,8 @@ public abstract class AmiPlugin<PluginFragment extends Fragment> implements IPlu
 
     protected PluginFragment mFragment;
 
+    private AmiGeneralComponent mComponent;
+
     private Activity mActivity;
 
     private AmiContentView contentView;
@@ -64,9 +66,17 @@ public abstract class AmiPlugin<PluginFragment extends Fragment> implements IPlu
         return mActivity;
     }
 
+    @SuppressWarnings("unchecked")
+    public  <Component extends AmiGeneralComponent> Component getComponent() {
+        if (mComponent == null) {
+            mComponent = createComponent();
+        }
+        return (Component) mComponent;
+    }
+
     protected abstract PluginFragment createFragment();
 
-    public abstract AmiGeneralComponent getComponent();
+    public abstract AmiGeneralComponent createComponent();
 
     public void destroyFragment() {
         mFragment = null;

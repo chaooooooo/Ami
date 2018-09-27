@@ -17,7 +17,7 @@ public class ColorfulPlugin extends AmiPlugin {
     }
 
     @Override
-    public AmiGeneralComponent getComponent() {
+    public AmiGeneralComponent createComponent() {
         return null;
     }
 

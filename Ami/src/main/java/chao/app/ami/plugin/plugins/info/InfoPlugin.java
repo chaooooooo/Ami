@@ -24,7 +24,7 @@ public class InfoPlugin extends AmiPlugin {
     }
 
     @Override
-    public AmiGeneralComponent getComponent() {
+    public AmiGeneralComponent createComponent() {
         return new InfoComponent(this);
     }
 
