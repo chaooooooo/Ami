@@ -94,13 +94,6 @@ public class LogcatManager {
         return logs;
     }
 
-    public void notifyRefreshUI(int extra) {
-        cancelRefreshUI();
-        Message message = mHandler.obtainMessage(HANDLER_WHAT_REFRESH);
-        message.arg1 = extra;
-        mHandler.sendMessageDelayed(message, 500);
-    }
-
     public void notifyRefreshUI() {
         cancelRefreshUI();
         Message message = mHandler.obtainMessage(HANDLER_WHAT_REFRESH);
@@ -204,6 +197,6 @@ public class LogcatManager {
     public void endSearch() {
         searchMode = false;
         searchParam = null;
-        notifyRefreshUI(-100);
+        notifyRefreshUI();
     }
 }

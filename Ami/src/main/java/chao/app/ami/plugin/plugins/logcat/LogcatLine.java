@@ -33,7 +33,7 @@ public class LogcatLine {
         pid = splits[2];
         tid = splits[3];
         level = LogLevel.indexOf(splits[4]);
-        tag = splits[5].substring(0, splits[5].length() - 1);
+        tag = splits[5].substring(0, splits[5].length());
         StringBuilder buffer = new StringBuilder();
         for (int i = 6; i < splits.length; i++) {
             buffer.append(splits[i]);
