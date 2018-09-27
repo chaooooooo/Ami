@@ -70,7 +70,7 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
     private class FPSFrameCallback implements Choreographer.FrameCallback {
         @Override
         public void doFrame(long frameTimeNanos) {
-            executorService.execute(new CalcFrameTask(frameTimeNanos));
+            executorService.execute(new CalcFrameTask());
             Choreographer.getInstance().postFrameCallback(this);
         }
     }
@@ -81,24 +81,19 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
 
     public class CalcFrameTask implements Runnable {
 
-        long frameTimeNanos;
-
-        public CalcFrameTask(long frameTimeNanos) {
-            this.frameTimeNanos = frameTimeNanos;
-        }
-
         @Override
         public void run() {
             int fps;
+            long currentTime = System.currentTimeMillis();
             while (frameTimes.size() > 0) {
                 long first = frameTimes.get(0);
-                if (frameTimeNanos - first > 1000 * 1000000) {
+                if (currentTime - first > 1000) {
                     frameTimes.remove(0);
                 } else {
                     break;
                 }
             }
-            frameTimes.add(frameTimeNanos);
+            frameTimes.add(currentTime);
             fps = frameTimes.size();
 
             if (fps != lastFps) {
