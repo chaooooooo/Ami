@@ -1,14 +1,16 @@
 package chao.app.ami.plugin;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * @author qinchao
  * @since 2018/9/18
  */
-public class MovementTouch implements View.OnTouchListener {
+public class MovementTouch extends ViewGroup implements View.OnTouchListener {
 
     private static final int NO_XY = Integer.MAX_VALUE;
 
@@ -18,13 +20,28 @@ public class MovementTouch implements View.OnTouchListener {
     private float lastY = NO_XY;
 
     private View moveView;
+    private int left, right, top, bottom;
 
     public MovementTouch(View view) {
+        super(view.getContext());
         moveView = view;
+        ViewGroup parentView = (ViewGroup) moveView.getParent();
+        parentView.removeView(moveView);
+        parentView.addView(this, new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+
+        LayoutParams layoutParams = moveView.getLayoutParams();
+        if (layoutParams instanceof MarginLayoutParams) {
+            left = ((MarginLayoutParams) layoutParams).leftMargin;
+            top = ((MarginLayoutParams) layoutParams).topMargin;
+        }
+        addView(moveView, new LayoutParams(layoutParams));
+    }
+
+    public MovementTouch(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
     @Override
-    @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
         // 获取相对屏幕的坐标，即以屏幕左上角为原点
         int action = event.getAction();
@@ -66,13 +83,28 @@ public class MovementTouch implements View.OnTouchListener {
         int maxWidth = parent.getWidth();
         int maxHeight = parent.getHeight();
 
-        int viewWidth = moveView.getWidth();
-        int viewHeight = moveView.getHeight();
+        int viewWidth = moveView.getMeasuredWidth();
+        int viewHeight = moveView.getMeasuredHeight();
 
-        int left = Math.min(maxWidth - viewWidth, Math.max(0, (int) (moveView.getLeft() + dx)));
-        int right = left + moveView.getWidth();
-        int top = Math.min(maxHeight - viewHeight, Math.max(0, (int) (moveView.getTop() + dy)));
-        int bottom = top + moveView.getHeight();
+        left = Math.min(maxWidth - viewWidth, Math.max(0, (int) (moveView.getLeft() + dx)));
+        top = Math.min(maxHeight - viewHeight, Math.max(0, (int) (moveView.getTop() + dy)));
+        right = left + viewWidth;
+        bottom = top + viewHeight;
+        moveView.layout(left, top, right, bottom);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        measureChild(moveView, widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        int viewWidth = moveView.getMeasuredWidth();
+        int viewHeight = moveView.getMeasuredHeight();
+        right = left + viewWidth;
+        bottom = top + viewHeight;
         moveView.layout(left, top, right, bottom);
     }
 }
