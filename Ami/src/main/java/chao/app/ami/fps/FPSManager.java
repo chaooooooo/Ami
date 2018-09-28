@@ -2,7 +2,6 @@ package chao.app.ami.fps;
 
 import android.os.Build;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -16,7 +15,7 @@ import java.util.concurrent.Executors;
  * @author qinchao
  * @since 2018/9/10
  */
-public class FPSManager extends HandlerThread implements Handler.Callback {
+public class FPSManager implements Handler.Callback {
 
     private static final int HANDLER_FPS_UPDATE = 1;
 
@@ -28,7 +27,6 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
 
 
     public FPSManager(@NonNull OnFPSUpdateListener listener) {
-        super("fps manager");
         onFPSUpdateListener = listener;
         handler = new Handler(Looper.getMainLooper(), this);
     }
@@ -37,6 +35,12 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
         Message message = handler.obtainMessage(HANDLER_FPS_UPDATE);
         message.arg1 = fps;
         handler.sendMessage(message);
+    }
+
+    public void start() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            Choreographer.getInstance().postFrameCallback(new FPSFrameCallback());
+        }
     }
 
     @Override
@@ -57,14 +61,6 @@ public class FPSManager extends HandlerThread implements Handler.Callback {
         }
         return false;
     }
-
-    @Override
-    protected void onLooperPrepared() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            Choreographer.getInstance().postFrameCallback(new FPSFrameCallback());
-        }
-    }
-
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private class FPSFrameCallback implements Choreographer.FrameCallback {

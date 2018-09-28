@@ -14,7 +14,6 @@
         <TextView
             android:id="@+id/ami_content_fps"
             android:textSize="14sp"
-            android:textColor="@android:color/holo_red_dark"
             android:layout_gravity="left"
             android:layout_marginTop="60dp"
             android:layout_marginLeft="10dp"

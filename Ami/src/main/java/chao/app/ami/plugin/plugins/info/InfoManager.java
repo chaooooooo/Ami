@@ -3,6 +3,7 @@ package chao.app.ami.plugin.plugins.info;
 import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
@@ -36,6 +37,13 @@ public class InfoManager {
                 if (settings.logEnabled()) {
                     Ami.log(text);
                 }
+                int fpsColor = Color.parseColor("#2e7c22");
+                if (fps < 20) {
+                    fpsColor = Color.parseColor("#c61515");
+                } else if (fps < 40) {
+                    fpsColor = Color.parseColor("#ffce2e");
+                }
+                fpsView.setTextColor(fpsColor);
                 fpsView.setText(text);
             }
         });
