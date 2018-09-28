@@ -22,7 +22,7 @@ public class ColorfulPlugin extends AmiPlugin {
     }
 
     @Override
-    public AmiSettings getSettings() {
+    public AmiSettings createSettings() {
         return null;
     }
 

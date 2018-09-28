@@ -13,8 +13,6 @@ import chao.app.ami.plugin.AmiGeneralComponent;
  */
 public class InfoPlugin extends AmiPlugin {
 
-    private InfoSettings settings;
-
     private InfoManager manager;
 
 
@@ -40,13 +38,12 @@ public class InfoPlugin extends AmiPlugin {
 
     @Override
     public void onBindView(AmiContentView contentView) {
-        settings = new InfoSettings();
-        manager = new InfoManager(contentView, settings);
+        manager = new InfoManager(contentView, (InfoSettings) getSettings());
     }
 
     @Override
-    public AmiSettings getSettings() {
-        return settings;
+    public AmiSettings createSettings() {
+        return new InfoSettings();
     }
 
     @Override

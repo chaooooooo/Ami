@@ -129,8 +129,9 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
         }
     }
 
-    public static AmiPlugin getPlugin(Class plugin) {
-        return mPluginMap.get(plugin);
+    @SuppressWarnings("unchecked")
+    public static <Plugin extends AmiPlugin> Plugin getPlugin(Class plugin) {
+        return (Plugin) mPluginMap.get(plugin);
     }
 
     public ArrayList<AmiPlugin> getPlugins() {

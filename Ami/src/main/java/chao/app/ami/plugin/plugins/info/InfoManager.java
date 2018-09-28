@@ -3,13 +3,13 @@ package chao.app.ami.plugin.plugins.info;
 import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.TextView;
-import chao.app.ami.Ami;
 import chao.app.ami.base.AmiContentView;
-import chao.app.ami.fps.FPSManager;
+import chao.app.ami.command.beans.Screen;
+import chao.app.ami.plugin.AmiSettings;
 import chao.app.ami.plugin.MovementTouch;
 import chao.app.debug.R;
 
@@ -17,59 +17,57 @@ import chao.app.debug.R;
  * @author qinchao
  * @since 2018/9/10
  */
-public class InfoManager {
-
-    private TextView fpsView;
+public class InfoManager implements AmiSettings.OnSettingsChangeListener {
 
     private TextView appInfoView;
 
+    private TextView displayView;
+
     private InfoSettings settings;
+
+    private String screenInfo;
 
     public InfoManager(@NonNull AmiContentView contentView, final InfoSettings settings) {
         this.settings  = settings;
-        //fps
-        fpsView = (TextView) contentView.findViewById(R.id.ami_content_fps);
-        fpsView.setOnTouchListener(new MovementTouch(fpsView));
-        FPSManager fpsManager = new FPSManager(new FPSManager.OnFPSUpdateListener() {
-            @Override
-            public void onFpsUpdate(int fps) {
-                String text = "fps: " + fps;
-                if (settings.logEnabled()) {
-                    Ami.log(text);
-                }
-                int fpsColor = Color.parseColor("#2e7c22");
-                if (fps < 20) {
-                    fpsColor = Color.parseColor("#c61515");
-                } else if (fps < 40) {
-                    fpsColor = Color.parseColor("#ffce2e");
-                }
-                fpsView.setTextColor(fpsColor);
-                fpsView.setText(text);
-            }
-        });
-        fpsManager.start();
+        settings.setSettingsChangeListener(this);
 
         //appInfo
         appInfoView = (TextView) contentView.findViewById(R.id.ami_content_app_info);
+        appInfoView.setOnTouchListener(new MovementTouch(appInfoView));
+
+
+        displayView = (TextView) contentView.findViewById(R.id.ami_content_app_display);
+        displayView.setOnTouchListener(new MovementTouch(displayView));
         updateVisible();
     }
 
-    public void  updateVisible() {
+    private void updateVisible() {
         if (settings.isShowAppInfo()){
             appInfoView.setVisibility(View.VISIBLE);
         } else {
             appInfoView.setVisibility(View.GONE);
         }
 
-        if (settings.isShowFPS()) {
-            fpsView.setVisibility(View.VISIBLE);
+        if (settings.isShowDisplayMetrics()) {
+            displayView.setVisibility(View.VISIBLE);
         } else {
-            fpsView.setVisibility(View.GONE);
+            displayView.setVisibility(View.GONE);
         }
     }
 
-    public void setupManager(Activity activity) {
+    void setupManager(Activity activity) {
         appInfoView.setText(getAppInfo(activity));
+        if (screenInfo == null) {
+            screenInfo = getDisplayInfo(activity);
+        }
+        displayView.setText(screenInfo);
+    }
+
+    private String getDisplayInfo(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        Screen screen = new Screen(dm);
+        return screen.toString();
     }
 
     private String getAppInfo(Activity activity) {
@@ -91,5 +89,10 @@ public class InfoManager {
             e.printStackTrace();
         }
         return buffer.toString();
+    }
+
+    @Override
+    public void onSettingsChanged(String key, Object value) {
+        updateVisible();
     }
 }

@@ -13,7 +13,6 @@ public interface IPlugin {
 
     Fragment newFragment();
 
-    AmiSettings getSettings();
 
     CharSequence getTitle();
 

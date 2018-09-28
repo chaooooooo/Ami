@@ -1,45 +1,40 @@
 package chao.app.ami.plugin.plugins.viewinterceptor;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiSettings;
-import chao.app.ami.plugin.AmiGeneralComponent;
+import chao.app.ami.plugin.AmiPluginFragment;
 
 /**
  * @author qinchao
  * @since 2018/9/12
  */
-public class ViewInterceptorPlugin extends AmiPlugin {
+public class ViewInterceptorPlugin extends AmiPlugin<AmiPluginFragment, ViewInterceptorSettings, ViewInterceptorComponent> {
 
     private InterceptorLayerManager interceptorManager;
     private ViewInterceptorSettings settings;
 
     @Override
-    protected Fragment createFragment() {
+    protected AmiPluginFragment createFragment() {
         return null;
     }
 
     @Override
-    public AmiGeneralComponent createComponent() {
+    public ViewInterceptorComponent createComponent() {
         return new ViewInterceptorComponent(this);
-    }
-
-    @Override
-    public AmiSettings getSettings() {
-        settings = new ViewInterceptorSettings();
-        return settings;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        if (settings == null) {
-            getSettings();
-        }
+        settings = getSettings();
         interceptorManager = new InterceptorLayerManager();
         interceptorManager.setInterceptorEnabled(settings.isEnabled());
+    }
+
+    @Override
+    public ViewInterceptorSettings createSettings() {
+        return new ViewInterceptorSettings();
     }
 
     @Override

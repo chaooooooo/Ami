@@ -1,4 +1,4 @@
-package chao.app.ami.fps;
+package chao.app.ami.plugin.plugins.fps;
 
 import android.os.Build;
 import android.os.Handler;

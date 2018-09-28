@@ -35,7 +35,6 @@ public abstract class AmiPluginFragment extends AMISupportFragment {
         return pluginManager.getPlugin(bindPlugin());
     }
 
-    @SuppressWarnings("unchecked")
     protected <T extends AmiSettings> T getSettings() {
         return (T) getPlugin().getSettings();
     }
@@ -48,4 +47,5 @@ public abstract class AmiPluginFragment extends AMISupportFragment {
     public boolean onKeyEvent(KeyEvent keyEvent) {
         return false;
     }
+
 }

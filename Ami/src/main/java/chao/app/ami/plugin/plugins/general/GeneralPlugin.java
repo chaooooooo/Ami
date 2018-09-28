@@ -12,6 +12,11 @@ import chao.app.ami.plugin.AmiGeneralComponent;
  */
 public class GeneralPlugin extends AmiPlugin {
     @Override
+    public AmiSettings createSettings() {
+        return null;
+    }
+
+    @Override
     protected Fragment createFragment() {
         return new GeneralFragment();
     }
@@ -21,10 +26,6 @@ public class GeneralPlugin extends AmiPlugin {
         return null;
     }
 
-    @Override
-    public AmiSettings getSettings() {
-        return null;
-    }
 
     @Override
     public CharSequence getTitle() {

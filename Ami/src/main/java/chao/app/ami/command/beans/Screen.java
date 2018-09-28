@@ -52,15 +52,14 @@ public class Screen {
 
     @Override
     public String toString() {
-        return "Screen{" +
-            "width=" + width +
-            ", height=" + height +
-            ", xdpi=" + xdpi +
-            ", ydpi=" + ydpi +
-            ", density=" + density +
-            ", inch=" + inch +
-            ", densityType='" + densityType  +
-            "(" + densityDpi + ")" +
-            '}';
+        StringBuilder buffer = new StringBuilder();
+        return buffer.append("屏幕像素: ").append(width).append(" x ").append(height).append("\n")
+            .append("屏幕长宽: ").append(width/xdpi).append(" x ").append(height/ydpi).append("英寸").append("\n")
+            .append("屏幕尺寸：").append(inch).append("英寸").append("\n")
+            .append("屏幕密度: ").append(density).append("\n")
+            .append("xdpi: ").append(xdpi).append("\n")
+            .append("ydpi: ").append(ydpi)
+            .toString();
+
     }
 }

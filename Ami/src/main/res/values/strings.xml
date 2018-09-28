@@ -26,4 +26,5 @@
     <string name="ami_info_settings_log">log</string>
     <string name="ami_fps_settings">fps</string>
     <string name="ami_plugin_view_interceptor_enable">enable</string>
+    <string name="ami_info_settings_display">屏幕信息</string>
 </resources>

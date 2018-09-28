@@ -2,6 +2,7 @@ package chao.app.ami.plugin;
 
 import android.content.Context;
 import chao.app.ami.utils.SPUtils;
+import java.util.Set;
 
 /**
  * @author qinchao
@@ -15,6 +16,8 @@ public class AmiSettings {
 
     private boolean logEnabled;
 
+    private OnSettingsChangeListener settingsChangeListener;
+
     public AmiSettings() {
         spUtils = SPUtils.getInstance(getClass().getSimpleName(), Context.MODE_PRIVATE);
         logEnabled = spUtils.getBoolean(SP_LOG_ENABLED);
@@ -22,10 +25,53 @@ public class AmiSettings {
 
     public void setLogEnabled(boolean enabled) {
         logEnabled = enabled;
-        spUtils.put(SP_LOG_ENABLED, enabled);
+        put(SP_LOG_ENABLED, enabled);
     }
 
     public boolean logEnabled() {
         return logEnabled;
+    }
+
+    public void put(String key, int value) {
+        spUtils.put(key, value);
+        if (settingsChangeListener != null) {
+            settingsChangeListener.onSettingsChanged(key, value);
+        }
+    }
+
+    public void put(String key, boolean value) {
+        spUtils.put(key, value);
+        if (settingsChangeListener != null) {
+            settingsChangeListener.onSettingsChanged(key, value);
+        }
+    }
+
+    public void put(String key, String value) {
+        spUtils.put(key, value);
+        if (settingsChangeListener != null) {
+            settingsChangeListener.onSettingsChanged(key, value);
+        }
+    }
+
+    public void put(String key, float value) {
+        spUtils.put(key, value);
+        if (settingsChangeListener != null) {
+            settingsChangeListener.onSettingsChanged(key, value);
+        }
+    }
+
+    public void put(String key, Set<String> value) {
+        spUtils.put(key, value);
+        if (settingsChangeListener != null) {
+            settingsChangeListener.onSettingsChanged(key, value);
+        }
+    }
+
+    public void setSettingsChangeListener(OnSettingsChangeListener listener) {
+        this.settingsChangeListener = listener;
+    }
+
+    public interface OnSettingsChangeListener {
+        <T> void onSettingsChanged(String key, T value);
     }
 }

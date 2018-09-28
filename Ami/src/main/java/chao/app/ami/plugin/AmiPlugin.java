@@ -12,15 +12,17 @@ import chao.app.ami.base.AmiContentView;
  * @author qinchao
  * @since 2018/9/4
  */
-public abstract class AmiPlugin<PluginFragment extends Fragment> implements IPlugin {
+public abstract class AmiPlugin<PluginFragment extends Fragment, Settings extends AmiSettings, Component extends AmiGeneralComponent> implements IPlugin {
 
     protected Context mAppContext;
 
     protected PluginFragment mFragment;
 
-    private AmiGeneralComponent mComponent;
+    private Component mComponent;
 
     private Activity mActivity;
+
+    private Settings mSetting;
 
     private AmiContentView contentView;
 
@@ -44,6 +46,7 @@ public abstract class AmiPlugin<PluginFragment extends Fragment> implements IPlu
         return mFragment;
     }
 
+
     public AmiContentView getContentView() {
         return contentView;
     }
@@ -57,6 +60,15 @@ public abstract class AmiPlugin<PluginFragment extends Fragment> implements IPlu
 
     }
 
+    public abstract Settings createSettings();
+
+    public Settings getSettings() {
+        if (mSetting == null) {
+            mSetting = createSettings();
+        }
+        return mSetting;
+    }
+
     @CallSuper
     public void onActivityChanged(FragmentActivity activity) {
         mActivity = activity;
@@ -66,17 +78,16 @@ public abstract class AmiPlugin<PluginFragment extends Fragment> implements IPlu
         return mActivity;
     }
 
-    @SuppressWarnings("unchecked")
-    public  <Component extends AmiGeneralComponent> Component getComponent() {
+    public Component getComponent() {
         if (mComponent == null) {
             mComponent = createComponent();
         }
-        return (Component) mComponent;
+        return mComponent;
     }
 
     protected abstract PluginFragment createFragment();
 
-    public abstract AmiGeneralComponent createComponent();
+    public abstract Component createComponent();
 
     public void destroyFragment() {
         mFragment = null;

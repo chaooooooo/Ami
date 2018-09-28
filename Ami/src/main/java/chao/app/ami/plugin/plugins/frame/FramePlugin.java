@@ -9,10 +9,15 @@ import chao.app.ami.plugin.AmiSettings;
  * @author qinchao
  * @since 2018/9/4
  */
-public class FramePlugin extends AmiPlugin<FramePluginFragment> {
+public class FramePlugin extends AmiPlugin<FramePluginFragment, AmiSettings, AmiGeneralComponent> {
 
 
     public FramePlugin() {
+    }
+
+    @Override
+    public AmiSettings createSettings() {
+        return null;
     }
 
     @Override
@@ -38,11 +43,6 @@ public class FramePlugin extends AmiPlugin<FramePluginFragment> {
     @Override
     public void onBindView(AmiContentView contentView) {
 
-    }
-
-    @Override
-    public AmiSettings getSettings() {
-        return null;
     }
 
     public void notifyFrameChanged() {

@@ -8,22 +8,13 @@ import chao.app.ami.plugin.AmiSettings;
  */
 public class InfoSettings extends AmiSettings {
 
-    private boolean showFPS = spUtils.getBoolean("fps", true);
-
     private boolean showAppInfo = spUtils.getBoolean("appInfo", false);
+
+    private boolean showDisplayMetrics = spUtils.getBoolean("displayMetrics", false);
 
     public InfoSettings() {
     }
 
-
-    public boolean isShowFPS() {
-        return showFPS;
-    }
-
-    public void setShowFPS(boolean showFPS) {
-        this.showFPS = showFPS;
-        spUtils.put("fps", showFPS);
-    }
 
     public boolean isShowAppInfo() {
         return showAppInfo;
@@ -31,6 +22,15 @@ public class InfoSettings extends AmiSettings {
 
     public void setShowAppInfo(boolean showAppInfo) {
         this.showAppInfo = showAppInfo;
-        spUtils.put("appInfo", showAppInfo);
+        put("appInfo", showAppInfo);
+    }
+
+    public boolean isShowDisplayMetrics() {
+        return showDisplayMetrics;
+    }
+
+    public void setShowDisplayMetrics(boolean showDisplayMetrics) {
+        this.showDisplayMetrics = showDisplayMetrics;
+        put("displayMetrics", showDisplayMetrics);
     }
 }

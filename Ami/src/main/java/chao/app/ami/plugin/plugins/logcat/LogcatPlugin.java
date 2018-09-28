@@ -49,13 +49,13 @@ public class LogcatPlugin extends AmiPlugin {
     }
 
     @Override
-    public void onBindView(AmiContentView contentView) {
-
+    public AmiSettings createSettings() {
+        return logcatSettings;
     }
 
     @Override
-    public AmiSettings getSettings() {
-        return logcatSettings;
+    public void onBindView(AmiContentView contentView) {
+
     }
 
     public void notifyDataSetChanged(ArrayList<LogcatLine> logCaches) {

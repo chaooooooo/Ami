@@ -34,6 +34,7 @@ import chao.app.ami.launcher.drawer.node.Node;
 import chao.app.ami.launcher.drawer.node.NodeGroup;
 import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.ami.plugin.plugins.colorful.ColorfulPlugin;
+import chao.app.ami.plugin.plugins.fps.FPSPlugin;
 import chao.app.ami.plugin.plugins.frame.FramePlugin;
 import chao.app.ami.plugin.plugins.general.GeneralPlugin;
 import chao.app.ami.plugin.plugins.info.InfoPlugin;
@@ -451,7 +452,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             new FramePlugin(),
             new InfoPlugin(),
             new ViewInterceptorPlugin(),
-            new ColorfulPlugin()
+            new ColorfulPlugin(),
+            new FPSPlugin()
         );
 
     }

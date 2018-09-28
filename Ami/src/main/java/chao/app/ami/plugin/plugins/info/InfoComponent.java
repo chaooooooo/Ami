@@ -15,11 +15,11 @@ import chao.app.debug.R;
  */
 public class InfoComponent extends AmiGeneralComponent implements CompoundButton.OnCheckedChangeListener {
 
-    private CheckBox fpsCheckbox;
-
     private CheckBox appInfoCheckbox;
 
     private CheckBox logEnabledCheckbox;
+
+    private CheckBox displayMetricsCheckBox;
 
     private InfoManager manager;
 
@@ -36,31 +36,29 @@ public class InfoComponent extends AmiGeneralComponent implements CompoundButton
     public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
         View layout = inflater.inflate(R.layout.ami_plugin_info_settings_fragment, parent, false);
 
-        fpsCheckbox = (CheckBox) layout.findViewById(R.id.ami_fps_settings);
         appInfoCheckbox = (CheckBox) layout.findViewById(R.id.ami_info_settings_app);
         logEnabledCheckbox = (CheckBox) layout.findViewById(R.id.ami_info_settings_log);
+        displayMetricsCheckBox = (CheckBox) layout.findViewById(R.id.ami_info_settings_display);
 
-        fpsCheckbox.setChecked(settings.isShowFPS());
         appInfoCheckbox.setChecked(settings.isShowAppInfo());
         logEnabledCheckbox.setChecked(settings.logEnabled());
+        displayMetricsCheckBox.setChecked(settings.isShowDisplayMetrics());
 
-        fpsCheckbox.setOnCheckedChangeListener(this);
         appInfoCheckbox.setOnCheckedChangeListener(this);
         logEnabledCheckbox.setOnCheckedChangeListener(this);
+        displayMetricsCheckBox.setOnCheckedChangeListener(this);
 
         return layout;
     }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (buttonView == fpsCheckbox) {
-            settings.setShowFPS(isChecked);
-            manager.updateVisible();
-        } else if (buttonView == appInfoCheckbox) {
+        if (buttonView == appInfoCheckbox) {
             settings.setShowAppInfo(isChecked);
-            manager.updateVisible();
         } else if (buttonView == logEnabledCheckbox) {
             settings.setLogEnabled(isChecked);
+        } else if (buttonView == displayMetricsCheckBox) {
+            settings.setShowDisplayMetrics(isChecked);
         }
     }
 }

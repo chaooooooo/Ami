@@ -5,8 +5,8 @@
     android:orientation="horizontal">
 
     <CheckBox
-        android:id="@+id/ami_fps_settings"
-        android:text="@string/ami_fps_settings"
+        android:id="@+id/ami_info_settings_app"
+        android:text="@string/ami_info_settings_app"
         android:textSize="16sp"
         android:layout_margin="10dp"
         android:textColor="@android:color/primary_text_light"
@@ -14,11 +14,13 @@
         android:layout_height="wrap_content" />
 
     <CheckBox
-        android:id="@+id/ami_info_settings_app"
-        android:text="@string/ami_info_settings_app"
+        android:id="@+id/ami_info_settings_display"
+        android:text="@string/ami_info_settings_display"
         android:textSize="16sp"
         android:layout_margin="10dp"
         android:textColor="@android:color/primary_text_light"
+        android:lines="1"
+        android:maxLines="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
