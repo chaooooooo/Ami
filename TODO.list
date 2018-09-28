@@ -104,7 +104,7 @@ extra object参数  #done since 2018-09-04
 
 #2018-09-10
 ami command
-1. 屏幕尺寸相关
+1. 屏幕尺寸相关       #done 2018-09-28
     density  dm.density
     width  dm.widthPixels
     height  dm.heightPixels
@@ -114,16 +114,6 @@ ami command
     ???dpi
     屏幕尺寸？
     每英寸像素值  dm.densityDpi
-
-
-DisplayMetrics dm = new DisplayMetrics();
-getWindowManager().getDefaultDisplay().getMetrics(dm);//display = getWindowManager().getDefaultDisplay();display.getMetrics(dm)（把屏幕尺寸信息赋值给DisplayMetrics dm）;
-width = ;
-height = ;
-xdpi = dm.xdpi;
-ydpi = dm.ydpi;
-density = ;
-fdensity = ;
 
 
 ami screen

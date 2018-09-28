@@ -4,6 +4,7 @@
     <property name="p2" value="v2"/>
 
 
+    <item name="TextViewFragment" component=".TextViewFragment"/>
     <item name="TestApp" component=".apps.AppsFragment"/>
     <item name="TestNoticeImageViewFragment" component=".TestNoticeImageViewFragment"/>
 

@@ -13,6 +13,24 @@ public class DeviceUtil {
         return (int)(getDeviceDensity() * dp + 0.5);
     }
 
+    public static int px2sp(float pxValue) {
+        final float fontScale = Ami.getApp().getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+    }
+
+
+    /**
+     * convert sp to its equivalent px
+     *
+     * 将sp转换为px
+     */
+    public static int sp2px(float spValue) {
+        final float fontScale = Ami.getApp().getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
+
+
     public static int getDeviceWidth() {
         return Ami.getApp().getResources().getDisplayMetrics().widthPixels;
     }

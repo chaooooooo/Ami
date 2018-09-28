@@ -1,6 +1,7 @@
 package chao.app.ami.plugin.plugins.viewinterceptor;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +10,7 @@ import android.graphics.RectF;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import chao.app.ami.Constants;
 import chao.app.ami.utils.DeviceUtil;
 import chao.app.ami.utils.ReflectUtil;
@@ -43,6 +46,13 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
     private ViewInterceptor mInterceptor;
 
     private Paint mDrawPaint = new Paint();
+
+    private TextPaint mTextPaint = new TextPaint();
+
+    private Paint mTextColorPaint = new Paint();
+
+    private float mTextHeight;
+
     private RectF mFocusRect = new RectF();
     private boolean mCleanDraw = true;
 
@@ -98,6 +108,19 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         mDrawPaint.setDither(true);
         mDrawPaint.setStyle(Paint.Style.STROKE);
         mDrawPaint.setStrokeWidth(4);
+
+        mTextPaint.setColor(Color.BLUE);
+        mTextPaint.setDither(true);
+        mTextPaint.setTextSize(DeviceUtil.dp2px(12));
+        mTextPaint.setAntiAlias(true);
+        mTextPaint.setStyle(Paint.Style.FILL);
+        mTextHeight = mTextPaint.measureText("0");
+
+        mTextColorPaint.setDither(true);
+        mTextColorPaint.setTextSize(DeviceUtil.dp2px(12));
+        mTextColorPaint.setAntiAlias(true);
+        mTextColorPaint.setStyle(Paint.Style.FILL);
+
         setWillNotDraw(false);
     }
 
@@ -207,15 +230,102 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         if (!mInterceptor.isInterceptorEnabled()) {
             return;
         }
+        if (mTouchedRecord == null || mTouchedRecord.get() == null) {
+            return;
+        }
         if (mCleanDraw) {
             mCleanDraw = false;
             return;
         }
         mFocusRect.inset(-4, -4);
 
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+
+
+        int textX = 20;
+        int textY = 20;
+
+        if (mFocusRect.centerY() < height/2) {
+            textY += height/2;
+        }
+
+        View view = mTouchedRecord.get().view;
+        String[] viewDetails = getViewDetail(view);
+
         canvas.drawRoundRect(mFocusRect, 10, 10, mDrawPaint);
 
+        for (String detail: viewDetails) {
+            textY += mTextHeight + DeviceUtil.dp2px(10);
+            canvas.drawText(detail, textX, textY, mTextPaint);
+        }
+
+        for (String textDetail: getTextDetails(view)) {
+            textY += mTextHeight + DeviceUtil.dp2px(10);
+            canvas.drawText(textDetail, textX, textY, mTextColorPaint);
+        }
+
         super.draw(canvas);
+    }
+
+    private String[] getTextDetails(View view) {
+        if (!(view instanceof TextView)) {
+            return new String[0];
+        }
+        TextView textView = (TextView) view;
+        String viewText = textView.getText().toString();
+        int textSize = (int) textView.getTextSize();
+        int textSizeSp = DeviceUtil.px2sp(textSize);
+        int textColor = textView.getTextColors().getDefaultColor();
+        mTextColorPaint.setColor(textColor);
+        return new String[]{
+            "Text: " + viewText,
+            "Text Size: " + textSize + "px " + textSizeSp + "sp",
+            "Text Color: #" + Integer.toHexString(textColor)
+        };
+    }
+
+    private String[] getViewDetail(View view) {
+        String[] details = new String[]{
+            view.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(view)),
+            view.getWidth() + " x " + view.getHeight() + "(" + view.getLeft() + ", " + view.getTop() + " - " + view.getRight() + ", " + view.getBottom() + ")",
+            (view.getId() == NO_ID ? "NO_ID" : getIdName(view))
+        };
+        return details;
+    }
+
+    private String getIdName(View view) {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("#").append(Integer.toHexString(view.getId()));
+        int id = view.getId();
+        final Resources r = getResources();
+        boolean hasPackage = (id >>> 24) != 0;
+        if (id > 0 && hasPackage && r != null) {
+            try {
+                String pkgname;
+                switch (id&0xff000000) {
+                    case 0x7f000000:
+                        pkgname="app";
+                        break;
+                    case 0x01000000:
+                        pkgname="android";
+                        break;
+                    default:
+                        pkgname = r.getResourcePackageName(id);
+                        break;
+                }
+                String typename = r.getResourceTypeName(id);
+                String entryname = r.getResourceEntryName(id);
+                buffer.append(" ");
+                buffer.append(pkgname);
+                buffer.append(":");
+                buffer.append(typename);
+                buffer.append("/");
+                buffer.append(entryname);
+            } catch (Resources.NotFoundException ignored) {
+            }
+        }
+        return buffer.toString();
     }
 
     @Override
