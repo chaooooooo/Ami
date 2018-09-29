@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import chao.app.ami.plugin.AmiGeneralComponent;
+import chao.app.ami.plugin.AmiPluginSettingPane;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.debug.R;
 
@@ -13,13 +13,13 @@ import chao.app.debug.R;
  * @author qinchao
  * @since 2018/9/12
  */
-public class ViewInterceptorComponent extends AmiGeneralComponent {
+public class ViewInterceptorPane extends AmiPluginSettingPane {
 
     private InterceptorLayerManager manager;
 
     private ViewInterceptorSettings settings;
 
-    public ViewInterceptorComponent(AmiPlugin plugin) {
+    public ViewInterceptorPane(AmiPlugin plugin) {
         super(plugin);
     }
 

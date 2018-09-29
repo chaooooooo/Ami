@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <chao.app.ami.plugin.AmiPluginSettingsPane
+        <chao.app.ami.plugin.plugins.logcat.LogcatSettingView
             android:id="@+id/ami_plugin_logcat_settings_panel"
             android:background="#515151"
             android:focusableInTouchMode="true"
@@ -74,9 +74,9 @@
                     android:background="@drawable/bg_logcat_filter"
                     android:drawableEnd="@drawable/ami_ic_logcat_filter_close" />
             </LinearLayout>
-        </chao.app.ami.plugin.AmiPluginSettingsPane>
+        </chao.app.ami.plugin.plugins.logcat.LogcatSettingView>
 
-        <chao.app.ami.plugin.AmiPluginSettingsPane
+        <chao.app.ami.plugin.plugins.logcat.LogcatSettingView
             android:id="@+id/ami_plugin_logcat_zoom_panel"
             android:background="@color/transparent"
             android:layout_marginTop="20dp"
@@ -108,6 +108,6 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp" />
             </LinearLayout>
-        </chao.app.ami.plugin.AmiPluginSettingsPane>
+        </chao.app.ami.plugin.plugins.logcat.LogcatSettingView>
     </RelativeLayout>
 </HorizontalScrollView>

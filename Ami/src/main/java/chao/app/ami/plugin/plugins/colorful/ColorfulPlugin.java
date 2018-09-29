@@ -2,7 +2,7 @@ package chao.app.ami.plugin.plugins.colorful;
 
 import android.support.v4.app.Fragment;
 import chao.app.ami.base.AmiContentView;
-import chao.app.ami.plugin.AmiGeneralComponent;
+import chao.app.ami.plugin.AmiPluginSettingPane;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiSettings;
 
@@ -17,7 +17,7 @@ public class ColorfulPlugin extends AmiPlugin {
     }
 
     @Override
-    public AmiGeneralComponent createComponent() {
+    public AmiPluginSettingPane createComponent() {
         return null;
     }
 

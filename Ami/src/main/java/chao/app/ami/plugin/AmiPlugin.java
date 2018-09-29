@@ -12,7 +12,7 @@ import chao.app.ami.base.AmiContentView;
  * @author qinchao
  * @since 2018/9/4
  */
-public abstract class AmiPlugin<PluginFragment extends Fragment, Settings extends AmiSettings, Component extends AmiGeneralComponent> implements IPlugin {
+public abstract class AmiPlugin<PluginFragment extends Fragment, Settings extends AmiSettings, Component extends AmiPluginSettingPane> implements IPlugin {
 
     protected Context mAppContext;
 

@@ -9,7 +9,7 @@ import chao.app.ami.plugin.AmiPluginFragment;
  * @author qinchao
  * @since 2018/9/12
  */
-public class ViewInterceptorPlugin extends AmiPlugin<AmiPluginFragment, ViewInterceptorSettings, ViewInterceptorComponent> {
+public class ViewInterceptorPlugin extends AmiPlugin<AmiPluginFragment, ViewInterceptorSettings, ViewInterceptorPane> {
 
     private InterceptorLayerManager interceptorManager;
     private ViewInterceptorSettings settings;
@@ -20,8 +20,8 @@ public class ViewInterceptorPlugin extends AmiPlugin<AmiPluginFragment, ViewInte
     }
 
     @Override
-    public ViewInterceptorComponent createComponent() {
-        return new ViewInterceptorComponent(this);
+    public ViewInterceptorPane createComponent() {
+        return new ViewInterceptorPane(this);
     }
 
     @Override

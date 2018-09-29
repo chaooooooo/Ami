@@ -8,11 +8,11 @@ import android.view.ViewGroup;
  * @author qinchao
  * @since 2018/9/19
  */
-public abstract class AmiGeneralComponent {
+public abstract class AmiPluginSettingPane {
 
     private AmiPlugin mPlugin;
 
-    public AmiGeneralComponent(AmiPlugin plugin) {
+    public AmiPluginSettingPane(AmiPlugin plugin) {
         mPlugin = plugin;
     }
 

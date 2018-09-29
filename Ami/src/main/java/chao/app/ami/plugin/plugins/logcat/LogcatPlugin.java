@@ -27,7 +27,7 @@ public class LogcatPlugin extends AmiPlugin {
     }
 
     @Override
-    public LogcatComponent createComponent() {
+    public LogcatPane createComponent() {
 //        return new LogcatComponent(this);
         return null;
     }

@@ -6,14 +6,14 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiGeneralComponent;
+import chao.app.ami.plugin.AmiPluginSettingPane;
 import chao.app.debug.R;
 
 /**
  * @author qinchao
  * @since 2018/9/19
  */
-public class InfoComponent extends AmiGeneralComponent implements CompoundButton.OnCheckedChangeListener {
+public class InfoPane extends AmiPluginSettingPane implements CompoundButton.OnCheckedChangeListener {
 
     private CheckBox appInfoCheckbox;
 
@@ -26,7 +26,7 @@ public class InfoComponent extends AmiGeneralComponent implements CompoundButton
     private InfoSettings settings;
 
 
-    public InfoComponent(AmiPlugin plugin) {
+    public InfoPane(AmiPlugin plugin) {
         super(plugin);
         settings = getSettings();
         manager = getManager();

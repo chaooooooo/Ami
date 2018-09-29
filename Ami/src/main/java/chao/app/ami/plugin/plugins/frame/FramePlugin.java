@@ -1,7 +1,7 @@
 package chao.app.ami.plugin.plugins.frame;
 
 import chao.app.ami.base.AmiContentView;
-import chao.app.ami.plugin.AmiGeneralComponent;
+import chao.app.ami.plugin.AmiPluginSettingPane;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiSettings;
 
@@ -9,7 +9,7 @@ import chao.app.ami.plugin.AmiSettings;
  * @author qinchao
  * @since 2018/9/4
  */
-public class FramePlugin extends AmiPlugin<FramePluginFragment, AmiSettings, AmiGeneralComponent> {
+public class FramePlugin extends AmiPlugin<FramePluginFragment, AmiSettings, AmiPluginSettingPane> {
 
 
     public FramePlugin() {
@@ -26,7 +26,7 @@ public class FramePlugin extends AmiPlugin<FramePluginFragment, AmiSettings, Ami
     }
 
     @Override
-    public AmiGeneralComponent createComponent() {
+    public AmiPluginSettingPane createComponent() {
         return null;
     }
 

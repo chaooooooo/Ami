@@ -203,88 +203,94 @@
  *
  */
 
-package chao.app.ami.plugin.plugins.fps;
+package chao.app.ami.plugin.plugins.logcat;
 
-import android.graphics.Color;
-import android.view.View;
-import android.widget.TextView;
-import chao.app.ami.Ami;
-import chao.app.ami.base.AmiContentView;
-import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiPluginFragment;
-import chao.app.ami.plugin.AmiSettings;
-import chao.app.ami.plugin.MovementTouch;
-import chao.app.debug.R;
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.widget.FrameLayout;
 
 /**
  * @author qinchao
- * @since 2018/9/28
+ * @since 2018/9/6
  */
-public class FPSPlugin extends AmiPlugin<AmiPluginFragment,FPSSettings, FPSPane> implements AmiSettings.OnSettingsChangeListener {
+public class LogcatSettingView extends FrameLayout {
 
-    private TextView fpsView;
+    private static final int WHAT_CHANGE_ALPHA = 1;
+
+    private static final float DEFAULT_ALPHA = 0.4f;
+
+    private static final float SHOW_ALPHA = 0.8f;
+
+    private boolean isShow = false;
 
 
-    @Override
-    public FPSSettings createSettings() {
-        return new FPSSettings();
-    }
-
-    @Override
-    protected AmiPluginFragment createFragment() {
-        return null;
-    }
-
-    @Override
-    public FPSPane createComponent() {
-        return new FPSPane(this);
-    }
-
-    @Override
-    public CharSequence getTitle() {
-        return "fps";
-    }
-
-    @Override
-    public Object getManager() {
-        return null;
-    }
-
-    @Override
-    public void onBindView(AmiContentView contentView) {
-
-        //fps
-        fpsView = (TextView) contentView.findViewById(R.id.ami_content_fps);
-        fpsView.setOnTouchListener(new MovementTouch(fpsView));
-        FPSManager fpsManager = new FPSManager(new FPSManager.OnFPSUpdateListener() {
-            @Override
-            public void onFpsUpdate(int fps) {
-                String text = "fps: " + fps;
-                if (getSettings().logEnabled()) {
-                    Ami.log(text);
-                }
-                int fpsColor = Color.parseColor("#2e7c22");
-                if (fps < 20) {
-                    fpsColor = Color.parseColor("#c61515");
-                } else if (fps < 40) {
-                    fpsColor = Color.parseColor("#ffce2e");
-                }
-                fpsView.setTextColor(fpsColor);
-                fpsView.setText(text);
+    private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what){
+                case WHAT_CHANGE_ALPHA:
+                    float alpha = (float) msg.obj;
+                    setAlpha(alpha);
+                    isShow = false;
+                    if(alpha == SHOW_ALPHA) {
+                        isShow = true;
+                    }
+                    break;
             }
-        });
-        fpsManager.start();
+            return false;
+        }
+    });
 
-        getSettings().setSettingsChangeListener(this);
+    public LogcatSettingView(Context context) {
+        super(context);
+        init();
     }
 
+    public LogcatSettingView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public LogcatSettingView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        setAlpha(DEFAULT_ALPHA);
+    }
 
     @Override
-    public <T> void onSettingsChanged(String key, T value) {
-        if (getSettings().isShowFPS()) {
-            fpsView.setVisibility(View.VISIBLE);
-        } else {
-            fpsView.setVisibility(View.GONE);
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        int action = ev.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                if (!isShow) {
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                    notifyChangeAlpha(SHOW_ALPHA, 0);
+                    return true;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                notifyChangeAlpha(DEFAULT_ALPHA, 3000);
+                break;
         }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private void cancelChangeAlpha() {
+        mHandler.removeMessages(WHAT_CHANGE_ALPHA);
+    }
+
+    private void notifyChangeAlpha(float alpha, int delay) {
+        cancelChangeAlpha();
+        Message message = mHandler.obtainMessage(WHAT_CHANGE_ALPHA);
+        message.obj = alpha;
+        mHandler.sendMessageDelayed(message, delay);
     }
 }

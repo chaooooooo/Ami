@@ -203,38 +203,42 @@
  *
  */
 
-package chao.app.ami.plugin.plugins.logcat;
+package chao.app.ami.plugin.plugins.fps;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import chao.app.ami.plugin.AmiGeneralComponent;
+import chao.app.ami.plugin.AmiPluginSettingPane;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.debug.R;
 
 /**
  * @author qinchao
- * @since 2018/9/27
+ * @since 2018/9/28
  */
-public class LogcatComponent extends AmiGeneralComponent {
+public class FPSPane extends AmiPluginSettingPane implements CompoundButton.OnCheckedChangeListener {
 
-    public LogcatComponent(AmiPlugin plugin) {
+    private CheckBox fpsCheckBox;
+
+    public FPSPane(AmiPlugin plugin) {
         super(plugin);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
-        View view = inflater.inflate(R.layout.ami_logcat_plugin_component_layout, parent, false);
-        CheckBox logSwitch = (CheckBox) view.findViewById(R.id.ami_plugin_logcat_log_switch);
-        logSwitch.setChecked(getSettings().logEnabled());
-        logSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                getSettings().setLogEnabled(isChecked);
-            }
-        });
+        View view = inflater.inflate(R.layout.ami_plugin_fps_componnet_layout, parent, false);
+        fpsCheckBox = (CheckBox) view.findViewById(R.id.ami_fps_settings);
+        FPSSettings settings = getSettings();
+        fpsCheckBox.setChecked(settings.isShowFPS());
+        fpsCheckBox.setOnCheckedChangeListener(this);
         return view;
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        FPSSettings settings = getSettings();
+        settings.setShowFPS(isChecked);
     }
 }

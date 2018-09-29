@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiSettings;
-import chao.app.ami.plugin.AmiGeneralComponent;
+import chao.app.ami.plugin.AmiPluginSettingPane;
 
 /**
  * @author qinchao
@@ -22,8 +22,8 @@ public class InfoPlugin extends AmiPlugin {
     }
 
     @Override
-    public AmiGeneralComponent createComponent() {
-        return new InfoComponent(this);
+    public AmiPluginSettingPane createComponent() {
+        return new InfoPane(this);
     }
 
     @Override

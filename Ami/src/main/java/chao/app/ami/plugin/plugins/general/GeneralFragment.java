@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
-import chao.app.ami.plugin.AmiGeneralComponent;
+import chao.app.ami.plugin.AmiPluginSettingPane;
 import chao.app.ami.utils.DeviceUtil;
 import chao.app.debug.R;
 
@@ -27,7 +27,7 @@ public class GeneralFragment extends AmiPluginFragment {
         super.setupView(layout);
         mLayout = findView(R.id.ami_plugin_general_parent);
         for (AmiPlugin plugin: mPluginManager.getPlugins()) {
-            AmiGeneralComponent generalComponent = plugin.getComponent();
+            AmiPluginSettingPane generalComponent = plugin.getComponent();
             if (generalComponent == null) {
                 continue;
             }
@@ -51,7 +51,7 @@ public class GeneralFragment extends AmiPluginFragment {
         return R.layout.ami_plugin_general_fragment;
     }
 
-    public void addComponentView(AmiGeneralComponent component, View view) {
+    public void addComponentView(AmiPluginSettingPane component, View view) {
         TextView titleView = new TextView(getContext());
         titleView.setText(component.getTitle());
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
