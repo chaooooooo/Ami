@@ -8,9 +8,13 @@ import chao.app.ami.plugin.AmiSettings;
  */
 public class ViewInterceptorSettings extends AmiSettings {
 
-    private static final String VIEW_INTERCEPTOR_ENABLED = "view_interceptor_enabled";
+    public static final String VIEW_INTERCEPTOR_ENABLED = "view_interceptor_enabled";
+
+    public static final String VIEW_DETAIL_SHOW_ENABLED = "show_view_detail";
 
     private boolean enabled = spUtils.getBoolean(VIEW_INTERCEPTOR_ENABLED);
+
+    private boolean showViewDetail = spUtils.getBoolean(VIEW_DETAIL_SHOW_ENABLED);
 
     public boolean isEnabled() {
         return enabled;
@@ -18,6 +22,15 @@ public class ViewInterceptorSettings extends AmiSettings {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-        spUtils.put(VIEW_INTERCEPTOR_ENABLED, enabled);
+        put(VIEW_INTERCEPTOR_ENABLED, enabled);
+    }
+
+    public boolean isShowViewDetail() {
+        return showViewDetail;
+    }
+
+    public void showViewDetail(boolean show) {
+        this.showViewDetail = show;
+        put(VIEW_DETAIL_SHOW_ENABLED, show);
     }
 }

@@ -28,13 +28,22 @@ public class ViewInterceptorPane extends AmiPluginSettingPane {
         View layout = inflater.inflate(R.layout.ami_plugin_view_interceptor_settings, parent, false);
         settings = getSettings();
         manager = getManager();
-        final CheckBox checkBox = (CheckBox) layout.findViewById(R.id.ami_plugin_view_interceptor_enable);
+        CheckBox checkBox = (CheckBox) layout.findViewById(R.id.ami_plugin_view_interceptor_enable);
         checkBox.setChecked(settings.isEnabled());
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 settings.setEnabled(isChecked);
                 manager.setInterceptorEnabled(isChecked);
+            }
+        });
+
+        CheckBox viewDetailCheckBox = (CheckBox) layout.findViewById(R.id.ami_plugin_view_show_detail_enable);
+        viewDetailCheckBox.setChecked(settings.isShowViewDetail());
+        viewDetailCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                settings.showViewDetail(isChecked);
             }
         });
         return layout;

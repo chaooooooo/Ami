@@ -27,4 +27,5 @@
     <string name="ami_fps_settings">fps</string>
     <string name="ami_plugin_view_interceptor_enable">enable</string>
     <string name="ami_info_settings_display">屏幕信息</string>
+    <string name="ami_plugin_view_show_detail_enable">显示view详情</string>
 </resources>

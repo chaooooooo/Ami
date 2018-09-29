@@ -1,6 +1,8 @@
 package chao.app.ami.plugin.plugins.viewinterceptor;
 
+import static android.view.View.GONE;
 import static android.view.View.NO_ID;
+import static android.view.View.VISIBLE;
 
 
 import android.content.Context;
@@ -16,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.Constants;
+import chao.app.ami.plugin.AmiPluginManager;
+import chao.app.ami.plugin.AmiSettings;
 import chao.app.ami.plugin.MovementLayout;
 import chao.app.ami.utils.DeviceUtil;
 import chao.app.debug.R;
@@ -26,7 +30,7 @@ import java.util.ArrayList;
  * @since 2017/8/9
  */
 
-public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickListener, AdapterView.OnItemClickListener, InterceptorFrameLayout.OnTouchedTargetChangeListener {
+public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickListener, AdapterView.OnItemClickListener, InterceptorFrameLayout.OnTouchedTargetChangeListener, AmiSettings.OnSettingsChangeListener {
 
     private static final int ACTION_ID_LONG_CLICK = 0;
     private static final int ACTION_ID_TEXT_INJECT = 1;
@@ -34,6 +38,7 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
 
     private static final String LINE_SEPARATOR = "\n";
 
+    private final ViewInterceptorSettings mSettings;
 
 
     private ViewInterceptor mInterceptor;
@@ -68,6 +73,11 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         MovementLayout movementLayout = new MovementLayout(mLayout);
         movementLayout.addView(mViewDescriptionView);
         mLayout.setOnTouchedTargetListener(this);
+
+        ViewInterceptorPlugin plugin = AmiPluginManager.getPlugin(ViewInterceptorPlugin.class);
+        mSettings = plugin.getSettings();
+        mSettings.setSettingsChangeListener(this);
+
     }
 
     @Override
@@ -78,10 +88,18 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
 
     private String getTextDetails(View view) {
 
+        int[] boundary = new int[2];
+        view.getLocationOnScreen(boundary);
+        int left = boundary[0];
+        int top = boundary[1];
+        int right = left + view.getWidth();
+        int bottom = top + view.getHeight();
+
         StringBuilder buffer = new StringBuilder();
-        buffer.append(view.getClass().getName()).append("@").append(Integer.toHexString(System.identityHashCode(view))).append(LINE_SEPARATOR)
-            .append(view.getWidth()).append(" x ").append(view.getHeight()).append(" (").append(view.getLeft()).append(",").append(view.getTop())
-            .append(" - ").append(view.getRight()).append(",").append(view.getBottom()).append(")").append(LINE_SEPARATOR)
+        buffer.append(view.getClass().getName()).append("@")
+            .append(Integer.toHexString(System.identityHashCode(view))).append(LINE_SEPARATOR)
+            .append(view.getWidth()).append(" x ").append(view.getHeight()).append(" (")
+            .append(left).append(",").append(top).append(" - ").append(right).append(",").append(bottom).append(")").append(LINE_SEPARATOR)
             .append((view.getId() == NO_ID ? "NO_ID" : getIdName(view))).append(LINE_SEPARATOR);
 
         if (!(view instanceof TextView)) {
@@ -190,6 +208,9 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
 
     @Override
     public void onTouchTargetChanged(InterceptorRecord record) {
+        if (!mSettings.isShowViewDetail()) {
+            return;
+        }
         int textColor = Color.BLUE;
         if (record.view instanceof TextView) {
             textColor =  ((TextView) record.view).getTextColors().getDefaultColor();
@@ -197,6 +218,15 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         mViewDescriptionView.setTextColor(textColor);
 
         mViewDescriptionView.setText(getTextDetails(record.view));
+    }
+
+    @Override
+    public void onSettingsChanged(String key, Object value) {
+        if (ViewInterceptorSettings.VIEW_DETAIL_SHOW_ENABLED.equals(key)) {
+            boolean bValue = (boolean) value;
+            int visible = bValue ? VISIBLE: GONE;
+            mViewDescriptionView.setVisibility(visible);
+        }
     }
 
     private static class Action {
