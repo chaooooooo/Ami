@@ -203,88 +203,147 @@
  *
  */
 
-package chao.app.ami.plugin.plugins.fps;
+package chao.app.ami.plugin;
 
-import android.graphics.Color;
+import android.annotation.SuppressLint;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
-import chao.app.ami.Ami;
-import chao.app.ami.base.AmiContentView;
-import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiPluginFragment;
-import chao.app.ami.plugin.AmiSettings;
-import chao.app.ami.plugin.MovementLayout;
-import chao.app.debug.R;
+import android.view.ViewGroup;
+import java.util.ArrayList;
 
 /**
  * @author qinchao
- * @since 2018/9/28
+ * @since 2018/9/29
  */
-public class FPSPlugin extends AmiPlugin<AmiPluginFragment,FPSSettings, FPSPane> implements AmiSettings.OnSettingsChangeListener {
+@SuppressLint("ViewConstructor")
+public class MovementLayout extends ViewGroup {
 
-    private TextView fpsView;
+    private ArrayList<MovementView> mMoveViews = new ArrayList<>(1);
 
 
-    @Override
-    public FPSSettings createSettings() {
-        return new FPSSettings();
+    public MovementLayout(ViewGroup parent) {
+        super(parent.getContext());
+        setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        parent.addView(this);
     }
 
     @Override
-    protected AmiPluginFragment createFragment() {
-        return null;
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        for (MovementView moveView: mMoveViews) {
+            measureChild(moveView.view, widthMeasureSpec, heightMeasureSpec);
+        }
     }
 
     @Override
-    public FPSPane createComponent() {
-        return new FPSPane(this);
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        for (MovementView moveView: mMoveViews) {
+            View view = moveView.view;
+            int viewWidth = view.getMeasuredWidth();
+            int viewHeight = view.getMeasuredHeight();
+            moveView.right = moveView.left + viewWidth;
+            moveView.bottom = moveView.top + viewHeight;
+            moveView.layout();
+        }
     }
 
     @Override
-    public CharSequence getTitle() {
-        return "fps";
+    public void addView(View child, int index, LayoutParams params) {
+
+        LayoutParams layoutParams = child.getLayoutParams();
+
+        MovementView movementView = new MovementView(child);
+
+        if (layoutParams instanceof MarginLayoutParams) {
+            movementView.left = ((MarginLayoutParams) layoutParams).leftMargin;
+            movementView.top = ((MarginLayoutParams) layoutParams).topMargin;
+        }
+        ViewGroup parent = (ViewGroup) child.getParent();
+        if (parent != null) {
+            parent.removeView(child);
+        }
+
+        mMoveViews.add(movementView);
+
+        params = new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        super.addView(child, index, params);
     }
 
-    @Override
-    public Object getManager() {
-        return null;
-    }
+    private class MovementView implements OnTouchListener {
 
-    @Override
-    public void onBindView(AmiContentView contentView) {
-        MovementLayout movementLayout = contentView.getMovementLayout();
-        //fps
-        fpsView = (TextView) contentView.findViewById(R.id.ami_content_fps);
-        movementLayout.addView(fpsView);
-        FPSManager fpsManager = new FPSManager(new FPSManager.OnFPSUpdateListener() {
-            @Override
-            public void onFpsUpdate(int fps) {
-                String text = "fps: " + fps;
-                if (getSettings().logEnabled()) {
-                    Ami.log(text);
-                }
-                int fpsColor = Color.parseColor("#2e7c22");
-                if (fps < 20) {
-                    fpsColor = Color.parseColor("#c61515");
-                } else if (fps < 40) {
-                    fpsColor = Color.parseColor("#ffce2e");
-                }
-                fpsView.setTextColor(fpsColor);
-                fpsView.setText(text);
+        private static final int NO_XY = Integer.MAX_VALUE;
+
+
+        private View view;
+
+        private int left, top, right, bottom;
+
+
+        private float x = NO_XY;
+        private float y = NO_XY;
+        private float lastX = NO_XY;
+        private float lastY = NO_XY;
+
+
+        public MovementView(View view) {
+            this.view = view;
+            this.view.setOnTouchListener(this);
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            // 获取相对屏幕的坐标，即以屏幕左上角为原点
+            int action = event.getAction();
+            x = event.getRawX();
+            y = event.getRawY();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    view.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    updateLocation();
+                    reset();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    updateLocation();
+                    lastX = x;
+                    lastY = y;
+                    break;
             }
-        });
-        fpsManager.start();
+            return true;
+        }
 
-        getSettings().setSettingsChangeListener(this);
-    }
+        private void updateLocation() {
+            if (lastX == NO_XY && lastY == NO_XY) {
+                return;
+            }
+            float dx = x - lastX;
+            float dy = y - lastY;
 
+            View parent = (View) view.getParent();
+            int maxWidth = parent.getWidth();
+            int maxHeight = parent.getHeight();
 
-    @Override
-    public <T> void onSettingsChanged(String key, T value) {
-        if (getSettings().isShowFPS()) {
-            fpsView.setVisibility(View.VISIBLE);
-        } else {
-            fpsView.setVisibility(View.GONE);
+            int viewWidth = view.getMeasuredWidth();
+            int viewHeight = view.getMeasuredHeight();
+
+            left = Math.min(maxWidth - viewWidth, Math.max(0, (int) (view.getLeft() + dx)));
+            top = Math.min(maxHeight - viewHeight, Math.max(0, (int) (view.getTop() + dy)));
+            right = left + viewWidth;
+            bottom = top + viewHeight;
+            view.layout(left, top, right, bottom);
+        }
+
+        private void reset() {
+            x = NO_XY;
+            y = NO_XY;
+            lastX = NO_XY;
+            lastY = NO_XY;
+        }
+
+        private void layout() {
+            view.layout(left, top, right, bottom);
         }
     }
 }

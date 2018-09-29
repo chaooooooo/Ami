@@ -79,14 +79,11 @@
         <chao.app.ami.plugin.plugins.logcat.LogcatSettingView
             android:id="@+id/ami_plugin_logcat_zoom_panel"
             android:background="@color/transparent"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/ami_plugin_logcat_settings_panel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true">
+            android:layout_width="100dp"
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"

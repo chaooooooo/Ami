@@ -10,7 +10,7 @@ import android.widget.TextView;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.command.beans.Screen;
 import chao.app.ami.plugin.AmiSettings;
-import chao.app.ami.plugin.MovementTouch;
+import chao.app.ami.plugin.MovementLayout;
 import chao.app.debug.R;
 
 /**
@@ -31,13 +31,16 @@ public class InfoManager implements AmiSettings.OnSettingsChangeListener {
         this.settings  = settings;
         settings.setSettingsChangeListener(this);
 
+
+        MovementLayout movementLayout = contentView.getMovementLayout();
+
         //appInfo
         appInfoView = (TextView) contentView.findViewById(R.id.ami_content_app_info);
-        appInfoView.setOnTouchListener(new MovementTouch(appInfoView));
+        movementLayout.addView(appInfoView);
 
 
         displayView = (TextView) contentView.findViewById(R.id.ami_content_app_display);
-        displayView.setOnTouchListener(new MovementTouch(displayView));
+        movementLayout.addView(displayView);
         updateVisible();
     }
 
