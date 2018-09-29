@@ -1,7 +1,13 @@
 package chao.app.ami.plugin.plugins.viewinterceptor;
 
+import static android.view.View.NO_ID;
+
+
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -10,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.Constants;
+import chao.app.ami.plugin.MovementLayout;
+import chao.app.ami.utils.DeviceUtil;
 import chao.app.debug.R;
 import java.util.ArrayList;
 
@@ -18,11 +26,14 @@ import java.util.ArrayList;
  * @since 2017/8/9
  */
 
-public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickListener, AdapterView.OnItemClickListener {
+public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickListener, AdapterView.OnItemClickListener, InterceptorFrameLayout.OnTouchedTargetChangeListener {
 
     private static final int ACTION_ID_LONG_CLICK = 0;
     private static final int ACTION_ID_TEXT_INJECT = 1;
     private static final int ACTION_ID_VIEW_DETAIL = 2;
+
+    private static final String LINE_SEPARATOR = "\n";
+
 
 
     private ViewInterceptor mInterceptor;
@@ -32,6 +43,8 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
     private ListView mActionListView;
 
     private ArrayAdapter<Action> mActionListAdapter;
+
+    private TextView mViewDescriptionView;
 
 
     private ArrayList<Action> mActionList = new ArrayList<>();
@@ -48,6 +61,13 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         mActionListView.setDivider(new ColorDrawable(context.getResources().getColor(R.color.transparent_red)));
         mActionListView.setDividerHeight(1);
         mActionListView.setOnItemClickListener(this);
+
+        mViewDescriptionView = new TextView(context);
+        mViewDescriptionView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        mViewDescriptionView.setLineSpacing(10, 1);
+        MovementLayout movementLayout = new MovementLayout(mLayout);
+        movementLayout.addView(mViewDescriptionView);
+        mLayout.setOnTouchedTargetListener(this);
     }
 
     @Override
@@ -56,6 +76,62 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         return true;
     }
 
+    private String getTextDetails(View view) {
+
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(view.getClass().getName()).append("@").append(Integer.toHexString(System.identityHashCode(view))).append(LINE_SEPARATOR)
+            .append(view.getWidth()).append(" x ").append(view.getHeight()).append(" (").append(view.getLeft()).append(",").append(view.getTop())
+            .append(" - ").append(view.getRight()).append(",").append(view.getBottom()).append(")").append(LINE_SEPARATOR)
+            .append((view.getId() == NO_ID ? "NO_ID" : getIdName(view))).append(LINE_SEPARATOR);
+
+        if (!(view instanceof TextView)) {
+            return buffer.toString();
+        }
+        TextView textView = (TextView) view;
+        String viewText = textView.getText().toString();
+        int textSize = (int) textView.getTextSize();
+        int textSizeSp = DeviceUtil.px2sp(textSize);
+        int textColor = textView.getTextColors().getDefaultColor();
+
+        return buffer.append("Text: ").append(viewText).append(LINE_SEPARATOR)
+            .append("Text Size: ").append(textSize).append("px ").append(textSizeSp).append("sp").append(LINE_SEPARATOR)
+            .append("Text Color: #").append(Integer.toHexString(textColor)).append(LINE_SEPARATOR)
+            .toString();
+    }
+
+    private String getIdName(View view) {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("#").append(Integer.toHexString(view.getId()));
+        int id = view.getId();
+        final Resources r = view.getResources();
+        boolean hasPackage = (id >>> 24) != 0;
+        if (id > 0 && hasPackage && r != null) {
+            try {
+                String pkgname;
+                switch (id&0xff000000) {
+                    case 0x7f000000:
+                        pkgname="app";
+                        break;
+                    case 0x01000000:
+                        pkgname="android";
+                        break;
+                    default:
+                        pkgname = r.getResourcePackageName(id);
+                        break;
+                }
+                String typename = r.getResourceTypeName(id);
+                String entryname = r.getResourceEntryName(id);
+                buffer.append(" ");
+                buffer.append(pkgname);
+                buffer.append(":");
+                buffer.append(typename);
+                buffer.append("/");
+                buffer.append(entryname);
+            } catch (Resources.NotFoundException ignored) {
+            }
+        }
+        return buffer.toString();
+    }
 
     public InterceptorFrameLayout getLayout() {
         return mLayout;
@@ -110,6 +186,17 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
 
     public void injectListeners(ViewGroup vg, View child) {
         mInterceptor.injectListeners(vg, child);
+    }
+
+    @Override
+    public void onTouchTargetChanged(InterceptorRecord record) {
+        int textColor = Color.BLUE;
+        if (record.view instanceof TextView) {
+            textColor =  ((TextView) record.view).getTextColors().getDefaultColor();
+        }
+        mViewDescriptionView.setTextColor(textColor);
+
+        mViewDescriptionView.setText(getTextDetails(record.view));
     }
 
     private static class Action {
