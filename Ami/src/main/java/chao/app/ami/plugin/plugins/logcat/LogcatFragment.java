@@ -93,6 +93,9 @@ public class LogcatFragment extends AmiPluginFragment implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 logcatSettings.setPause(!isChecked);
+                if (!isChecked) {
+                    logcatManager.notifyRefreshUI();
+                }
             }
         });
         heartView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

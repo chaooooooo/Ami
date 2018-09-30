@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import chao.app.ami.Ami;
 import chao.app.ami.UI;
 import chao.app.ami.text.Poetry;
 import chao.app.ami.text.TextManager;
@@ -72,6 +73,7 @@ public class PullRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onClick(View v) {
+        Ami.log(v);
         UI.show(mContext, TestListFragment.class);
     }
 }

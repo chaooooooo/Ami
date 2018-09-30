@@ -1,6 +1,5 @@
 package chao.app.ami;
 
-import android.support.annotation.NonNull;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -51,7 +50,7 @@ public class Interceptor<T> implements InvocationHandler {
      * @return    返回被拦截事件的代理。
      */
     @SuppressWarnings("all")
-    public static <T> T newInstance(@NonNull T source, Class[] interfaces, OnInterceptorListener listener, boolean intercept) {
+    public static <T> T newInstance(T source, Class[] interfaces, OnInterceptorListener listener, boolean intercept) {
         ClassLoader classLoader = null;
         if (listener != null) {
             classLoader = listener.getClass().getClassLoader();

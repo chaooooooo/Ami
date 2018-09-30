@@ -6,17 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import chao.app.ami.UI;
+import chao.app.ami.Ami;
 import chao.app.ami.text.Poetry;
 import chao.app.ami.text.TextManager;
-import chao.app.debugtools.TestListFragment;
 
 /**
  * @author qinchao
  * @since 2018/8/15
  */
 
-public class PullRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
+public class PullRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int ITEM_TYPE_HEADER = 1;
 
@@ -54,7 +53,7 @@ public class PullRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 //        if (position == 0) {
 //            mRecyclerView.resetCardMode();
 //        }
@@ -62,7 +61,13 @@ public class PullRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             TextView textView = (TextView) holder.itemView;
             textView.setText(poetry[position - 1].getPoetryName());
         }
-        holder.itemView.setOnClickListener(this);
+        final int i = position;
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Ami.log("position: " + i + ", " + v);
+            }
+        });
     }
 
     @Override
@@ -70,8 +75,4 @@ public class PullRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return poetry.length + 1;
     }
 
-    @Override
-    public void onClick(View v) {
-        UI.show(mContext, TestListFragment.class);
-    }
 }

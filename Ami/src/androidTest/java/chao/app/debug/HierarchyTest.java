@@ -203,295 +203,90 @@
  *
  */
 
-package chao.app.ami.utils.hierarchy;
+package chao.app.debug;
 
-import android.support.annotation.NonNull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import chao.app.ami.Ami;
+import chao.app.ami.utils.hierarchy.Hierarchy;
+import chao.app.ami.utils.hierarchy.HierarchyNode;
+import chao.app.ami.utils.hierarchy.ViewHierarchyNode;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author qinchao
- * @since 2018/9/25
+ * @since 2018/9/29
  */
-public class Hierarchy<V> {
+public class HierarchyTest {
 
-    private HierarchyNode<V> mT;
 
-    private HierarchyNode<V> mPoint;
+    private View mView;
 
-    private HierarchyNode<V> mRoot;
+    @Before
+    public void init() {
+        Context context = Ami.getApp();
+        mView = new View(context);
+        mView.setTag("self");
+        ViewGroup brother1 = new LinearLayout(context);
+        View brother2 = new View(context);
+        View brother3 = new View(context);
+        View brother4 = new View(context);
+        ViewGroup brother5 = new LinearLayout(context);
 
-    private Hierarchy(HierarchyNode<V> t) {
-        mT = t;
-        mPoint = mT;
+        View brother6 = new View(context);
+        View brother7 = new View(context);
+        View brother8 = new View(context);
+
+
+        brother1.setTag("brother1");
+        brother2.setTag("brother2");
+        brother3.setTag("brother3");
+        brother4.setTag("brother4");
+        brother5.setTag("brother5");
+        brother6.setTag("brother6");
+        brother7.setTag("brother7");
+        brother8.setTag("brother8");
+
+        brother1.addView(brother6);
+        brother5.addView(brother7);
+        brother5.addView(brother8);
+
+        ViewGroup parent = new LinearLayout(context);
+        parent.addView(mView);
+        parent.addView(brother1);
+        parent.addView(brother2);
+        parent.addView(brother3);
+
+        parent.setTag("parent");
+
+        ViewGroup parentBrother = new LinearLayout(context);
+        parentBrother.addView(brother4);
+        parentBrother.addView(brother5);
+        parentBrother.setTag("parentBrother");
+
+        ViewGroup pprant = new RelativeLayout(context);
+        pprant.addView(parent);
+        pprant.addView(parentBrother);
+
+        pprant.setTag("pparent");
     }
 
+    @Test
+    public void testHierarchy() {
+        ViewHierarchyNode root = (ViewHierarchyNode) Hierarchy.of(new ViewHierarchyNode(mView)).root();
+        Ami.log("root: " + root.value().getTag());
 
-    public class Family implements Iterable<HierarchyNode<V>> {
-
-        private Itr itr;
-
-        Family(Itr itr) {
-            this.itr = itr;
-        }
-
-        @NonNull
-        @Override
-        public Iterator<HierarchyNode<V>> iterator() {
-            itr.onCreate();
-            return new Iterator<HierarchyNode<V>>() {
-                @Override
-                public boolean hasNext() {
-                    return itr.hasNext();
-                }
-
-                @Override
-                public HierarchyNode<V> next() {
-                    return itr.next();
-                }
-            };
-        }
-
-        @SuppressWarnings("unused")
-        public void filter(final MultiFilter<HierarchyNode<V>> filter) {
-            forEach(new Action<HierarchyNode<V>>() {
-                @Override
-                public boolean action(HierarchyNode<V> v) {
-                    return false;
-                }
-            });
-        }
-
-
-        public HierarchyNode<V> find(Filter<HierarchyNode<V>> filter) {
-            for (HierarchyNode<V> node: this) {
-                if (filter.onFilter(node)) {
-                    return node;
-                }
-            }
-            return null;
-        }
-
-        public void forEach(Action a) {
-            for (HierarchyNode<V> t: this) {
-                if(a.action(t)) {
-                    return;
-                }
-            }
-        }
-
-    }
-
-    /**
-     * 从树的根开始遍历
-     *
-     * @return family包含树的所有成员
-     */
-    public Family all() {
-        return new Family(new Itr() {
-
-            private ArrayList<HierarchyNode<V>> all = new ArrayList<>();
-
-            int index;
-            int size;
-
+        Hierarchy.of(root).descendants().forEach(new Hierarchy.Action() {
             @Override
-            public void onCreate() {
-                index = -1;
-                all.clear();
-                HierarchyNode<V> root = Hierarchy.of(mT).root();
-                all.add(root);
-                merge(root);
-                size = all.size();
-            }
-
-            @Override
-            public boolean hasNext() {
-                return index + 1 < size;
-            }
-
-            @Override
-            public HierarchyNode<V> next() {
-                index++;
-                return all.get(index);
-            }
-
-            private void merge(HierarchyNode<V> node) {
-                HierarchyNode<V>[] children = node.children();
-                all.addAll(Arrays.asList(children));
-                for (HierarchyNode<V> child: children) {
-                    merge(child);
-                }
+            public boolean action(HierarchyNode v) {
+                View view = (View) v.value();
+                Ami.log(view.getTag());
+                return false;
             }
         });
-    }
-
-    /**
-     * 所有直接子节点
-     */
-    public Family children() {
-        return new Family(new Itr() {
-
-            private int index;
-
-            private HierarchyNode<V>[] nodes = mT.children();
-
-            @Override
-            public void onCreate() {
-                index = 0;
-            }
-
-            @Override
-            public boolean hasNext() {
-                return index < nodes.length;
-            }
-
-            @Override
-            public HierarchyNode<V> next() {
-                index++;
-                return nodes[index];
-            }
-        });
-    }
-
-    /**
-     * 所有子孙节点,包括直接子node和子node的子node
-     * 也包括自己
-     *
-     * @return 所有子孙节点
-     */
-    public Family descendants() {
-        return new Family(new Itr() {
-
-            private ArrayList<HierarchyNode<V>> descendants = new ArrayList<>();
-
-            int index;
-            int size;
-
-            @Override
-            public void onCreate() {
-                index = -1;
-                descendants.clear();
-                descendants.add(mT);
-                merge(mT);
-                size = descendants.size();
-            }
-
-            @Override
-            public boolean hasNext() {
-                return index + 1 < size;
-            }
-
-            @Override
-            public HierarchyNode<V> next() {
-                index++;
-                return descendants.get(index);
-            }
-
-            private void merge(HierarchyNode<V> node) {
-                HierarchyNode<V>[] children = node.children();
-                descendants.addAll(Arrays.asList(children));
-                for (HierarchyNode<V> child: children) {
-                    merge(child);
-                }
-            }
-        });
-    }
-
-    public Family ancestors() {
-        return new Family(new Itr() {
-
-            @Override
-            public void onCreate() {
-                mPoint = mT;
-            }
-
-            @Override
-            public boolean hasNext() {
-                return mPoint.parent() != null;
-            }
-
-            @Override
-            public HierarchyNode<V> next() {
-                mPoint = mPoint.parent();
-                return mPoint;
-            }
-        });
-    }
-
-    /**
-     * brothers 包含自己
-     */
-    public Family brothers() {
-        return new Family(new Itr() {
-            private HierarchyNode<V> parent;
-            private HierarchyNode<V>[] children;
-            private int index = 0;
-
-            @Override
-            public void onCreate() {
-                parent = parent();
-                index = 0;
-                if (parent == null) {
-                    return;
-                }
-                children = parent.children();
-            }
-
-            @Override
-            public boolean hasNext() {
-                return parent != null && index < children.length;
-            }
-
-            @Override
-            public HierarchyNode<V> next() {
-                HierarchyNode<V> child = children[index];
-                index ++;
-                return child;
-            }
-        });
-    }
-
-    public HierarchyNode<V> parent(){
-        return mT.parent();
-    }
-
-
-    public HierarchyNode<V> root() {
-        if (mRoot == null) {
-            for (HierarchyNode<V> t: ancestors()) {
-                if(t.parent() == null) {
-                    mRoot = t;
-                    break;
-                }
-            }
-        }
-        return mRoot;
-    }
-
-    @SuppressWarnings("unused")
-    public HierarchyNode<V> childAt(int index) {
-        return mT.childAt(index);
-    }
-
-    public interface Action<T> {
-        boolean action(T t);
-    }
-
-    public static <T> Hierarchy<T> of(HierarchyNode<T> t) {
-        return new Hierarchy<>(t);
-    }
-
-    public interface MultiFilter<T> extends Filter<T> {
-        boolean onMatcher(T t);
-    }
-
-    public interface Filter<T> {
-        boolean onFilter(T t);
-    }
-
-    public abstract class Itr implements Iterator<HierarchyNode<V>> {
-        public abstract void onCreate();
     }
 }

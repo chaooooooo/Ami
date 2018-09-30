@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.os.Build;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,9 +18,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import chao.app.ami.Constants;
 import chao.app.ami.utils.DeviceUtil;
 import chao.app.ami.utils.ReflectUtil;
+import chao.app.ami.utils.hierarchy.Hierarchy;
+import chao.app.ami.utils.hierarchy.HierarchyNode;
+import chao.app.ami.utils.hierarchy.ViewHierarchyNode;
 import chao.app.debug.R;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -140,6 +145,10 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         return rectF;
     }
 
+    private boolean mCancelActionDialog = false;
+    private int maxDistance = 0;
+
+
     /**
      *  touch拦截事件不会影响原有的touch， click或longClick等事件触发
      *  但是有可能会抢夺view的焦点导致原有的事件不触发
@@ -153,18 +162,19 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         }
         int action = event.getAction();
         boolean result = false;
-        if (mLastRecord != null && mLastRecord.get() == record) {
-            OnTouchListener touchListener = record.getSourceTouchListener();
-            if (touchListener != null) {
-                result = touchListener.onTouch(record.view, event);
-            }
-            return result;
-        }
+//        if (mLastRecord != null && mLastRecord.get() == record) {
+//            OnTouchListener touchListener = record.getSourceTouchListener();
+//            if (touchListener != null) {
+//                result = touchListener.onTouch(record.view, event);
+//            }
+//            return result;
+//        }
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (isActionDialogShowed()) {
                     hideActionDialog();
-                    return false;
+                    mCancelActionDialog = true;
+                    return true;
                 }
                 if (mTouchedRecord != null) {
                     InterceptorRecord lastRecord = mTouchedRecord.get();
@@ -177,6 +187,8 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
                 mTouchedRecord = new WeakReference<>(record);
                 mDownPoint.x = (int) event.getRawX();
                 mDownPoint.y = (int) event.getRawY();
+                maxDistance = 0;
+//                Ami.log("new record: " + mTouchedRecord.get().view);
             case MotionEvent.ACTION_MOVE:
                 mSecondClickable = false;
                 InterceptorRecord touchedRecord = mTouchedRecord.get();
@@ -184,25 +196,68 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
                     return false;
                 }
                 getBoundaryOnLayout(touchedRecord.view, mFocusRect);
+                long downTime = event.getDownTime();
+                long curTime = event.getEventTime();
+                int moveX = (int) event.getRawX();
+                int moveY = (int) event.getRawY();
+                maxDistance = Math.max(maxDistance, Math.abs(moveX - mDownPoint.x));
+                maxDistance = Math.max(maxDistance, Math.abs(moveY - mDownPoint.y));
+                boolean inDistance = maxDistance < 10;
+                boolean overTime = curTime - downTime > 1000;
+                if (!inDistance) {
+                    mCancelActionDialog = true;
+                }
+                if (overTime) {
+                    mCancelActionDialog = true;
+                }
                 invalidate();
-                return true;
-            case MotionEvent.ACTION_UP:
-//                if (mLastRecord != null && mLastRecord.get() == record) {
-//                    mSecondClickable = true;
-//                }
-//
-//                if (mSecondClickable) {
-//                    if (performSecondTouchEvent(record, event)) {
-//                        result = true;
-//                    }
-//                    mSecondClickable = false;
-//                }
+                if (inDistance && overTime) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        record.view.performLongClick(moveX, moveY);
+                    } else {
+                        record.view.performLongClick();
+                    }
+                    mCancelActionDialog = true;
+                    return true;
+                }
+                return action == MotionEvent.ACTION_DOWN;
             case MotionEvent.ACTION_CANCEL:
-                mLastRecord = new WeakReference<>(record);
+            case MotionEvent.ACTION_UP:
+                if (mCancelActionDialog) {
+                    mCancelActionDialog = false;
+                    return true;
+                }
+                if (mLastRecord == null || mLastRecord.get() != record) {
+                    mLastRecord = mTouchedRecord;
+                    //满足此条件是做标记动作
+                    return true;
+                }
+//                Ami.log(mLastRecord.get().view);
+//                Ami.log(record.view);
+//                Ami.log("===================================\n");
+                if (performSecondTouchEvent(record, event)) {
+                    result = true;
+                }
+                mSecondClickable = false;
+                mLastRecord = mTouchedRecord;
                 break;
-
         }
-        return false;
+        return result;
+    }
+
+    private String getText(View view) {
+        ViewHierarchyNode node = (ViewHierarchyNode) Hierarchy.of(new ViewHierarchyNode(view)).descendants().find(new Hierarchy.Filter<HierarchyNode<View>>() {
+            @Override
+            public boolean onFilter(HierarchyNode<View> viewHierarchyNode) {
+                View tempView = viewHierarchyNode.value();
+                return tempView instanceof TextView;
+            }
+        });
+        if (node == null) {
+            return "";
+        }
+        TextView textView = (TextView) node.value();
+        return textView.getText().toString();
     }
 
     private boolean performSecondTouchEvent(InterceptorRecord record, MotionEvent event) {
@@ -211,18 +266,15 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
             return false;
         }
 
-        OnTouchListener touchListener = record.getSourceTouchListener();
-        if (touchListener != null) {
-            processed = touchListener.onTouch(record.view, event);
-        }
         OnClickListener clickListener = record.getSourceClickListener();
         if (clickListener != null) {
             Method setPressed = ReflectUtil.getMethod(View.class, "setPressed", boolean.class, float.class, float.class);
             if (setPressed != null) {
                 //点击特效
-                ReflectUtil.callMethod(setPressed, record.view, true, event.getX(), event.getY());
+//                ReflectUtil.callMethod(setPressed, record.view, true, event.getX(), event.getY());
                 //点击事件
-                record.view.performClick();
+                clickListener.onClick(record.view);
+//                Ami.log(getText(record.view));
                 processed = true;
             }
         }

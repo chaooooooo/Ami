@@ -227,4 +227,12 @@ public abstract class HierarchyNode<V> {
 
     public abstract HierarchyNode<V> childAt(int index);
 
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof HierarchyNode)) {
+            return false;
+        }
+        return value == ((HierarchyNode) obj).value;
+    }
 }

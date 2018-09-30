@@ -1,6 +1,7 @@
 package chao.app.debugtools;
 
 import android.os.Bundle;
+import chao.app.ami.UI;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMIActivity;
 import java.util.ArrayList;
@@ -50,15 +51,7 @@ public class MainActivity extends AMIActivity {
     @Override
     public void setupView(Bundle savedInstanceState) {
         super.setupView(savedInstanceState);
-//        UI.show(this, TestPermissionFragment.class);
-
-
-//        DisplayMetrics dm = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(dm);//display = getWindowManager().getDefaultDisplay();display.getMetrics(dm)（把屏幕尺寸信息赋值给DisplayMetrics dm）;
-//        Screen screen = new Screen(dm);
-//        Ami.log(screen);
-
-
+        UI.show(this, PullRecyclerView2TestFragment.class);
     }
 
 }

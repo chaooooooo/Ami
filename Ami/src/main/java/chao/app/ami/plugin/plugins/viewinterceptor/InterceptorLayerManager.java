@@ -234,7 +234,7 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         private String name;
         private int actionId;
 
-        public Action(int actionId, String name) {
+        Action(int actionId, String name) {
             this.name = name;
             this.actionId = actionId;
         }
@@ -246,7 +246,7 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
     }
 
 
-    public void setInterceptorEnabled(boolean enabled) {
+    void setInterceptorEnabled(boolean enabled) {
         mInterceptor.setInterceptorEnabled(enabled);
         mLayout.setVisibility(enabled?View.VISIBLE:View.GONE);
     }

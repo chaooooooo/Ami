@@ -105,6 +105,9 @@ public class InterceptorRecord {
             return null;
         }
         ViewGroup vg = (ViewGroup) viewParent;
+        if (vg.getId() == android.R.id.content) {
+            return null;
+        }
         InterceptorRecord record = new InterceptorRecord(vg, parent, null);
         record.listener = listener.createListener(record);
         return record;

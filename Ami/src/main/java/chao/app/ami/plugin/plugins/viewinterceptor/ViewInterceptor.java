@@ -49,20 +49,24 @@ public class ViewInterceptor {
         listener.setInterceptorRecord(record);
 
         View.OnTouchListener srcTouchListener = record.getTouchListener();
-        View.OnTouchListener hookTouchListener = Interceptor.newInstance(srcTouchListener, new Class[]{View.OnTouchListener.class, IViewInterceptor.class}, listener, true);
-        child.setOnTouchListener(hookTouchListener);
+        if (!hasInjected(srcTouchListener)) {
+            View.OnTouchListener hookTouchListener = Interceptor.newInstance(srcTouchListener, new Class[] {View.OnTouchListener.class, IViewInterceptor.class}, listener, false);
+            child.setOnTouchListener(hookTouchListener);
+        }
 
 
         if (!(child instanceof ViewGroup)) {
-//            View.OnClickListener srcClickListener = ViewHook.getOnClickListener(child);
-//            View.OnClickListener hookClickListener = Interceptor.newInstance(srcClickListener, View.OnClickListener.class, mInterceptorListener, true);
-//            child.setOnClickListener(hookClickListener);
+            View.OnClickListener srcClickListener = ViewHook.getOnClickListener(child);
+            if (!hasInjected(srcClickListener)) {
+                View.OnClickListener hookClickListener = Interceptor.newInstance(srcClickListener, new Class[] {View.OnClickListener.class, IViewInterceptor.class}, listener, true);
+                child.setOnClickListener(hookClickListener);
+            }
 
             //这里两个作用
             //1. 注入了longClick事件代理
             //2. 设置了clickable， 使得每个view都可以被点击到 等同于child.setClickable(true)
             View.OnLongClickListener srcLongClickListener = record.getLongClickListener();
-            if (!(srcLongClickListener instanceof IViewInterceptor)) {
+            if (!hasInjected(srcLongClickListener)) {
                 View.OnLongClickListener hookLongClickListener = Interceptor.newInstance(srcLongClickListener, new Class[]{View.OnLongClickListener.class, IViewInterceptor.class}, listener, true);
                 child.setOnLongClickListener(hookLongClickListener);
             }
@@ -71,7 +75,7 @@ public class ViewInterceptor {
         ViewGroup vgChild = (ViewGroup) child;
 
         ViewGroup.OnHierarchyChangeListener srcHierarchyListener = record.getHierarchyChangeListener();
-        if (!(srcHierarchyListener instanceof IViewInterceptor)) {
+        if (!hasInjected(srcHierarchyListener)) {
             ViewGroup.OnHierarchyChangeListener hookHierarchyListener = Interceptor.newInstance(srcHierarchyListener, new Class[]{ViewGroup.OnHierarchyChangeListener.class, IViewInterceptor.class}, listener, false);
             vgChild.setOnHierarchyChangeListener(hookHierarchyListener);
             int grandChildrenCount = vgChild.getChildCount();
@@ -114,6 +118,9 @@ public class ViewInterceptor {
         }
     }
 
+    private boolean hasInjected(Object listener) {
+        return listener instanceof IViewInterceptor;
+    }
 
     public void setInterceptorEnabled(boolean enabled) {
         mInterceptorEnabled = enabled;
