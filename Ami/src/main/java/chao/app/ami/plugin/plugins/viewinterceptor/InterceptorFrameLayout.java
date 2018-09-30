@@ -16,12 +16,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import chao.app.ami.Constants;
 import chao.app.ami.utils.DeviceUtil;
 import chao.app.ami.utils.ReflectUtil;
+import chao.app.ami.utils.Util;
 import chao.app.ami.utils.hierarchy.Hierarchy;
 import chao.app.ami.utils.hierarchy.HierarchyNode;
 import chao.app.ami.utils.hierarchy.ViewHierarchyNode;
@@ -160,15 +162,13 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         if (!mInterceptor.isInterceptorEnabled()) {
             return false;
         }
+        //不支持webview
+        if (Util.isWebView(record.view)) {
+            return false;
+        }
+
         int action = event.getAction();
         boolean result = false;
-//        if (mLastRecord != null && mLastRecord.get() == record) {
-//            OnTouchListener touchListener = record.getSourceTouchListener();
-//            if (touchListener != null) {
-//                result = touchListener.onTouch(record.view, event);
-//            }
-//            return result;
-//        }
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (isActionDialogShowed()) {
@@ -383,7 +383,7 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         return mActionListView.getVisibility() == VISIBLE && mActionListView.getParent() != null;
     }
 
-    public void showActionDialog() {
+    public void showActionDialog(AdapterView.OnItemClickListener listener) {
         getLocationOnScreen(mFrameViewLocation);
         mActionParams.left = mDownPoint.x - mFrameViewLocation[0];
         mActionParams.top = mDownPoint.y - mFrameViewLocation[1];
@@ -391,6 +391,7 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
         mActionParams.height = LayoutParams.WRAP_CONTENT;
         removeView(mActionListView);
         addView(mActionListView, mActionParams);
+        mActionListView.setOnItemClickListener(listener);
     }
 
     public void hideActionDialog() {

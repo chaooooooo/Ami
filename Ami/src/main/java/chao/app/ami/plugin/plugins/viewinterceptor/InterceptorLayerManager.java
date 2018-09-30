@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.Constants;
+import chao.app.ami.Interceptor;
+import chao.app.ami.hooks.ViewHook;
 import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.ami.plugin.AmiSettings;
 import chao.app.ami.plugin.MovementLayout;
@@ -155,14 +157,26 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         return mLayout;
     }
 
-    private void showAction(View view) {
+    private void showAction(final View view) {
         mActionList.clear();
         mActionList.add(new Action(ACTION_ID_LONG_CLICK, Constants.AMI_ACTION_LONG_CLICK));
-        if (view instanceof TextView) {
-            mActionList.add(new Action(ACTION_ID_TEXT_INJECT, "注入文本"));
-        }
-        mActionList.add(new Action(ACTION_ID_VIEW_DETAIL,Constants.AMI_ACTION_VIEW_DETAIL));
-        mLayout.showActionDialog();
+//        if (view instanceof TextView) {
+//            mActionList.add(new Action(ACTION_ID_TEXT_INJECT, "注入文本"));
+//        }
+//        mActionList.add(new Action(ACTION_ID_VIEW_DETAIL,Constants.AMI_ACTION_VIEW_DETAIL));
+        mLayout.showActionDialog(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View itemView, int position, long id) {
+                if (position == ACTION_ID_LONG_CLICK) {
+                    View.OnLongClickListener injectLongClick = ViewHook.getOnLongClickListener(view);
+                    View.OnLongClickListener srcLongClick = Interceptor.getSourceListener(injectLongClick);
+                    if (srcLongClick != null) {
+                        srcLongClick.onLongClick(view);
+                    }
+                }
+                hideAction();
+            }
+        });
         mActionListAdapter.clear();
         mActionListAdapter.addAll(mActionList);
     }
