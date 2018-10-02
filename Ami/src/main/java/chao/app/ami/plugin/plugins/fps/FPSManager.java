@@ -7,6 +7,8 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.view.Choreographer;
+import chao.app.ami.base.AMIToast;
+import chao.app.ami.logs.LogHelper;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,7 +17,10 @@ import java.util.concurrent.Executors;
  * @author qinchao
  * @since 2018/9/10
  */
+@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
 public class FPSManager implements Handler.Callback {
+
+    private static final String TAG = FPSManager.class.getSimpleName();
 
     private static final int HANDLER_FPS_UPDATE = 1;
 
@@ -24,6 +29,8 @@ public class FPSManager implements Handler.Callback {
     private int lastFps = 0;
 
     private OnFPSUpdateListener onFPSUpdateListener;
+
+    private FPSFrameCallback frameCallback = new FPSFrameCallback();
 
 
     public FPSManager(@NonNull OnFPSUpdateListener listener) {
@@ -37,9 +44,30 @@ public class FPSManager implements Handler.Callback {
         handler.sendMessage(message);
     }
 
-    public void start() {
+    public boolean start() {
+        Looper looper = Looper.myLooper();
+        if (looper != Looper.getMainLooper()) {
+            LogHelper.w(TAG, "FPS只有在主线程下启动才能生效!");
+            return false;
+        }
+        stop();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            Choreographer.getInstance().postFrameCallback(new FPSFrameCallback());
+            Choreographer.getInstance().postFrameCallback(frameCallback);
+            return true;
+        } else {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    AMIToast.show("fps只支持Android API16(Android4.1)以上");
+                }
+            });
+            return false;
+        }
+    }
+
+    public void stop() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            Choreographer.getInstance().removeFrameCallback(frameCallback);
         }
     }
 
