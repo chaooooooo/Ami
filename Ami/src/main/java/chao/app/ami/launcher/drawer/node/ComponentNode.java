@@ -2,7 +2,7 @@ package chao.app.ami.launcher.drawer.node;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.util.ArrayMap;
+import androidx.collection.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
 import chao.app.ami.launcher.drawer.DrawerParserException;

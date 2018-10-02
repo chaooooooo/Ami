@@ -1,7 +1,7 @@
 package chao.app.debugtools.tabhost;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import chao.app.ami.annotations.LayoutID;
 import chao.app.debugtools.BaseFragment;

@@ -2,9 +2,9 @@ package chao.app.ami.plugin;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.CallSuper;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import androidx.annotation.CallSuper;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import chao.app.ami.Ami;
 import chao.app.ami.base.AmiContentView;
 

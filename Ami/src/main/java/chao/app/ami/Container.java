@@ -3,8 +3,10 @@ package chao.app.ami;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import chao.app.ami.base.AMIActivity;
 import chao.app.debug.R;
 
@@ -15,14 +17,14 @@ public class Container extends AMIActivity {
     private Class<?> mTargetFragment;
 
     private Fragment mAppFragment;
-    private android.support.v4.app.Fragment mSupportFragment;
+    private androidx.fragment.app.Fragment mSupportFragment;
 
 
     private boolean checkTargetFragment() {
         if (mTargetFragment == null) {
             return false;
         }
-        return Fragment.class.isAssignableFrom(mTargetFragment) || android.support.v4.app.Fragment.class.isAssignableFrom(mTargetFragment);
+        return Fragment.class.isAssignableFrom(mTargetFragment) || androidx.fragment.app.Fragment.class.isAssignableFrom(mTargetFragment);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class Container extends AMIActivity {
         removeSupportFragment();
         if (Fragment.class.isAssignableFrom(fragmentClazz)) {
             addAppFragment(fragmentClazz);
-        } else if (android.support.v4.app.Fragment.class.isAssignableFrom(fragmentClazz)) {
+        } else if (androidx.fragment.app.Fragment.class.isAssignableFrom(fragmentClazz)) {
             addSupportFragment(fragmentClazz);
         }
     }
@@ -81,9 +83,9 @@ public class Container extends AMIActivity {
     }
 
     private void addSupportFragment(Class<?> clazz) throws IllegalAccessException, InstantiationException {
-        android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-        mSupportFragment = (android.support.v4.app.Fragment) clazz.newInstance();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        mSupportFragment = (androidx.fragment.app.Fragment) clazz.newInstance();
         transaction.replace(R.id.fragment, mSupportFragment, clazz.getSimpleName());
         transaction.commitAllowingStateLoss();
     }
@@ -103,8 +105,8 @@ public class Container extends AMIActivity {
         if (mSupportFragment == null) {
             return;
         }
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.remove(mSupportFragment);
         transaction.commitAllowingStateLoss();
         mSupportFragment = null;

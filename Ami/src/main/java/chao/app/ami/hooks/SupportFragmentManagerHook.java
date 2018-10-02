@@ -1,10 +1,10 @@
 package chao.app.ami.hooks;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentController;
-import android.support.v4.app.FragmentHostCallback;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentController;
+import androidx.fragment.app.FragmentHostCallback;
 import android.util.SparseArray;
 
 import java.lang.reflect.Field;

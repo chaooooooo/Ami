@@ -1,6 +1,6 @@
 package chao.app.ami.plugin;
 
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import chao.app.ami.base.AMISupportFragment;

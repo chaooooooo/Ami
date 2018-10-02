@@ -3,7 +3,7 @@ package chao.app.ami.plugin.plugins.info;
 import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.TextView;

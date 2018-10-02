@@ -2,9 +2,9 @@ package chao.app.ami.base;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +31,7 @@ public abstract class AMISupportFragment extends Fragment implements IAMIFragmen
 
     @Override
     public void setupTitle() {
-        android.support.v7.app.ActionBar supportActionBar = getAppCompatActivity().getSupportActionBar();
+        androidx.appcompat.app.ActionBar supportActionBar = getAppCompatActivity().getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setTitle(getClass().getSimpleName());
         }

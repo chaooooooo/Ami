@@ -3,7 +3,7 @@ package chao.app.ami.plugin.plugins.frame;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -54,11 +54,11 @@ public class FirstFrame extends FrameImpl{
             }
         }
         //support fragments
-        entries.add(new Entry(android.support.v4.app.Fragment.class.getName(), true));
+        entries.add(new Entry(androidx.fragment.app.Fragment.class.getName(), true));
         if (activity instanceof FragmentActivity) {
-            ArrayList<android.support.v4.app.Fragment> fragmentList = SupportFragmentManagerHook.getActiveFragments((FragmentActivity) activity);
+            ArrayList<androidx.fragment.app.Fragment> fragmentList = SupportFragmentManagerHook.getActiveFragments((FragmentActivity) activity);
             if (fragmentList != null) {
-                for (android.support.v4.app.Fragment fragment: fragmentList) {
+                for (androidx.fragment.app.Fragment fragment: fragmentList) {
                     entries.add(new Entry(fragment, "", fragment.getClass().getName()));
                 }
             }

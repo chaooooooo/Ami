@@ -1,19 +1,13 @@
 package chao.app.ami.base;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
+import androidx.annotation.Nullable;
 import android.view.View;
 import android.content.res.Resources;
-import android.view.Window;
-import android.view.WindowManager;
 
 import chao.app.ami.Ami;
 import chao.app.ami.annotations.LayoutID;
-import chao.app.debug.R;
 
 /**
  * @author chao.qin

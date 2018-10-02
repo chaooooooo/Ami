@@ -1,6 +1,6 @@
 package chao.app.ami.plugin.plugins.colorful;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.plugin.AmiPluginSettingPane;
 import chao.app.ami.plugin.AmiPlugin;

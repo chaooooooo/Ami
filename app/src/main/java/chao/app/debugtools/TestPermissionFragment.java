@@ -2,7 +2,7 @@ package chao.app.debugtools;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 import chao.app.ami.annotations.LayoutID;

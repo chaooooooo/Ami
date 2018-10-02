@@ -8,8 +8,9 @@ import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.widget.Toast;
+import androidx.fragment.app.Fragment;
 import chao.app.ami.utils.permission.PermissionHelper;
 import chao.app.ami.utils.permission.PermissionListener;
 
@@ -60,7 +61,7 @@ public class UI {
     private static void showInner(Context context, Class clazz, Bundle bundle, int flags) {
         if (android.app.Fragment.class.isAssignableFrom(clazz)) {
             showAppFragment(context,clazz,bundle,flags);
-        } else if (android.support.v4.app.Fragment.class.isAssignableFrom(clazz)) {
+        } else if (Fragment.class.isAssignableFrom(clazz)) {
             showSupportFragment(context,clazz,bundle,flags);
         } else if (Activity.class.isAssignableFrom(clazz)) {
             showActivity(context,clazz,bundle,flags);
