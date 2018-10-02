@@ -27,7 +27,6 @@ public class AppsFragment extends AMISupportFragment implements View.OnClickList
 
     private List<ResolveInfo> resolveInfos;
 
-
     private Button button;
 
     @Override

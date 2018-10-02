@@ -25,6 +25,8 @@ public class FPSManager implements Handler.Callback {
 
     private OnFPSUpdateListener onFPSUpdateListener;
 
+    private FPSFrameCallback frameCallback = new FPSFrameCallback();
+
 
     public FPSManager(@NonNull OnFPSUpdateListener listener) {
         onFPSUpdateListener = listener;
@@ -39,7 +41,7 @@ public class FPSManager implements Handler.Callback {
 
     public void start() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            Choreographer.getInstance().postFrameCallback(new FPSFrameCallback());
+            Choreographer.getInstance().postFrameCallback(frameCallback);
         }
     }
 
@@ -60,6 +62,12 @@ public class FPSManager implements Handler.Callback {
             return true;
         }
         return false;
+    }
+
+    public void stop(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            Choreographer.getInstance().removeFrameCallback(frameCallback);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
