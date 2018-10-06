@@ -1,10 +1,11 @@
 package chao.app.ami;
 
 import android.app.Application;
+import android.os.Handler;
 import android.util.Log;
 import chao.app.ami.base.AmiHandlerThread;
-import chao.app.ami.plugin.plugins.frame.FrameManager;
 import chao.app.ami.launcher.drawer.DrawerManager;
+import chao.app.ami.plugin.plugins.frame.FrameManager;
 import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;
 import chao.app.ami.utils.Util;
@@ -207,6 +208,7 @@ public class Ami {
         Log.d(tag, className + "." + method + "() " + log);
     }
 
+    @Deprecated
     public static void lifecycle(String tag, String log, int level) {
         if (mLifecycle == LIFECYCLE_LEVEL_NONE) {
             return;
@@ -218,6 +220,16 @@ public class Ami {
     }
 
     public static AmiHandlerThread getHandlerThread() {
+        if (!inited()) {
+            return null;
+        }
         return sHandlerThread;
+    }
+
+    public static Handler getHandler(){
+        if (!inited()) {
+            return null;
+        }
+        return sHandlerThread.getHandler();
     }
 }

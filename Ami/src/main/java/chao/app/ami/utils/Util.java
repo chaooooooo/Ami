@@ -174,6 +174,8 @@ public class Util implements Constants {
         return String.valueOf(pid);
     }
 
+    private final static HashMap<String, Boolean> WEB_CLASS_MAP = new HashMap<>();
+
     public static boolean isWebView(View view) {
         if (view instanceof WebView) {
             return true;
@@ -183,13 +185,19 @@ public class Util implements Constants {
     }
 
     private static boolean isWebView(String className, View view) {
+        Boolean isWebView = WEB_CLASS_MAP.get(className);
+        if (isWebView != null) {
+            return isWebView;
+        }
         try {
             Class<?> clazz = Class.forName(className);
-            return clazz.isAssignableFrom(view.getClass());
+            isWebView = clazz.isAssignableFrom(view.getClass());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            isWebView = false;
         }
-        return false;
+        WEB_CLASS_MAP.put(className, isWebView);
+        return isWebView;
     }
 
 }

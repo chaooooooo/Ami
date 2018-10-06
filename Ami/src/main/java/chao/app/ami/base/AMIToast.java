@@ -203,96 +203,33 @@
  *
  */
 
-package chao.app.ami.plugin.plugins.fps;
+package chao.app.ami.base;
 
-import android.graphics.Color;
-import android.view.View;
-import android.widget.TextView;
+import android.os.Handler;
+import android.widget.Toast;
 import chao.app.ami.Ami;
-import chao.app.ami.base.AmiContentView;
-import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiPluginFragment;
-import chao.app.ami.plugin.AmiSettings;
-import chao.app.ami.plugin.MovementLayout;
-import chao.app.debug.R;
 
 /**
  * @author qinchao
- * @since 2018/9/28
+ * @since 2018/10/2
  */
-public class FPSPlugin extends AmiPlugin<AmiPluginFragment,FPSSettings, FPSPane> implements AmiSettings.OnSettingsChangeListener {
+public class AMIToast {
 
-    private TextView fpsView;
-    private FPSManager fpsManager;
-
-
-    @Override
-    public FPSSettings createSettings() {
-        return new FPSSettings();
+    public static void show(int textId) {
+        String text = Ami.getApp().getString(textId);
+        show(text);
     }
 
-    @Override
-    protected AmiPluginFragment createFragment() {
-        return null;
-    }
-
-    @Override
-    public FPSPane createComponent() {
-        return new FPSPane(this);
-    }
-
-    @Override
-    public CharSequence getTitle() {
-        return "fps";
-    }
-
-    @Override
-    public Object getManager() {
-        return fpsManager;
-    }
-
-    @Override
-    public void onBindView(AmiContentView contentView) {
-        MovementLayout movementLayout = contentView.getMovementLayout();
-        //fps
-        fpsView = contentView.findViewById(R.id.ami_content_fps);
-        movementLayout.addView(fpsView);
-        fpsManager = new FPSManager(new FPSManager.OnFPSUpdateListener() {
+    public static void show(final String text){
+        Handler handler = Ami.getHandler();
+        if (handler == null) {
+            return;
+        }
+        handler.post(new Runnable() {
             @Override
-            public void onFpsUpdate(int fps) {
-                String text = "fps: " + fps;
-                if (getSettings().logEnabled()) {
-                    Ami.log(text);
-                }
-                int fpsColor = Color.parseColor("#2e7c22");
-                if (fps < 20) {
-                    fpsColor = Color.parseColor("#c61515");
-                } else if (fps < 40) {
-                    fpsColor = Color.parseColor("#ffce2e");
-                }
-                fpsView.setTextColor(fpsColor);
-                fpsView.setText(text);
+            public void run() {
+                Toast.makeText(Ami.getApp(),text, Toast.LENGTH_SHORT).show();
             }
         });
-        FPSSettings settings = getSettings();
-        settings.setSettingsChangeListener(this);
-
-        if (settings.isShowFPS()) {
-            fpsManager.start();
-        }
-
-    }
-
-
-    @Override
-    public <T> void onSettingsChanged(String key, T value) {
-        if (getSettings().isShowFPS()) {
-            if (fpsManager.start()) {
-                fpsView.setVisibility(View.VISIBLE);
-            }
-        } else {
-            fpsManager.stop();
-            fpsView.setVisibility(View.GONE);
-        }
     }
 }

@@ -1,0 +1,11 @@
+2018-10-1
+版本： v0.1.0
+1. viewinterceptor导致卡顿问题  ## wait for testing
+
+2. support版本依赖问题        ## wait for testing
+
+3. fps无法默认关闭
+
+4. fps没有完全关闭， 只是不显示
+
+5. support库不应该强制依赖
