@@ -64,11 +64,6 @@ public class FPSManager implements Handler.Callback {
         return false;
     }
 
-    public void stop(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            Choreographer.getInstance().removeFrameCallback(frameCallback);
-        }
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private class FPSFrameCallback implements Choreographer.FrameCallback {
