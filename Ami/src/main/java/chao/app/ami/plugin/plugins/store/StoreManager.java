@@ -203,80 +203,40 @@
  *
  */
 
-package chao.app.debug;
+package chao.app.ami.plugin.plugins.store;
 
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import chao.app.ami.Ami;
-import chao.app.ami.utils.hierarchy.Hierarchy;
-import chao.app.ami.utils.hierarchy.ViewHierarchyNode;
-import org.junit.Before;
-import org.junit.Test;
+import chao.app.ami.hooks.ContextImplHook;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
 
 /**
  * @author qinchao
- * @since 2018/9/29
+ * @since 2018/10/7
  */
-public class HierarchyTest {
+public class StoreManager {
 
 
-    private View mView;
-
-    @Before
-    public void init() {
-        Context context = Ami.getApp();
-        mView = new View(context);
-        mView.setTag("self");
-        ViewGroup brother1 = new LinearLayout(context);
-        View brother2 = new View(context);
-        View brother3 = new View(context);
-        View brother4 = new View(context);
-        ViewGroup brother5 = new LinearLayout(context);
-
-        View brother6 = new View(context);
-        View brother7 = new View(context);
-        View brother8 = new View(context);
-
-
-        brother1.setTag("brother1");
-        brother2.setTag("brother2");
-        brother3.setTag("brother3");
-        brother4.setTag("brother4");
-        brother5.setTag("brother5");
-        brother6.setTag("brother6");
-        brother7.setTag("brother7");
-        brother8.setTag("brother8");
-
-        brother1.addView(brother6);
-        brother5.addView(brother7);
-        brother5.addView(brother8);
-
-        ViewGroup parent = new LinearLayout(context);
-        parent.addView(mView);
-        parent.addView(brother1);
-        parent.addView(brother2);
-        parent.addView(brother3);
-
-        parent.setTag("parent");
-
-        ViewGroup parentBrother = new LinearLayout(context);
-        parentBrother.addView(brother4);
-        parentBrother.addView(brother5);
-        parentBrother.setTag("parentBrother");
-
-        ViewGroup pprant = new RelativeLayout(context);
-        pprant.addView(parent);
-        pprant.addView(parentBrother);
-
-        pprant.setTag("pparent");
-    }
-
-    @Test
-    public void testHierarchy() {
-        ViewHierarchyNode root = (ViewHierarchyNode) Hierarchy.of(new ViewHierarchyNode(mView)).root();
-        Ami.log("root: " + root.value().getTag());
+    public ArrayList<String> getSharedPreferences(Context context) {
+        ArrayList<String> spList = new ArrayList<>();
+        File spDir = ContextImplHook.getPreferencesDir(context);
+        if (spDir == null || !spDir.exists()) {
+            return spList;
+        }
+        File[] subFiles = spDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".xml");
+            }
+        });
+        for (File subFile: subFiles) {
+            String fName = subFile.getName();
+            int beginIndex = 0;
+            int lastIndex = fName.lastIndexOf(".xml");
+            String name = fName.substring(beginIndex, lastIndex);
+            spList.add(name);
+        }
+        return spList;
     }
 }

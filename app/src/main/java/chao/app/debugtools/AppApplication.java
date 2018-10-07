@@ -2,6 +2,7 @@ package chao.app.debugtools;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
 import chao.app.ami.Ami;
 import java.io.File;
 
@@ -13,6 +14,10 @@ import java.io.File;
 @SuppressLint("Registered")
 public class AppApplication extends Application {
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+    }
 
     @Override
     public void onCreate() {

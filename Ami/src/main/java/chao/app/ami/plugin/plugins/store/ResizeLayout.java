@@ -203,80 +203,121 @@
  *
  */
 
-package chao.app.debug;
+package chao.app.ami.plugin.plugins.store;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import chao.app.ami.Ami;
-import chao.app.ami.utils.hierarchy.Hierarchy;
-import chao.app.ami.utils.hierarchy.ViewHierarchyNode;
-import org.junit.Before;
-import org.junit.Test;
+import chao.app.ami.utils.DeviceUtil;
 
 /**
  * @author qinchao
- * @since 2018/9/29
+ * @since 2018/10/7
  */
-public class HierarchyTest {
+public class ResizeLayout extends ViewGroup {
 
+    private float mLastX;
 
-    private View mView;
+    private float mDx;
 
-    @Before
-    public void init() {
-        Context context = Ami.getApp();
-        mView = new View(context);
-        mView.setTag("self");
-        ViewGroup brother1 = new LinearLayout(context);
-        View brother2 = new View(context);
-        View brother3 = new View(context);
-        View brother4 = new View(context);
-        ViewGroup brother5 = new LinearLayout(context);
+    private int mWidth;
 
-        View brother6 = new View(context);
-        View brother7 = new View(context);
-        View brother8 = new View(context);
+    private View mChild;
 
+    private int mMinWidth = DeviceUtil.dp2px(60);
 
-        brother1.setTag("brother1");
-        brother2.setTag("brother2");
-        brother3.setTag("brother3");
-        brother4.setTag("brother4");
-        brother5.setTag("brother5");
-        brother6.setTag("brother6");
-        brother7.setTag("brother7");
-        brother8.setTag("brother8");
+    private int mMaxWidth = DeviceUtil.dp2px(200);
 
-        brother1.addView(brother6);
-        brother5.addView(brother7);
-        brother5.addView(brother8);
+    private boolean mInitMeasured = true;
 
-        ViewGroup parent = new LinearLayout(context);
-        parent.addView(mView);
-        parent.addView(brother1);
-        parent.addView(brother2);
-        parent.addView(brother3);
-
-        parent.setTag("parent");
-
-        ViewGroup parentBrother = new LinearLayout(context);
-        parentBrother.addView(brother4);
-        parentBrother.addView(brother5);
-        parentBrother.setTag("parentBrother");
-
-        ViewGroup pprant = new RelativeLayout(context);
-        pprant.addView(parent);
-        pprant.addView(parentBrother);
-
-        pprant.setTag("pparent");
+    public ResizeLayout(Context context) {
+        super(context);
+        init();
     }
 
-    @Test
-    public void testHierarchy() {
-        ViewHierarchyNode root = (ViewHierarchyNode) Hierarchy.of(new ViewHierarchyNode(mView)).root();
-        Ami.log("root: " + root.value().getTag());
+    public ResizeLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public ResizeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (mInitMeasured) {
+            mInitMeasured = false;
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            mWidth = getMeasuredWidth();
+            mWidth = Math.max(mMinWidth, Math.min(mWidth, mMaxWidth));
+            return;
+        }
+        mWidth += mDx;
+        mWidth = Math.max(mMinWidth, Math.min(mWidth, mMaxWidth));
+        int widthSize = mWidth;
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSpec = MeasureSpec.makeMeasureSpec(widthSize, widthMode);
+        super.onMeasure(widthSpec, heightMeasureSpec);
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+        }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        if (mChild == null) {
+            mChild = getChildAt(0);
+        }
+        int height = getMeasuredHeight();
+        int childHeight = mChild.getMeasuredHeight();
+        int childMinTop = (int) (height * 0.1);
+
+
+
+        int left = 0;
+        int right = left + mWidth;
+        int top = (height - childHeight) / 4;
+        top = Math.max(childMinTop, top);
+        int bottom = top + childHeight;
+        int childMaxHeight = (int) (getMeasuredHeight() * 0.85);
+        bottom = Math.min(bottom, childMaxHeight);
+        mChild.layout(left, top, right, bottom);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mLastX = event.getRawX();
+                getParent().requestDisallowInterceptTouchEvent(true);
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                float thisX = event.getRawX();
+                mDx = thisX - mLastX;
+                mLastX = thisX;
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mDx = 0;
+                break;
+        }
+        requestLayout();
+        return super.onTouchEvent(event);
     }
 }

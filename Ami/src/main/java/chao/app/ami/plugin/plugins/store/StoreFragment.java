@@ -205,15 +205,64 @@
 
 package chao.app.ami.plugin.plugins.store;
 
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
 import chao.app.debug.R;
+import java.util.ArrayList;
 
 /**
  * @author qinchao
  * @since 2018/10/7
  */
 public class StoreFragment extends AmiPluginFragment {
+
+    private RecyclerView mRecyclerView;
+
+    private StorePrefsFragment mFragment;
+
+    private Adapter mAdapter;
+
+    private ArrayList<String> mPrefs = new ArrayList<>();
+
+    private StoreManager mStoreManager = new StoreManager();
+
+    private int mSelected = 0;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPrefs = mStoreManager.getSharedPreferences(getContext());
+
+//        for (int i=0;i<30;i++) {
+//            mPrefs.add("i"+i);
+//        }
+    }
+
+    @Override
+    public void setupView(View layout) {
+        super.setupView(layout);
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        mRecyclerView = findView(R.id.ami_store_sp_titles);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(context, RecyclerView.VERTICAL));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+        mAdapter = new Adapter();
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
     @Override
     public Class<? extends AmiPlugin> bindPlugin() {
         return StorePlugin.class;
@@ -222,5 +271,38 @@ public class StoreFragment extends AmiPluginFragment {
     @Override
     public int getLayoutID() {
         return R.layout.store_fragment;
+    }
+
+    private class Adapter extends RecyclerView.Adapter {
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View view = inflater.inflate(R.layout.ami_plugin_store_prefs_title_item, viewGroup, false);
+            return new RecyclerView.ViewHolder(view) {};
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+            final TextView textView = (TextView) viewHolder.itemView;
+            textView.setText(mPrefs.get(position));
+            textView.setSelected(mSelected == position);
+            final int preSelected = position;
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int lastSelected = mSelected;
+                    mSelected = preSelected;
+                    notifyItemChanged(mSelected);
+                    notifyItemChanged(lastSelected);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mPrefs.size();
+        }
     }
 }

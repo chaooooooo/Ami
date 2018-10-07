@@ -39,6 +39,7 @@ import chao.app.ami.plugin.plugins.frame.FramePlugin;
 import chao.app.ami.plugin.plugins.general.GeneralPlugin;
 import chao.app.ami.plugin.plugins.info.InfoPlugin;
 import chao.app.ami.plugin.plugins.logcat.LogcatPlugin;
+import chao.app.ami.plugin.plugins.store.StorePlugin;
 import chao.app.ami.plugin.plugins.viewinterceptor.InterceptorLayerManager;
 import chao.app.ami.plugin.plugins.viewinterceptor.ViewInterceptorPlugin;
 import chao.app.debug.R;
@@ -452,6 +453,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             new FramePlugin(),
             new InfoPlugin(),
             new ViewInterceptorPlugin(),
+            new StorePlugin(),
             new ColorfulPlugin(),
             new FPSPlugin()
         );

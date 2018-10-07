@@ -33,6 +33,9 @@ public class GeneralFragment extends AmiPluginFragment {
             }
             LayoutInflater inflater = getLayoutInflater();
             View componentView = generalComponent.onCreateView(inflater, mLayout);
+            if (componentView == null) {
+                throw new NullPointerException("onCreateView should have a return value");
+            }
             addComponentView(generalComponent, componentView);
         }
     }

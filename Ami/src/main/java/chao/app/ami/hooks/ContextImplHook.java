@@ -203,80 +203,61 @@
  *
  */
 
-package chao.app.debug;
+package chao.app.ami.hooks;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import chao.app.ami.Ami;
-import chao.app.ami.utils.hierarchy.Hierarchy;
-import chao.app.ami.utils.hierarchy.ViewHierarchyNode;
-import org.junit.Before;
-import org.junit.Test;
+import android.content.ContextWrapper;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * @author qinchao
- * @since 2018/9/29
+ * @since 2018/10/7
  */
-public class HierarchyTest {
+@SuppressLint("PrivateApi")
+public class ContextImplHook {
 
+    private static Class<?> Class_ContextImpl;
 
-    private View mView;
+    private static Method Method_getPreferencesDir;
 
-    @Before
-    public void init() {
-        Context context = Ami.getApp();
-        mView = new View(context);
-        mView.setTag("self");
-        ViewGroup brother1 = new LinearLayout(context);
-        View brother2 = new View(context);
-        View brother3 = new View(context);
-        View brother4 = new View(context);
-        ViewGroup brother5 = new LinearLayout(context);
+     static {
+        try {
+            Class_ContextImpl = Class.forName("android.app.ContextImpl");
+            Method_getPreferencesDir = Class_ContextImpl.getDeclaredMethod("getPreferencesDir");
+            Method_getPreferencesDir.setAccessible(true);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+     }
 
-        View brother6 = new View(context);
-        View brother7 = new View(context);
-        View brother8 = new View(context);
-
-
-        brother1.setTag("brother1");
-        brother2.setTag("brother2");
-        brother3.setTag("brother3");
-        brother4.setTag("brother4");
-        brother5.setTag("brother5");
-        brother6.setTag("brother6");
-        brother7.setTag("brother7");
-        brother8.setTag("brother8");
-
-        brother1.addView(brother6);
-        brother5.addView(brother7);
-        brother5.addView(brother8);
-
-        ViewGroup parent = new LinearLayout(context);
-        parent.addView(mView);
-        parent.addView(brother1);
-        parent.addView(brother2);
-        parent.addView(brother3);
-
-        parent.setTag("parent");
-
-        ViewGroup parentBrother = new LinearLayout(context);
-        parentBrother.addView(brother4);
-        parentBrother.addView(brother5);
-        parentBrother.setTag("parentBrother");
-
-        ViewGroup pprant = new RelativeLayout(context);
-        pprant.addView(parent);
-        pprant.addView(parentBrother);
-
-        pprant.setTag("pparent");
+    /**
+     * 参考 android.app.ContextImpl#getImpl
+     *
+     * @return ContextImpl
+     */
+    private static Context getImpl(Context context) {
+        Context nextContext;
+        while ((context instanceof ContextWrapper) &&
+            (nextContext=((ContextWrapper)context).getBaseContext()) != null) {
+            context = nextContext;
+        }
+        return context;
     }
 
-    @Test
-    public void testHierarchy() {
-        ViewHierarchyNode root = (ViewHierarchyNode) Hierarchy.of(new ViewHierarchyNode(mView)).root();
-        Ami.log("root: " + root.value().getTag());
+
+    public static File getPreferencesDir(Context context) {
+        try {
+            return (File) Method_getPreferencesDir.invoke(getImpl(context));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

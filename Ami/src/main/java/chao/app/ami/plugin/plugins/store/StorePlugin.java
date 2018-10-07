@@ -225,7 +225,7 @@ public class StorePlugin extends AmiPlugin<StoreFragment, StoreSettings, StorePa
 
     @Override
     public StorePane createComponent() {
-        return new StorePane(this);
+        return null;
     }
 
     @Override
