@@ -7,7 +7,7 @@ import chao.app.ami.Interceptor;
 import chao.app.ami.hooks.ViewGroupHook;
 import chao.app.ami.hooks.ViewHook;
 import chao.app.ami.launcher.drawer.DrawerManager;
-import chao.app.ami.utils.Util;
+import chao.app.ami.utils.ViewUtil;
 import chao.app.debug.R;
 import java.lang.reflect.Method;
 
@@ -47,7 +47,7 @@ public class ViewInterceptor {
             return;
         }
         //不注入WebView
-        if (Util.isWebView(child)) {
+        if (ViewUtil.isWebView(child)) {
             return;
         }
         InterceptorListener listener = new InterceptorListener();

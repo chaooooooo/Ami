@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import chao.app.ami.Ami;
@@ -24,6 +25,7 @@ import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.ami.plugin.AmiSettings;
 import chao.app.ami.plugin.MovementLayout;
 import chao.app.ami.utils.DeviceUtil;
+import chao.app.ami.utils.ViewUtil;
 import chao.app.debug.R;
 import java.util.ArrayList;
 
@@ -35,8 +37,7 @@ import java.util.ArrayList;
 public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickListener, AdapterView.OnItemClickListener, InterceptorFrameLayout.OnTouchedTargetChangeListener, AmiSettings.OnSettingsChangeListener {
 
     private static final int ACTION_ID_LONG_CLICK = 0;
-    private static final int ACTION_ID_TEXT_INJECT = 1;
-    private static final int ACTION_ID_VIEW_DETAIL = 2;
+    private static final int ACTION_ID_SHOW_PASSWORD = 1;
 
     private static final String LINE_SEPARATOR = "\n";
 
@@ -157,13 +158,15 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
         return mLayout;
     }
 
+    private Action longClickAction = new Action(ACTION_ID_LONG_CLICK, Constants.AMI_ACTION_LONG_CLICK);
+    private Action showPasswordAction = new Action(ACTION_ID_SHOW_PASSWORD, Constants.AMI_ACTION_SHOW_PASSWORD);
+
     private void showAction(final View view) {
         mActionList.clear();
-        mActionList.add(new Action(ACTION_ID_LONG_CLICK, Constants.AMI_ACTION_LONG_CLICK));
-//        if (view instanceof TextView) {
-//            mActionList.add(new Action(ACTION_ID_TEXT_INJECT, "注入文本"));
-//        }
-//        mActionList.add(new Action(ACTION_ID_VIEW_DETAIL,Constants.AMI_ACTION_VIEW_DETAIL));
+        mActionList.add(longClickAction);
+        if (view instanceof EditText && ViewUtil.isPasswordEditText((EditText) view)) {
+            mActionList.add(showPasswordAction);
+        }
         mLayout.showActionDialog(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View itemView, int position, long id) {
@@ -172,6 +175,16 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
                     View.OnLongClickListener srcLongClick = Interceptor.getSourceListener(injectLongClick);
                     if (srcLongClick != null) {
                         srcLongClick.onLongClick(view);
+                    }
+                } else if (position == ACTION_ID_SHOW_PASSWORD) {
+                    if (!(view instanceof EditText)) {
+                        return;
+                    }
+                    EditText editText = (EditText) view;
+                    if (ViewUtil.inPassword(editText)) {
+                        ViewUtil.hidePassword(editText);
+                    } else {
+                        ViewUtil.showPassword(editText);
                     }
                 }
                 hideAction();
@@ -203,10 +216,6 @@ public class InterceptorLayerManager implements ViewInterceptor.OnViewLongClickL
                 if (listener != null) {
                     listener.onLongClick(touchedRecord.view);
                 }
-                break;
-            case ACTION_ID_TEXT_INJECT:
-                break;
-            case ACTION_ID_VIEW_DETAIL:
                 break;
         }
         hideAction();
