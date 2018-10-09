@@ -230,7 +230,7 @@ public class StorePlugin extends AmiPlugin<StoreFragment, StoreSettings, StorePa
 
     @Override
     public CharSequence getTitle() {
-        return "Store";
+        return "存储";
     }
 
     @Override

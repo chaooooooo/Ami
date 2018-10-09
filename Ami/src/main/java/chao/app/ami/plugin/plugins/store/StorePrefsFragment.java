@@ -205,22 +205,92 @@
 
 package chao.app.ami.plugin.plugins.store;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.TextView;
+import chao.app.ami.Ami;
 import chao.app.ami.base.AMISupportFragment;
 import chao.app.debug.R;
+import java.util.Map;
 
 /**
  * @author qinchao
  * @since 2018/10/7
  */
 public class StorePrefsFragment extends AMISupportFragment {
+
+    private TextView mTitleView;
+
+    private ViewGroup mLayout;
+
+    private SharedPreferences mPrefs;
+
+    private LayoutInflater mInflater;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mInflater = LayoutInflater.from(getAppContext());
+    }
+
     @Override
     public void setupView(View layout) {
+        mLayout = layout.findViewById(R.id.ami_plugin_prefs_content);
+        mLayout.setBackgroundColor(Color.WHITE);
+        mTitleView = findView(R.id.ami_plugin_prefs_title);
 
     }
 
     @Override
     public int getLayoutID() {
         return R.layout.ami_plugin_store_prefs_content;
+    }
+
+    public void changed(String name) {
+        mLayout.removeAllViews();
+        mTitleView.setText(name);
+        mLayout.addView(mTitleView);
+        Context context = Ami.getApp();
+        mPrefs = context.getSharedPreferences(name, Context.MODE_PRIVATE);
+        Map<String, ?> map = mPrefs.getAll();
+        for (Map.Entry<String, ?> entry: map.entrySet()) {
+            addValueView(entry);
+        }
+    }
+
+    private void addValueView(Map.Entry<String,?> entry) {
+
+        String key = entry.getKey();
+        Object value = entry.getValue();
+
+        String title = key + "( " + value.getClass().getSimpleName() + " )";
+
+        View view = mInflater.inflate(R.layout.ami_prefs_item_layout, mLayout, false);
+        TextView titleView = view.findViewById(R.id.ami_prefs_item_title);
+        titleView.setText(title);
+
+
+        ViewStub stub;
+        if (value instanceof Boolean) {
+            boolean bValue = (boolean) value;
+            stub = view.findViewById(R.id.ami_prefs_item_switch_stub);
+            Switch switchView = (Switch) stub.inflate();
+            switchView.setChecked(bValue);
+        } else {
+            stub = view.findViewById(R.id.ami_prefs_item_edit_stub);
+            EditText editView = (EditText) stub.inflate();
+            editView.setText(String.valueOf(value));
+        }
+        mLayout.addView(view);
     }
 }

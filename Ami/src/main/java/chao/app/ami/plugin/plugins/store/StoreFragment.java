@@ -209,6 +209,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -242,11 +243,14 @@ public class StoreFragment extends AmiPluginFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPrefs = mStoreManager.getSharedPreferences(getContext());
+        mAdapter = new Adapter();
+    }
 
-//        for (int i=0;i<30;i++) {
-//            mPrefs.add("i"+i);
-//        }
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        mPrefs = mStoreManager.getSharedPreferences(getContext());
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -256,10 +260,11 @@ public class StoreFragment extends AmiPluginFragment {
         if (context == null) {
             return;
         }
+        FragmentManager fm = getChildFragmentManager();
+        mFragment = (StorePrefsFragment) fm.findFragmentById(R.id.ami_store_sp_content);
         mRecyclerView = findView(R.id.ami_store_sp_titles);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(context, RecyclerView.VERTICAL));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        mAdapter = new Adapter();
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -288,6 +293,9 @@ public class StoreFragment extends AmiPluginFragment {
             final TextView textView = (TextView) viewHolder.itemView;
             textView.setText(mPrefs.get(position));
             textView.setSelected(mSelected == position);
+            if (mSelected == position) {
+                mFragment.changed(mPrefs.get(mSelected));
+            }
             final int preSelected = position;
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override

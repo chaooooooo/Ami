@@ -205,12 +205,16 @@
 
 package chao.app.debugtools;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.EditText;
 import chao.app.ami.Ami;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMISupportFragment;
 import chao.app.ami.utils.ViewUtil;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author qinchao
@@ -230,6 +234,22 @@ public class PasswordFragment extends AMISupportFragment {
 
         Ami.log(pwdEdit.getText());
         Ami.log(pwdEdit.getTransformationMethod());
+
+        SharedPreferences prefs = getActivity().getSharedPreferences(getClass().getSimpleName(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("intTest", 100);
+        editor.putLong("longTest", 201810090124L);
+        editor.putFloat("floatTest", 3.1415f);
+        editor.putString("stringTest", "Hello World!!");
+        editor.putBoolean("booleanTest", true);
+
+        Set<String> set = new HashSet<>();
+        set.add("123");
+        set.add("hi, luqin");
+        set.add("hashset");
+
+        editor.putStringSet("stringSetTest", set);
+        editor.apply();
 
         pwdEdit.setOnClickListener(new View.OnClickListener() {
             @Override
