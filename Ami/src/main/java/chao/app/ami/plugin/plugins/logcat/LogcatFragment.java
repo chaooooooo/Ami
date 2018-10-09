@@ -18,11 +18,11 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import chao.app.ami.R;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
 import chao.app.ami.plugin.MovementTouch;
 import chao.app.ami.utils.Util;
-import chao.app.debug.R;
 import java.util.ArrayList;
 import java.util.List;
 

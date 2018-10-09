@@ -1,8 +1,8 @@
 package chao.app.ami.base;
 
 import android.view.View;
+import chao.app.ami.R;
 
-import chao.app.debug.R;
 
 /**
  * @author chao.qin

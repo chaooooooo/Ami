@@ -2,9 +2,8 @@ package chao.app.ami.plugin.plugins.frame.items;
 
 import android.content.Context;
 import android.widget.TextView;
-
+import chao.app.ami.R;
 import chao.app.ami.plugin.plugins.frame.IFrame;
-import chao.app.debug.R;
 
 /**
  * @author chao.qin

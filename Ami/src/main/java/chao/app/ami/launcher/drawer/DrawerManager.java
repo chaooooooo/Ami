@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
@@ -24,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import chao.app.ami.ActivitiesLifeCycleAdapter;
 import chao.app.ami.Ami;
+import chao.app.ami.R;
 import chao.app.ami.UI;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.hooks.FragmentLifecycle;
@@ -42,7 +44,6 @@ import chao.app.ami.plugin.plugins.logcat.LogcatPlugin;
 import chao.app.ami.plugin.plugins.store.StorePlugin;
 import chao.app.ami.plugin.plugins.viewinterceptor.InterceptorLayerManager;
 import chao.app.ami.plugin.plugins.viewinterceptor.ViewInterceptorPlugin;
-import chao.app.debug.R;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -454,9 +455,11 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             new InfoPlugin(),
             new ViewInterceptorPlugin(),
             new StorePlugin(),
-            new ColorfulPlugin(),
-            new FPSPlugin()
+            new ColorfulPlugin()
         );
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mPluginManager.addPlugin(new FPSPlugin());
+        }
 
     }
 

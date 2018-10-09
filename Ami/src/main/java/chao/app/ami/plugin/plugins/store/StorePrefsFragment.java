@@ -218,8 +218,8 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import chao.app.ami.Ami;
+import chao.app.ami.R;
 import chao.app.ami.base.AMISupportFragment;
-import chao.app.debug.R;
 import java.util.Map;
 
 /**

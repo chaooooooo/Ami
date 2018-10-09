@@ -206,20 +206,23 @@
 package chao.app.ami.plugin.plugins.fps;
 
 import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.widget.TextView;
 import chao.app.ami.Ami;
+import chao.app.ami.R;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
 import chao.app.ami.plugin.AmiSettings;
 import chao.app.ami.plugin.MovementLayout;
-import chao.app.debug.R;
 
 /**
  * @author qinchao
  * @since 2018/9/28
  */
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
 public class FPSPlugin extends AmiPlugin<AmiPluginFragment,FPSSettings, FPSPane> implements AmiSettings.OnSettingsChangeListener {
 
     private TextView fpsView;

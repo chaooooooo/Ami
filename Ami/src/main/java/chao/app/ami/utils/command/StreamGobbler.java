@@ -58,7 +58,7 @@ public class StreamGobbler extends Thread {
    * @param inputStream
    *     InputStream to read from
    * @param outputList
-   *     List<String> to write to, or null
+   *     List to write to, or null
    */
   public StreamGobbler(InputStream inputStream, List<String> outputList) {
     reader = new BufferedReader(new InputStreamReader(inputStream));

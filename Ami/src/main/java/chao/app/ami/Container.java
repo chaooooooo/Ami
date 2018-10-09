@@ -3,10 +3,8 @@ package chao.app.ami;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import chao.app.ami.base.AMIActivity;
-import chao.app.debug.R;
 
 public class Container extends AMIActivity {
 

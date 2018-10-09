@@ -3,8 +3,8 @@ package chao.app.ami.plugin;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.KeyEvent;
 import android.view.View;
+import chao.app.ami.R;
 import chao.app.ami.base.AMISupportFragment;
-import chao.app.debug.R;
 
 /**
  * @author qinchao

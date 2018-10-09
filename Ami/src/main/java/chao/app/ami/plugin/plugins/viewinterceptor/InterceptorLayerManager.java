@@ -20,13 +20,13 @@ import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.Constants;
 import chao.app.ami.Interceptor;
+import chao.app.ami.R;
 import chao.app.ami.hooks.ViewHook;
 import chao.app.ami.plugin.AmiPluginManager;
 import chao.app.ami.plugin.AmiSettings;
 import chao.app.ami.plugin.MovementLayout;
 import chao.app.ami.utils.DeviceUtil;
 import chao.app.ami.utils.ViewUtil;
-import chao.app.debug.R;
 import java.util.ArrayList;
 
 /**

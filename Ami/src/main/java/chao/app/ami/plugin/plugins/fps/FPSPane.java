@@ -210,9 +210,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import chao.app.ami.plugin.AmiPluginSettingPane;
+import chao.app.ami.R;
 import chao.app.ami.plugin.AmiPlugin;
-import chao.app.debug.R;
+import chao.app.ami.plugin.AmiPluginSettingPane;
 
 /**
  * @author qinchao

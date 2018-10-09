@@ -106,7 +106,8 @@ public class Ami {
      * @param app application
      * @param drawerId   抽屉配置文件Id, 必须是R.raw.xxxx
      *
-     * @Deprecated 独立功能开关
+     * Deprecated: 独立功能开关
+     *
      * @see #init(Application)
      * @see #setDrawerId(int)
      */
