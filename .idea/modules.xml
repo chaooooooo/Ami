@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/Ami.iml" filepath="$PROJECT_DIR$/.idea/Ami.iml" />
       <module fileurl="file://$PROJECT_DIR$/Ami/Ami-Ami.iml" filepath="$PROJECT_DIR$/Ami/Ami-Ami.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jcentertest/jcentertest.iml" filepath="$PROJECT_DIR$/jcentertest/jcentertest.iml" />
     </modules>
   </component>
 </project>

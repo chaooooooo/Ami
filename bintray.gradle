@@ -11,9 +11,18 @@ if (project.hasProperty("android")) { // Android libraries
     }
 
     task javadoc(type: Javadoc) {
+        options.encoding "UTF-8"
+        options.charSet 'UTF-8'
         source = android.sourceSets.main.java.srcDirs
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        options.links("http://docs.oracle.com/javase/7/docs/api/")
+        options.linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
+        options.addStringOption('Xdoclint:none', '-quiet')
+        exclude '**/BuildConfig.java'
+        exclude '**/R.java'
+        failOnError = false
     }
+
 } else { // Java libraries
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
@@ -27,7 +36,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
-    archives javadocJar
+//    archives javadocJar
     archives sourcesJar
 }
 
@@ -45,14 +54,14 @@ bintray {
         name = bintrayName
         desc = libraryDescription
         websiteUrl = siteUrl
-        vcsUrl=gitUrl
-        licenses=['Apache-2.0']
-        publish=true
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        publish = true
         publicDownloadNumbers = true
         version {
-            name=libraryVersion
-            vcsTag=""
-            released  = new Date()
+            name = libraryVersion
+            vcsTag = ""
+            released = new Date()
             desc = libraryDescription
         }
     }
