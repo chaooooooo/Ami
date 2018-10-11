@@ -132,7 +132,12 @@ ami screen
 
 #2018-9-14
 邮件发送
-查看db，sp,assets, raw,data cache
+查看db，
+sp,      配置是否查看ami的sp
+assets,
+raw,
+data
+cache
 
 
 命令行通信：

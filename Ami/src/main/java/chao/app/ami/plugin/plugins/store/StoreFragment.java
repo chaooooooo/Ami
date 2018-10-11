@@ -221,6 +221,8 @@ import chao.app.ami.R;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * @author qinchao
@@ -246,10 +248,18 @@ public class StoreFragment extends AmiPluginFragment {
         mAdapter = new Adapter();
     }
 
+    private Comparator<String> comparator = new Comparator<String>() {
+        @Override
+        public int compare(String o1, String o2) {
+            return o1.compareToIgnoreCase(o2);
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mPrefs = mStoreManager.getSharedPreferences(getContext());
+        Collections.sort(mPrefs, comparator);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

@@ -210,23 +210,28 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.R;
 import chao.app.ami.base.AMISupportFragment;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author qinchao
  * @since 2018/10/7
  */
-public class StorePrefsFragment extends AMISupportFragment {
+public class StorePrefsFragment extends AMISupportFragment implements View.OnFocusChangeListener, CompoundButton.OnCheckedChangeListener {
 
     private TextView mTitleView;
 
@@ -281,16 +286,82 @@ public class StorePrefsFragment extends AMISupportFragment {
 
 
         ViewStub stub;
+        EditText editView = null;
+        Switch switchView = null;
         if (value instanceof Boolean) {
             boolean bValue = (boolean) value;
             stub = view.findViewById(R.id.ami_prefs_item_switch_stub);
-            Switch switchView = (Switch) stub.inflate();
+            switchView = (Switch) stub.inflate();
             switchView.setChecked(bValue);
         } else {
             stub = view.findViewById(R.id.ami_prefs_item_edit_stub);
-            EditText editView = (EditText) stub.inflate();
+            editView = (EditText) stub.inflate();
             editView.setText(String.valueOf(value));
         }
+        if (value instanceof Integer
+            || value instanceof Long) {
+            editView.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+        } else if (value instanceof Float
+            || value instanceof Double) {
+            editView.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL );
+        } else if (value instanceof String
+            || value instanceof Set){
+            editView.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
+
+        if (switchView != null) {
+            switchView.setTag(entry);
+            switchView.setOnCheckedChangeListener(this);
+        }
+        if (editView != null) {
+            editView.setTag(entry);
+            editView.setOnFocusChangeListener(this);
+        }
         mLayout.addView(view);
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        EditText editView = null;
+        if (v instanceof EditText) {
+            editView = (EditText) v;
+        }
+        if (editView == null) {
+            return;
+        }
+        Map.Entry entry = (Map.Entry) v.getTag();
+        String key = String.valueOf(entry.getKey());
+        Object oldValue = entry.getValue();
+
+        SharedPreferences.Editor editor = mPrefs.edit();
+        String value = editView.getText().toString();
+        if (oldValue instanceof Integer) {
+            Integer iValue = Integer.valueOf(value);
+            editor.putInt(key, iValue);
+        } else if (oldValue instanceof Long){
+            Long lValue = Long.valueOf(value);
+            editor.putLong(key, lValue);
+        } else if (oldValue instanceof Float) {
+            Float fValue = Float.valueOf(value);
+            editor.putFloat(key, fValue);
+        } else if (oldValue instanceof Set) {
+            value = value.substring(1, value.length() - 1);
+            String[] arr = value.split("\\s*,\\s*");
+            Set<String> set = new HashSet<>(Arrays.asList(arr));
+            editor.putStringSet(key, set);
+        } else {
+            editor.putString(key, value);
+        }
+        editor.apply();
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        Map.Entry entry = (Map.Entry) buttonView.getTag();
+        String key = String.valueOf(entry.getKey());
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(String.valueOf(key), isChecked);
+        editor.apply();
+
     }
 }
