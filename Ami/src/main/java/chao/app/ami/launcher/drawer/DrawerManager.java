@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -49,7 +50,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Set;
-import net.lucode.hackware.magicindicator.MagicIndicator;
 
 
 public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, ViewGroup.OnHierarchyChangeListener {
@@ -88,7 +88,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             return;
         }
         mActivity = activity;
-        ViewGroup decorView = (ViewGroup) activity.findViewById(android.R.id.content);
+        ViewGroup decorView = activity.findViewById(android.R.id.content);
         int decorViewChildCount = decorView.getChildCount();
         if (decorViewChildCount == 0) {
             return;
@@ -126,27 +126,29 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         if (mDrawerLayout == null) {
             LayoutInflater inflater = LayoutInflater.from(Ami.getApp());
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
-            AmiContentView content = (AmiContentView) mDrawerLayout.findViewById(R.id.ami_content);
+            AmiContentView content = mDrawerLayout.findViewById(R.id.ami_content);
 
-            mInterceptorManager = (InterceptorLayerManager) mPluginManager.getPlugin(ViewInterceptorPlugin.class).getManager();
+            mInterceptorManager = (InterceptorLayerManager) AmiPluginManager.getPlugin(ViewInterceptorPlugin.class).getManager();
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             content.addView(mInterceptorManager.getLayout(),layoutParams);
 
             View componentContent = findViewById(R.id.drawer_component_content);
-            mNavigationBackView = (ImageView) componentContent.findViewById(R.id.navigation_back);
+            mNavigationBackView = componentContent.findViewById(R.id.navigation_back);
             mNavigationBackView.setOnClickListener(this);
-            mNavigationPathView = (TextView) componentContent.findViewById(R.id.navigation_title);
-            mDrawerListView = (RecyclerView) componentContent.findViewById(R.id.ui_list);
+            mNavigationPathView = componentContent.findViewById(R.id.navigation_title);
+            mDrawerListView = componentContent.findViewById(R.id.ui_list);
             mDrawerListView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
             mDrawerListView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.VERTICAL));
 
 //            ViewInterceptor interceptor = new ViewInterceptor();
 //            mInterceptorFrame.setInterceptor(interceptor);
 
-            MagicIndicator tableLayout = findViewById(R.id.drawer_plugins_tab_layout);
             ViewPager viewPager = findViewById(R.id.drawer_plugins_view_pager);
+            TabLayout tabLayout = findViewById(R.id.drawer_plugins_tab_layout);
+            tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+            tabLayout.setupWithViewPager(viewPager, true);
 
-            mPluginManager.initView(content, tableLayout, viewPager);
+            mPluginManager.initView(content, tabLayout, viewPager);
 
             DrawerXmlParser parser = new DrawerXmlParser();
             if (mDrawerId != 0) {
@@ -170,7 +172,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
                 Ami.log("ami xml is not exist: " + amiXml.getParent());
             }
         }
-        TextView tipView = (TextView) mDrawerLayout.findViewById(R.id.ami_useless_tip_view);
+        TextView tipView = mDrawerLayout.findViewById(R.id.ami_useless_tip_view);
         if (mPluginManager != null) {
             mPluginManager.setupPluginTabs(activity, tipView);
         }
@@ -262,8 +264,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
             View itemView = holder.itemView;
-            TextView textView = (TextView) itemView.findViewById(R.id.drawer_item_name);
-            ImageView arrow = (ImageView) itemView.findViewById(R.id.drawer_item_arrow);
+            TextView textView = itemView.findViewById(R.id.drawer_item_name);
+            ImageView arrow = itemView.findViewById(R.id.drawer_item_arrow);
             Node node = mCurrentGroup.getChild(position);
             int visible = View.INVISIBLE;
             if (node instanceof NodeGroup) {
