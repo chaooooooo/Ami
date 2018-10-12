@@ -207,7 +207,6 @@ package chao.app.ami.plugin.plugins.store;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.InputType;
@@ -251,7 +250,6 @@ public class StorePrefsFragment extends AMISupportFragment implements View.OnFoc
     @Override
     public void setupView(View layout) {
         mLayout = layout.findViewById(R.id.ami_plugin_prefs_content);
-        mLayout.setBackgroundColor(Color.WHITE);
         mTitleView = findView(R.id.ami_plugin_prefs_title);
 
     }
@@ -345,8 +343,8 @@ public class StorePrefsFragment extends AMISupportFragment implements View.OnFoc
             Float fValue = Float.valueOf(value);
             editor.putFloat(key, fValue);
         } else if (oldValue instanceof Set) {
-            value = value.substring(1, value.length() - 1);
-            String[] arr = value.split("\\s*,\\s*");
+            value = value.trim().substring(1, value.length() - 1);
+            String[] arr = value.trim().split("\\s*,\\s*");
             Set<String> set = new HashSet<>(Arrays.asList(arr));
             editor.putStringSet(key, set);
         } else {

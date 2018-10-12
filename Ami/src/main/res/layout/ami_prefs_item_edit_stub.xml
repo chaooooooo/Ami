@@ -208,4 +208,6 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:textSize="12sp"
+    android:textColor="@android:color/secondary_text_dark"
     android:background="@null"/>
