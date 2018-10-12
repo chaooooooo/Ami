@@ -9,3 +9,8 @@
 4. fps没有完全关闭， 只是不显示
 
 5. support库不应该强制依赖
+
+
+2018-10-12
+drawer配置非必传参数
+去掉 MagicIndicator， 使用TabLayout

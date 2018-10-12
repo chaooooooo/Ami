@@ -184,7 +184,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         return (T) mDrawerLayout.findViewById(resId);
     }
 
-    private void setDrawerId(int rawId) {
+    public void setDrawerId(int rawId) {
         mDrawerId = rawId;
     }
 
@@ -362,8 +362,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         }
     }
 
-    public static void init(int drawerXml) {
-        get().setDrawerId(drawerXml);
+    private void initActivityListener() {
+
         Ami.getApp().registerActivityLifecycleCallbacks(new ActivitiesLifeCycleAdapter(){
 
             @Override
@@ -463,6 +463,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mPluginManager.addPlugin(new FPSPlugin());
         }
 
+        initActivityListener();
     }
 
 

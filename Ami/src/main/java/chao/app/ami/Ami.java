@@ -76,6 +76,7 @@ public class Ami {
         ProxyManager.init(app);
         TextManager.init();
         FrameManager.init();
+        DrawerManager.get();
 //        MonitorManager.init(app);
 
         sHandlerThread = new AmiHandlerThread();
@@ -97,40 +98,8 @@ public class Ami {
         if (!Util.isMainProcess(getApp())) {
             return;
         }
-        DrawerManager.init(drawerId);
+        DrawerManager.get().setDrawerId(drawerId);
     }
-
-    /**
-     *  Ami 功能初始化
-     *
-     * @param app application
-     * @param drawerId   抽屉配置文件Id, 必须是R.raw.xxxx
-     *
-     * Deprecated: 独立功能开关
-     *
-     * @see #init(Application)
-     * @see #setDrawerId(int)
-     */
-    @Deprecated
-    public static void init(Application app, int drawerId) {
-        if (!isDebugMode(app)) {
-            return;
-        }
-        if (mInstance != null) {
-            return;
-        }
-
-        if (!Util.isMainProcess(getApp())) {
-            return;
-        }
-
-        mInstance = new Ami(app);
-        DrawerManager.init(drawerId);
-        ProxyManager.init(app);
-        TextManager.init();
-        FrameManager.init();
-    }
-
 
     public static Application getApp() {
         return mApp;
