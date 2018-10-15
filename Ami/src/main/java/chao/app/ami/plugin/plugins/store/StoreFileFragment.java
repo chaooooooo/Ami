@@ -205,189 +205,392 @@
 
 package chao.app.ami.plugin.plugins.store;
 
-import android.content.Context;
-import android.os.Bundle;
+
+import android.content.res.AssetManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.R;
-import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiPluginFragment;
+import chao.app.ami.base.AMIToast;
+import chao.app.ami.utils.permission.PermissionHelper;
+import chao.app.ami.utils.permission.PermissionListener;
+import chao.app.ami.utils.permission.Permissions;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author qinchao
- * @since 2018/10/7
+ * @since 2018/10/13
  */
-public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOnTabSelectedListener {
+public class StoreFileFragment extends StoreContentFragment implements Handler.Callback {
+
+    private static final int MODE_ASSETS = 1;
+
+    private static final int MODE_FILE = 2;
+
+    private static final int HANDLER_MESSAGE_UPDATE_MUSIC = 1;
+
+    private TextView mTitleView;
 
     private RecyclerView mRecyclerView;
 
-    private StoreContentFragment mFragment;
-
-    private StoreContentFragment mPrefsFragment;
-
-    private StoreContentFragment mFileFragment;
+    private ArrayList<StoreFile> mData = new ArrayList<>();
 
     private Adapter mAdapter;
 
-    private ArrayList<String> mPrefs = new ArrayList<>();
+    private String mCurPath = "";
 
-    private ArrayList<String> mDirs = new ArrayList<>();
+    private AssetFile mCurAsset = AssetFile.root();
 
-    private ArrayList<String> mData;
+    private int mMode = MODE_ASSETS;
 
-    private StoreManager mStoreManager = new StoreManager();
+    private static Map<String ,String> MAP = new HashMap<>();
 
-    private int mSelected = 0;
+    private Handler mHandler = new Handler(Looper.getMainLooper(), this);
 
-    private TabLayout mTabLayout;
+    static {
+        MAP.put(Constants.DIR_KEY_ASSETS, Constants.DIR_KEY_ASSETS);
 
-    private TabLayout.Tab mPrefsTab;
-
-    private TabLayout.Tab mFileTab;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mAdapter = new Adapter();
-        mDirs.add(Constants.DIR_KEY_ASSETS);
-        mDirs.add(Constants.DIR_KEY_DATA_DATA);
-        mDirs.add(Constants.DIR_KEY_SDCARD_DATA);
-        mDirs.add(Constants.DIR_KEY_SDCARD);
-    }
-
-    private Comparator<String> comparator = new Comparator<String>() {
-        @Override
-        public int compare(String o1, String o2) {
-            return o1.compareToIgnoreCase(o2);
+        File filesDir = Ami.getApp().getFilesDir();
+        File exFileDir = Ami.getApp().getExternalFilesDir("");
+        String dataDir = null;
+        String exDataDir = null;
+        String sdcardDir = null;
+        if (filesDir != null) {
+            dataDir = filesDir.getParent();
         }
-    };
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mPrefs = mStoreManager.getSharedPreferences(getContext());
-        Collections.sort(mPrefs, comparator);
-        return super.onCreateView(inflater, container, savedInstanceState);
+        if (exFileDir != null) {
+            exDataDir = exFileDir.getParent();
+        }
+        if (dataDir != null) {
+            MAP.put(Constants.DIR_KEY_DATA_DATA, dataDir);
+        }
+        if (exFileDir != null) {
+            MAP.put(Constants.DIR_KEY_SDCARD_DATA, exDataDir);
+        }
+        File sdcard = Environment.getExternalStorageDirectory();
+        if (sdcard != null) {
+            sdcardDir = sdcard.getAbsolutePath();
+            MAP.put(Constants.DIR_KEY_SDCARD, sdcardDir);
+        }
     }
 
     @Override
     public void setupView(View layout) {
-        super.setupView(layout);
-        Context context = getContext();
-        if (context == null) {
-            return;
-        }
-        FragmentManager fm = getChildFragmentManager();
-        mPrefsFragment = (StorePrefsFragment) fm.findFragmentById(R.id.ami_store_sp_content);
-        mFileFragment = (StoreContentFragment) fm.findFragmentById(R.id.ami_store_file_content);
-        mFragment = mPrefsFragment;
-        mData = mPrefs;
-        mRecyclerView = findView(R.id.ami_store_sp_titles);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(context, RecyclerView.VERTICAL));
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+        mTitleView = findView(R.id.ami_plugin_store_file_title);
+        mRecyclerView = findView(R.id.ami_plugin_store_file_recycler_view);
+
+        mAdapter = new Adapter();
         mRecyclerView.setAdapter(mAdapter);
-        mTabLayout = findView(R.id.ami_store_tab);
-        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-
-        mPrefsTab = mTabLayout.newTab();
-        mPrefsTab.setText("prefs");
-
-
-        mFileTab = mTabLayout.newTab();
-        mFileTab.setText("文件");
-
-        mTabLayout.addTab(mPrefsTab);
-        mTabLayout.addTab(mFileTab);
-        mTabLayout.addOnTabSelectedListener(this);
-    }
-
-    @Override
-    public Class<? extends AmiPlugin> bindPlugin() {
-        return StorePlugin.class;
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getAppContext(), RecyclerView.VERTICAL, false));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getAppContext(), RecyclerView.VERTICAL));
     }
 
     @Override
     public int getLayoutID() {
-        return R.layout.store_fragment;
+        return R.layout.ami_plugin_store_file_fragment;
     }
 
     @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        if (tab == mPrefsTab) {
-            mFragment = mPrefsFragment;
-            mData = mPrefs;
-            ft.hide(mFileFragment);
-            ft.show(mPrefsFragment);
-        } else if (tab == mFileTab) {
-            mFragment = mFileFragment;
-            mData = mDirs;
-            ft.hide(mPrefsFragment);
-            ft.show(mFileFragment);
+    public void changed(final String name) {
+        mTitleView.setText(name);
+        if (Constants.DIR_KEY_ASSETS.equals(name)) {
+            mMode = MODE_ASSETS;
+            openAssets(mCurAsset);
+        } else {
+            PermissionHelper.requestPermissions(getAppContext(),
+                Permissions.PERMISSIONS_EXTERNAL_STORAGE, new PermissionListener(){
+                @Override
+                public void onPassed() {
+                    mMode = MODE_FILE;
+                    String path = MAP.get(name);
+                    if ( path == null) {
+                        path = name;
+                    }
+                    loadDir(new StoreFile(new File(path)));
+                    mCurPath = path;
+                }
+            });
         }
-        ft.commit();
+    }
+
+    private void loadDir(StoreFile storeFile) {
+        String path = storeFile.getPath();
+        mTitleView.setText(path);
+        ArrayList<StoreFile> data = new ArrayList<>();
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files == null) {
+                files = new File[0];
+            }
+            for (File f: files) {
+                StoreFile sf = new StoreFile(f);
+                data.add(sf);
+            }
+        }
+        Collections.sort(data, comparator);
+        data.add(0,storeFile);
+        mCurPath = path;
+        mData = data;
         mAdapter.notifyDataSetChanged();
-        mFragment.changed(mData.get(0));
+    }
+
+    private void openFile(StoreFile storeFile) {
+        if (storeFile.isDir()) {
+            loadDir(storeFile);
+            return;
+        }
+        OpenFileUtil.openFile(storeFile.getPath());
+    }
+
+    private void openAssets(AssetFile assetFile) {
+        if (!assetFile.isDir()) {
+            OpenFileUtil.openFile(assetFile.getPath());
+            return;
+        }
+        String path = assetFile.getPath();
+        AssetManager assetManager = getResources().getAssets();
+        ArrayList<StoreFile> data = new ArrayList<>();
+        String[] assets;
+        try {
+            assets = assetManager.list(path);
+        } catch (IOException e) {
+            assets = null;
+        }
+        if (assets == null) {
+            assets = new String[0];
+        }
+        for (String child: assets) {
+            AssetFile file = new AssetFile(assetFile, child);
+            data.add(file);
+        }
+        String title = "assets/" + path;
+        Collections.sort(data, comparator);
+        data.add(0, assetFile);
+        mTitleView.setText(title);
+        mData = data;
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private Comparator<StoreFile> comparator = new Comparator<StoreFile>() {
+        @Override
+        public int compare(StoreFile sf1, StoreFile sf2) {
+            boolean d1 = sf1.isDir();
+            boolean d2 = sf2.isDir();
+            if (d1 != d2) {
+                return d1 ? -1 : 1;
+            }
+            String o1 = sf1.getName();
+            String o2 = sf2.getName();
+            return o1.compareToIgnoreCase(o2);
+        }
+    };
+
+    private boolean isAssetMode() {
+        return mMode == MODE_ASSETS;
+    }
+
+
+    private MediaPlayer mMediaPlayer;
+
+    private ProgressBar mSeekbar;
+
+    private void playMusic(View v) {
+        StoreFile storeFile = (StoreFile) v.getTag();
+        if (!storeFile.isMusic()) {
+            return;
+        }
+        mSeekbar = v.findViewById(R.id.ami_store_file_item_seek);
+        mSeekbar.setVisibility(View.VISIBLE);
+        try {
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setLooping(true);
+
+            if(storeFile instanceof AssetFile) {
+                AssetFile assetFile = (AssetFile) storeFile;
+                long start = assetFile.getAfd().getStartOffset();
+                long length = assetFile.getAfd().getDeclaredLength();
+                mMediaPlayer.setDataSource(assetFile.getFd(), start, length);
+            } else {
+                FileDescriptor fd = storeFile.getFd();
+                if (fd == null) {
+                    AMIToast.show("文件打开失败");
+                    return;
+                }
+                mMediaPlayer.setDataSource(fd);
+            }
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mMediaPlayer.prepareAsync();
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    int duration = mMediaPlayer.getDuration();
+                    mMediaPlayer.start();
+                    mSeekbar.setMax(duration);
+                    mSeekbar.setProgress(0);
+                    notifyUpdateMusicPosition();
+                }
+            });
+            mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Ami.log("what, extra: " + what + ", " + extra);
+                    return false;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopMusic(View v) {
+        cancelUpdateMusicPostion();
+        mSeekbar = v.findViewById(R.id.ami_store_file_item_seek);
+        mSeekbar.setVisibility(View.INVISIBLE);
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+    }
+
+    private void notifyUpdateMusicPosition() {
+        cancelUpdateMusicPostion();
+        Message message = mHandler.obtainMessage(HANDLER_MESSAGE_UPDATE_MUSIC);
+        mHandler.sendMessageDelayed(message, 100);
+    }
+
+    private void cancelUpdateMusicPostion() {
+        mHandler.removeMessages(HANDLER_MESSAGE_UPDATE_MUSIC);
+    }
+
+    private void showPicture(View v) {
+    }
+
+    private void showText(View v) {
     }
 
     @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-        Ami.log();
+    public boolean handleMessage(Message msg) {
+        if (msg.what == HANDLER_MESSAGE_UPDATE_MUSIC) {
+            if (mMediaPlayer == null
+                || mSeekbar == null) {
+                return false;
+            }
+            int position = mMediaPlayer.getCurrentPosition();
+            mSeekbar.setProgress(position);
+            notifyUpdateMusicPosition();
+        }
+        return false;
     }
 
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-        Ami.log();
-    }
-
-    private class Adapter extends RecyclerView.Adapter {
-
+    private class Adapter extends RecyclerView.Adapter implements View.OnTouchListener, View.OnClickListener {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            View view = inflater.inflate(R.layout.ami_plugin_store_prefs_title_item, viewGroup, false);
+            LayoutInflater inflater = LayoutInflater.from(getAppContext());
+            View view = inflater.inflate(R.layout.ami_layout_store_file_item, viewGroup, false);
             return new RecyclerView.ViewHolder(view) {};
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-            final TextView textView = (TextView) viewHolder.itemView;
-            textView.setText(mData.get(position));
-            textView.setSelected(mSelected == position);
-            if (mSelected == position) {
-                mFragment.changed(mData.get(mSelected));
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
+            final StoreFile storeFile = mData.get(i);
+            TextView titleView = viewHolder.itemView.findViewById(R.id.ami_store_file_item_title);
+            TextView descView = viewHolder.itemView.findViewById(R.id.ami_store_file_item_description);
+            ProgressBar seekBar = viewHolder.itemView.findViewById(R.id.ami_store_file_item_seek);
+            ImageView iconView = viewHolder.itemView.findViewById(R.id.ami_store_file_item_icon);
+            titleView.setText(storeFile.getName());
+            descView.setText(storeFile.getDesc());
+            iconView.setImageResource(storeFile.getIcon());
+            seekBar.setIndeterminate(false);
+
+            if (i == 0) {
+                titleView.setText("..");
             }
-            final int preSelected = position;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int lastSelected = mSelected;
-                    mSelected = preSelected;
-                    notifyItemChanged(mSelected);
-                    notifyItemChanged(lastSelected);
-                }
-            });
+            if (storeFile.isMusic()) {
+                seekBar.setVisibility(View.INVISIBLE);
+            } else {
+                seekBar.setVisibility(View.GONE);
+            }
+            viewHolder.itemView.setTag(storeFile);
+            viewHolder.itemView.setOnClickListener(storeFile.isDir() ? this: null);
+            viewHolder.itemView.setOnTouchListener(storeFile.isDir() ? null : this);
         }
 
         @Override
         public int getItemCount() {
             return mData.size();
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            StoreFile storeFile = (StoreFile) v.getTag();
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    if (storeFile.isMusic()) {
+                        playMusic(v);
+                    } else if (storeFile.isText()) {
+                        showText(v);
+                    } else if (storeFile.isPic()) {
+                        showPicture(v);
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    if (storeFile.isMusic()) {
+                        stopMusic(v);
+                    } else if (storeFile.isText()) {
+//                        hiddenText(v);
+                    } else if (storeFile.isPic()) {
+//                        hiddenPicture(v);
+                    }
+                    break;
+            }
+            return false;
+        }
+
+        @Override
+        public void onClick(View v) {
+            StoreFile storeFile = (StoreFile) v.getTag();
+            boolean firstView = mData.get(0) == storeFile;
+            if (firstView) {
+                StoreFile parent = storeFile.getParent();
+                if (parent == null) {
+                    return;
+                }
+                storeFile = parent;
+            }
+            if (isAssetMode()) {
+                openAssets((AssetFile) storeFile);
+            } else {
+                loadDir(storeFile);
+            }
         }
     }
 }

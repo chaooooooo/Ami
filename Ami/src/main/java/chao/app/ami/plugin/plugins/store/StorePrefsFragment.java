@@ -220,7 +220,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.R;
-import chao.app.ami.base.AMISupportFragment;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -230,7 +229,7 @@ import java.util.Set;
  * @author qinchao
  * @since 2018/10/7
  */
-public class StorePrefsFragment extends AMISupportFragment implements View.OnFocusChangeListener, CompoundButton.OnCheckedChangeListener {
+public class StorePrefsFragment extends StoreContentFragment implements View.OnFocusChangeListener, CompoundButton.OnCheckedChangeListener {
 
     private TextView mTitleView;
 

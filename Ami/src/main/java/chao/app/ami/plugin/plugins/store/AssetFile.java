@@ -205,189 +205,67 @@
 
 package chao.app.ami.plugin.plugins.store;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
+import android.text.TextUtils;
 import chao.app.ami.Ami;
-import chao.app.ami.R;
-import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiPluginFragment;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author qinchao
- * @since 2018/10/7
+ * @since 2018/10/14
  */
-public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOnTabSelectedListener {
+public class AssetFile extends StoreFile {
 
-    private RecyclerView mRecyclerView;
+    private static AssetFile mRoot;
 
-    private StoreContentFragment mFragment;
-
-    private StoreContentFragment mPrefsFragment;
-
-    private StoreContentFragment mFileFragment;
-
-    private Adapter mAdapter;
-
-    private ArrayList<String> mPrefs = new ArrayList<>();
-
-    private ArrayList<String> mDirs = new ArrayList<>();
-
-    private ArrayList<String> mData;
-
-    private StoreManager mStoreManager = new StoreManager();
-
-    private int mSelected = 0;
-
-    private TabLayout mTabLayout;
-
-    private TabLayout.Tab mPrefsTab;
-
-    private TabLayout.Tab mFileTab;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mAdapter = new Adapter();
-        mDirs.add(Constants.DIR_KEY_ASSETS);
-        mDirs.add(Constants.DIR_KEY_DATA_DATA);
-        mDirs.add(Constants.DIR_KEY_SDCARD_DATA);
-        mDirs.add(Constants.DIR_KEY_SDCARD);
-    }
-
-    private Comparator<String> comparator = new Comparator<String>() {
-        @Override
-        public int compare(String o1, String o2) {
-            return o1.compareToIgnoreCase(o2);
+    public AssetFile(StoreFile parent, String name) {
+        setParent(parent);
+        setName(name);
+        setPath(parent.getPath() + File.separator + name);
+        if (TextUtils.isEmpty(parent.getPath())) {
+            setPath(name);
         }
-    };
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mPrefs = mStoreManager.getSharedPreferences(getContext());
-        Collections.sort(mPrefs, comparator);
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void setupView(View layout) {
-        super.setupView(layout);
-        Context context = getContext();
-        if (context == null) {
-            return;
+        AssetManager assetManager = Ami.getApp().getAssets();
+        InputStream is;
+        try {
+            is = assetManager.open(getPath());
+        } catch (IOException e) {
+            is = null;
         }
-        FragmentManager fm = getChildFragmentManager();
-        mPrefsFragment = (StorePrefsFragment) fm.findFragmentById(R.id.ami_store_sp_content);
-        mFileFragment = (StoreContentFragment) fm.findFragmentById(R.id.ami_store_file_content);
-        mFragment = mPrefsFragment;
-        mData = mPrefs;
-        mRecyclerView = findView(R.id.ami_store_sp_titles);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(context, RecyclerView.VERTICAL));
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        mRecyclerView.setAdapter(mAdapter);
-        mTabLayout = findView(R.id.ami_store_tab);
-        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-
-        mPrefsTab = mTabLayout.newTab();
-        mPrefsTab.setText("prefs");
-
-
-        mFileTab = mTabLayout.newTab();
-        mFileTab.setText("文件");
-
-        mTabLayout.addTab(mPrefsTab);
-        mTabLayout.addTab(mFileTab);
-        mTabLayout.addOnTabSelectedListener(this);
+        setDir(is == null);
     }
 
-    @Override
-    public Class<? extends AmiPlugin> bindPlugin() {
-        return StorePlugin.class;
+    private AssetFile() {
     }
 
-    @Override
-    public int getLayoutID() {
-        return R.layout.store_fragment;
-    }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        if (tab == mPrefsTab) {
-            mFragment = mPrefsFragment;
-            mData = mPrefs;
-            ft.hide(mFileFragment);
-            ft.show(mPrefsFragment);
-        } else if (tab == mFileTab) {
-            mFragment = mFileFragment;
-            mData = mDirs;
-            ft.hide(mPrefsFragment);
-            ft.show(mFileFragment);
+    public static AssetFile root() {
+        if (mRoot == null) {
+            mRoot = new AssetFile();
+            mRoot.setPath("");
+            mRoot.setName("");
+            mRoot.setDir(true);
+            mRoot.setParent(null);
+            return mRoot;
         }
-        ft.commit();
-        mAdapter.notifyDataSetChanged();
-        mFragment.changed(mData.get(0));
+        return mRoot;
     }
 
     @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-        Ami.log();
+    public FileDescriptor getFd() {
+        return getAfd().getFileDescriptor();
     }
 
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-        Ami.log();
-    }
-
-    private class Adapter extends RecyclerView.Adapter {
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            View view = inflater.inflate(R.layout.ami_plugin_store_prefs_title_item, viewGroup, false);
-            return new RecyclerView.ViewHolder(view) {};
+    public AssetFileDescriptor getAfd() {
+        AssetManager assetManager = Ami.getApp().getAssets();
+        try {
+            return assetManager.openFd(getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-            final TextView textView = (TextView) viewHolder.itemView;
-            textView.setText(mData.get(position));
-            textView.setSelected(mSelected == position);
-            if (mSelected == position) {
-                mFragment.changed(mData.get(mSelected));
-            }
-            final int preSelected = position;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int lastSelected = mSelected;
-                    mSelected = preSelected;
-                    notifyItemChanged(mSelected);
-                    notifyItemChanged(lastSelected);
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mData.size();
-        }
+        return null;
     }
 }

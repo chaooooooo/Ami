@@ -1,23 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <chao.app.ami.plugin.plugins.store.ResizeLayout
-        android:background="@color/transparent_red"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/ami_store_sp_titles"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-    </chao.app.ami.plugin.plugins.store.ResizeLayout>
-
-    <fragment
-        android:id="@+id/ami_store_sp_content"
-        class="chao.app.ami.plugin.plugins.store.StorePrefsFragment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <chao.app.ami.plugin.plugins.store.ResizeLayout
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent_red">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ami_store_sp_titles"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+        </chao.app.ami.plugin.plugins.store.ResizeLayout>
+
+        <fragment
+            android:id="@+id/ami_store_sp_content"
+            class="chao.app.ami.plugin.plugins.store.StorePrefsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <fragment
+            android:id="@+id/ami_store_file_content"
+            class="chao.app.ami.plugin.plugins.store.StoreFileFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/ami_store_tab"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
 </LinearLayout>

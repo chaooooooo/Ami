@@ -25,22 +25,13 @@ public interface Permissions {
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.ACCESS_FINE_LOCATION
     };
-    String[] PERMISSIONS_BIOSPSY_AUDIO = new String[]{
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-    };
-    String[] PERMISSIONS_BIOSPSY = new String[]{
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-    };
     String[] PERMISSIONS_PHONE_STATE = new String[]{
             Manifest.permission.READ_PHONE_STATE
     };
     String[] PERMISSIONS_CAMERA = new String[]{
             Manifest.permission.CAMERA
     };
-    String[] PERMISSIONS_GALLERY = new String[]{
+    String[] PERMISSIONS_EXTERNAL_STORAGE = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };

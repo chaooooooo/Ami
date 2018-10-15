@@ -206,188 +206,135 @@
 package chao.app.ami.plugin.plugins.store;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 import chao.app.ami.Ami;
-import chao.app.ami.R;
-import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiPluginFragment;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import chao.app.ami.base.AMIToast;
+import java.io.File;
+import java.util.Locale;
 
 /**
  * @author qinchao
- * @since 2018/10/7
+ * @since 2018/10/14
  */
-public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOnTabSelectedListener {
-
-    private RecyclerView mRecyclerView;
-
-    private StoreContentFragment mFragment;
-
-    private StoreContentFragment mPrefsFragment;
-
-    private StoreContentFragment mFileFragment;
-
-    private Adapter mAdapter;
-
-    private ArrayList<String> mPrefs = new ArrayList<>();
-
-    private ArrayList<String> mDirs = new ArrayList<>();
-
-    private ArrayList<String> mData;
-
-    private StoreManager mStoreManager = new StoreManager();
-
-    private int mSelected = 0;
-
-    private TabLayout mTabLayout;
-
-    private TabLayout.Tab mPrefsTab;
-
-    private TabLayout.Tab mFileTab;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mAdapter = new Adapter();
-        mDirs.add(Constants.DIR_KEY_ASSETS);
-        mDirs.add(Constants.DIR_KEY_DATA_DATA);
-        mDirs.add(Constants.DIR_KEY_SDCARD_DATA);
-        mDirs.add(Constants.DIR_KEY_SDCARD);
-    }
-
-    private Comparator<String> comparator = new Comparator<String>() {
-        @Override
-        public int compare(String o1, String o2) {
-            return o1.compareToIgnoreCase(o2);
-        }
-    };
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mPrefs = mStoreManager.getSharedPreferences(getContext());
-        Collections.sort(mPrefs, comparator);
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void setupView(View layout) {
-        super.setupView(layout);
-        Context context = getContext();
-        if (context == null) {
+public class OpenFileUtil implements Constants.DataType{
+    /**
+     * 打开文件
+     * @param filePath 文件的全路径，包括到文件名
+     */
+    public static void openFile(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()){
+            //如果文件不存在
+            AMIToast.show("打开文件失败:" + filePath);
             return;
         }
-        FragmentManager fm = getChildFragmentManager();
-        mPrefsFragment = (StorePrefsFragment) fm.findFragmentById(R.id.ami_store_sp_content);
-        mFileFragment = (StoreContentFragment) fm.findFragmentById(R.id.ami_store_file_content);
-        mFragment = mPrefsFragment;
-        mData = mPrefs;
-        mRecyclerView = findView(R.id.ami_store_sp_titles);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(context, RecyclerView.VERTICAL));
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        mRecyclerView.setAdapter(mAdapter);
-        mTabLayout = findView(R.id.ami_store_tab);
-        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-
-        mPrefsTab = mTabLayout.newTab();
-        mPrefsTab.setText("prefs");
-
-
-        mFileTab = mTabLayout.newTab();
-        mFileTab.setText("文件");
-
-        mTabLayout.addTab(mPrefsTab);
-        mTabLayout.addTab(mFileTab);
-        mTabLayout.addOnTabSelectedListener(this);
-    }
-
-    @Override
-    public Class<? extends AmiPlugin> bindPlugin() {
-        return StorePlugin.class;
-    }
-
-    @Override
-    public int getLayoutID() {
-        return R.layout.store_fragment;
-    }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        if (tab == mPrefsTab) {
-            mFragment = mPrefsFragment;
-            mData = mPrefs;
-            ft.hide(mFileFragment);
-            ft.show(mPrefsFragment);
-        } else if (tab == mFileTab) {
-            mFragment = mFileFragment;
-            mData = mDirs;
-            ft.hide(mPrefsFragment);
-            ft.show(mFileFragment);
+        /* 取得扩展名 */
+        String end = file.getName().substring(file.getName().lastIndexOf(".") + 1, file.getName().length()).toLowerCase(Locale.getDefault());
+        /* 依扩展名的类型决定MimeType */
+        Intent intent = null;
+        if (end.equals("m4a") || end.equals("mp3") || end.equals("mid") || end.equals("xmf") || end.equals("ogg") || end.equals("wav")) {
+            intent =  generateVideoAudioIntent(filePath,DATA_TYPE_AUDIO);
+        } else if (end.equals("3gp") || end.equals("mp4")) {
+            intent = generateVideoAudioIntent(filePath,DATA_TYPE_VIDEO);
+        } else if (end.equals("jpg") || end.equals("gif") || end.equals("png") || end.equals("jpeg") || end.equals("bmp")) {
+            intent = generateCommonIntent(filePath,DATA_TYPE_IMAGE);
+        } else if (end.equals("apk")) {
+            intent = generateCommonIntent(filePath,DATA_TYPE_APK);
+        }else if (end.equals("html") || end.equals("htm")){
+            intent = getHtmlFileIntent(filePath);
+        } else if (end.equals("ppt")) {
+            intent = generateCommonIntent(filePath,DATA_TYPE_PPT);
+        } else if (end.equals("xls")) {
+            intent = generateCommonIntent(filePath,DATA_TYPE_EXCEL);
+        } else if (end.equals("doc")) {
+            intent = generateCommonIntent(filePath,DATA_TYPE_WORD);
+        } else if (end.equals("pdf")) {
+            intent = generateCommonIntent(filePath,DATA_TYPE_PDF);
+        } else if (end.equals("chm")) {
+            intent = generateCommonIntent(filePath,DATA_TYPE_CHM);
+        } else if (end.equals("txt")) {
+            intent = generateCommonIntent(filePath, DATA_TYPE_TXT);
+        } else if (end.equals("xml")) {
+            intent = generateCommonIntent(filePath, DATA_TYPE_XML);
+        } else {
+            intent = generateCommonIntent(filePath,DATA_TYPE_ALL);
         }
-        ft.commit();
-        mAdapter.notifyDataSetChanged();
-        mFragment.changed(mData.get(0));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Ami.getApp().startActivity(intent);
     }
 
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-        Ami.log();
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-        Ami.log();
-    }
-
-    private class Adapter extends RecyclerView.Adapter {
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            View view = inflater.inflate(R.layout.ami_plugin_store_prefs_title_item, viewGroup, false);
-            return new RecyclerView.ViewHolder(view) {};
+    /**
+     * 获取对应文件的Uri
+     * @param intent 相应的Intent
+     * @param file 文件对象
+     * @return
+     */
+    private static Uri getUri(Intent intent, File file) {
+        Context context = Ami.getApp();
+        Uri uri = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //判断版本是否在7.0以上
+            uri = FileProvider.getUriForFile(context,context.getPackageName() + ".fileprovider",
+                    file);
+            //添加这一句表示对目标应用临时授权该Uri所代表的文件
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } else {
+            uri = Uri.fromFile(file);
         }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-            final TextView textView = (TextView) viewHolder.itemView;
-            textView.setText(mData.get(position));
-            textView.setSelected(mSelected == position);
-            if (mSelected == position) {
-                mFragment.changed(mData.get(mSelected));
-            }
-            final int preSelected = position;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int lastSelected = mSelected;
-                    mSelected = preSelected;
-                    notifyItemChanged(mSelected);
-                    notifyItemChanged(lastSelected);
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mData.size();
-        }
+        return uri;
     }
+
+
+    /**
+     * 产生打开视频或音频的Intent
+     * @param filePath 文件路径
+     * @param dataType 文件类型
+     * @return
+     */
+    private static Intent generateVideoAudioIntent(String filePath, String dataType){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("oneshot", 0);
+        intent.putExtra("configchange", 0);
+        File file = new File(filePath);
+        intent.setDataAndType(getUri(intent,file), dataType);
+        return intent;
+    }
+
+    /**
+     * 产生打开网页文件的Intent
+     * @param filePath 文件路径
+     * @return
+     */
+    private static Intent getHtmlFileIntent(String filePath) {
+        Uri uri = Uri.parse(filePath)
+            .buildUpon()
+            .encodedAuthority("com.android.htmlfileprovider")
+            .scheme("content")
+            .encodedPath(filePath)
+            .build();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, DATA_TYPE_HTML);
+        return intent;
+    }
+
+    /**
+     * 产生除了视频、音频、网页文件外，打开其他类型文件的Intent
+     * @param filePath 文件路径
+     * @param dataType 文件类型
+     * @return
+     */
+    private static Intent generateCommonIntent(String filePath, String dataType) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(Intent.ACTION_VIEW);
+        File file = new File(filePath);
+        Uri uri = getUri(intent, file);
+        intent.setDataAndType(uri, dataType);
+        return intent;
+    }
+
 }

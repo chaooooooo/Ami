@@ -205,189 +205,124 @@
 
 package chao.app.ami.plugin.plugins.store;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import chao.app.ami.Ami;
 import chao.app.ami.R;
-import chao.app.ami.plugin.AmiPlugin;
-import chao.app.ami.plugin.AmiPluginFragment;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Locale;
 
 /**
  * @author qinchao
- * @since 2018/10/7
+ * @since 2018/10/14
  */
-public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOnTabSelectedListener {
+public class StoreFile {
 
-    private RecyclerView mRecyclerView;
+    private String path;
 
-    private StoreContentFragment mFragment;
+    private String name;
 
-    private StoreContentFragment mPrefsFragment;
+    private StoreFile parent;
 
-    private StoreContentFragment mFileFragment;
+    private boolean isDir;
 
-    private Adapter mAdapter;
+    public StoreFile() {}
 
-    private ArrayList<String> mPrefs = new ArrayList<>();
-
-    private ArrayList<String> mDirs = new ArrayList<>();
-
-    private ArrayList<String> mData;
-
-    private StoreManager mStoreManager = new StoreManager();
-
-    private int mSelected = 0;
-
-    private TabLayout mTabLayout;
-
-    private TabLayout.Tab mPrefsTab;
-
-    private TabLayout.Tab mFileTab;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mAdapter = new Adapter();
-        mDirs.add(Constants.DIR_KEY_ASSETS);
-        mDirs.add(Constants.DIR_KEY_DATA_DATA);
-        mDirs.add(Constants.DIR_KEY_SDCARD_DATA);
-        mDirs.add(Constants.DIR_KEY_SDCARD);
-    }
-
-    private Comparator<String> comparator = new Comparator<String>() {
-        @Override
-        public int compare(String o1, String o2) {
-            return o1.compareToIgnoreCase(o2);
+    public StoreFile(File file) {
+        File parentFile = file.getParentFile();
+        if (parentFile != null) {
+            this.parent = new StoreFile(parentFile);
         }
-    };
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        mPrefs = mStoreManager.getSharedPreferences(getContext());
-        Collections.sort(mPrefs, comparator);
-        return super.onCreateView(inflater, container, savedInstanceState);
+        this.name = file.getName();
+        this.path = file.getAbsolutePath();
+        isDir = file.isDirectory();
     }
 
-    @Override
-    public void setupView(View layout) {
-        super.setupView(layout);
-        Context context = getContext();
-        if (context == null) {
-            return;
+    public boolean isDir() {
+        return isDir;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public StoreFile getParent() {
+        return parent;
+    }
+
+    public void setParent(StoreFile parent) {
+        this.parent = parent;
+    }
+
+    public void setDir(boolean isDir) {
+        this.isDir = isDir;
+    }
+
+    public int getIcon() {
+        if (isDir()) {
+            return R.drawable.ami_store_dir_ic;
+        } else if (isMusic()) {
+            return R.drawable.ami_store_music_file_ic;
+        } else if (isPic()) {
+            return R.drawable.ami_store_pic_file_ic;
+        } else if (isText()) {
+            return R.drawable.ami_store_file_ic;
+        } else {
+            return R.drawable.ami_store_unknown_file_ic;
         }
-        FragmentManager fm = getChildFragmentManager();
-        mPrefsFragment = (StorePrefsFragment) fm.findFragmentById(R.id.ami_store_sp_content);
-        mFileFragment = (StoreContentFragment) fm.findFragmentById(R.id.ami_store_file_content);
-        mFragment = mPrefsFragment;
-        mData = mPrefs;
-        mRecyclerView = findView(R.id.ami_store_sp_titles);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(context, RecyclerView.VERTICAL));
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        mRecyclerView.setAdapter(mAdapter);
-        mTabLayout = findView(R.id.ami_store_tab);
-        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-
-        mPrefsTab = mTabLayout.newTab();
-        mPrefsTab.setText("prefs");
-
-
-        mFileTab = mTabLayout.newTab();
-        mFileTab.setText("文件");
-
-        mTabLayout.addTab(mPrefsTab);
-        mTabLayout.addTab(mFileTab);
-        mTabLayout.addOnTabSelectedListener(this);
     }
-
-    @Override
-    public Class<? extends AmiPlugin> bindPlugin() {
-        return StorePlugin.class;
-    }
-
-    @Override
-    public int getLayoutID() {
-        return R.layout.store_fragment;
-    }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        if (tab == mPrefsTab) {
-            mFragment = mPrefsFragment;
-            mData = mPrefs;
-            ft.hide(mFileFragment);
-            ft.show(mPrefsFragment);
-        } else if (tab == mFileTab) {
-            mFragment = mFileFragment;
-            mData = mDirs;
-            ft.hide(mPrefsFragment);
-            ft.show(mFileFragment);
+    public String getDesc() {
+        if (isDir()) {
+            return "文件夹";
+        } else if (isMusic()) {
+            return "触摸以播放音乐🎵";
+        } else if (isPic()) {
+            return "长按预览图片";
+        } else if (isText()) {
+            return "长按预览文件内容";
+        } else {
+            return "未知文件类型";
         }
-        ft.commit();
-        mAdapter.notifyDataSetChanged();
-        mFragment.changed(mData.get(0));
     }
 
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-        Ami.log();
+    public String getSuffix() {
+        return name.substring(name.lastIndexOf(".") + 1).toLowerCase(Locale.getDefault());
     }
 
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-        Ami.log();
+    public boolean isMusic() {
+        return !isDir && Constants.FILE_TYPE_MUSIC_MASK.contains(getSuffix());
     }
 
-    private class Adapter extends RecyclerView.Adapter {
+    public boolean isPic() {
+        return !isDir && Constants.FILE_TYPE_PIC_MASK.contains(getSuffix());
+    }
 
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            View view = inflater.inflate(R.layout.ami_plugin_store_prefs_title_item, viewGroup, false);
-            return new RecyclerView.ViewHolder(view) {};
-        }
+    public boolean isText() {
+        return !isDir && Constants.FILE_TYPE_TEXT_MASK.contains(getSuffix());
+    }
 
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-            final TextView textView = (TextView) viewHolder.itemView;
-            textView.setText(mData.get(position));
-            textView.setSelected(mSelected == position);
-            if (mSelected == position) {
-                mFragment.changed(mData.get(mSelected));
-            }
-            final int preSelected = position;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int lastSelected = mSelected;
-                    mSelected = preSelected;
-                    notifyItemChanged(mSelected);
-                    notifyItemChanged(lastSelected);
-                }
-            });
+    public FileDescriptor getFd() {
+        try {
+            FileInputStream fis = new FileInputStream(path);
+            return fis.getFD();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        public int getItemCount() {
-            return mData.size();
-        }
+        return null;
     }
 }
