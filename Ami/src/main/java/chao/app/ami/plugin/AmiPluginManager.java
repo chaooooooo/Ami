@@ -143,7 +143,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
         tipView.setVisibility(View.GONE);
         mActivity = (FragmentActivity) activity;
         FragmentManager fm = mActivity.getSupportFragmentManager();
-        mViewPager.clearOnPageChangeListeners();
         mPageAdapter = new PageAdapter(fm);
         mViewPager.setAdapter(mPageAdapter);
 
@@ -153,8 +152,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
             plugin.mFragment = fm.findFragmentByTag(mPageAdapter.makeFragmentName(position));
             position++;
         }
-        mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(curIndicator);
     }
 
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {

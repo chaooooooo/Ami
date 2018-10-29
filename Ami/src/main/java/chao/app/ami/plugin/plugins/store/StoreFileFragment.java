@@ -522,10 +522,14 @@ public class StoreFileFragment extends StoreContentFragment implements Handler.C
             TextView descView = viewHolder.itemView.findViewById(R.id.ami_store_file_item_description);
             ProgressBar seekBar = viewHolder.itemView.findViewById(R.id.ami_store_file_item_seek);
             ImageView iconView = viewHolder.itemView.findViewById(R.id.ami_store_file_item_icon);
+            ImageView arrowView = viewHolder.itemView.findViewById(R.id.ami_store_file_item_arrow);
+
             titleView.setText(storeFile.getName());
             descView.setText(storeFile.getDesc());
             iconView.setImageResource(storeFile.getIcon());
             seekBar.setIndeterminate(false);
+
+            arrowView.setVisibility(storeFile.isText() || storeFile.isText() ? View.VISIBLE: View.GONE);
 
             if (i == 0) {
                 titleView.setText("..");
@@ -536,8 +540,8 @@ public class StoreFileFragment extends StoreContentFragment implements Handler.C
                 seekBar.setVisibility(View.GONE);
             }
             viewHolder.itemView.setTag(storeFile);
-            viewHolder.itemView.setOnClickListener(storeFile.isDir() ? this: null);
-            viewHolder.itemView.setOnTouchListener(storeFile.isDir() ? null : this);
+            viewHolder.itemView.setOnClickListener(!storeFile.isMusic() ? this: null);
+            viewHolder.itemView.setOnTouchListener(storeFile.isMusic() ? this : null);
         }
 
         @Override
@@ -586,10 +590,33 @@ public class StoreFileFragment extends StoreContentFragment implements Handler.C
                 }
                 storeFile = parent;
             }
-            if (isAssetMode()) {
-                openAssets((AssetFile) storeFile);
+            if (storeFile.isDir()) {
+                if (isAssetMode()) {
+                    openAssets((AssetFile) storeFile);
+                } else {
+                    loadDir(storeFile);
+                }
+                return;
+            }
+            if (storeFile.isText()) {
+                toggleText(v);
+            } else if (storeFile.isPic()){
+//                tooglePicture(v);
+            }
+        }
+
+        private void toggleText(View v) {
+            StoreFile storeFile = (StoreFile) v.getTag();
+            ImageView arrowView = v.findViewById(R.id.ami_store_file_item_arrow);
+            TextView summaryView = v.findViewById(R.id.ami_store_file_item_summary);
+            boolean shrink = summaryView.getVisibility() == View.GONE;
+            if (shrink) {
+                arrowView.setImageResource(R.drawable.ami_frame_item_spread);
+                summaryView.setVisibility(View.VISIBLE);
+                summaryView.setText(storeFile.getSummary());
             } else {
-                loadDir(storeFile);
+                arrowView.setImageResource(R.drawable.ami_frame_item_shrink);
+                summaryView.setVisibility(View.GONE);
             }
         }
     }

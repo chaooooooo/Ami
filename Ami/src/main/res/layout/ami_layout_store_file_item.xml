@@ -203,58 +203,102 @@
   ~
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/ami_store_file_item_icon"
-        android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:scaleType="center"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:contentDescription="@string/empty_image_description"
-        android:layout_marginStart="10dp" />
-
-    <TextView
-        android:id="@+id/ami_store_file_item_title"
-        android:textSize="16sp"
-        android:textColor="@android:color/primary_text_dark"
-        android:layout_toRightOf="@id/ami_store_file_item_icon"
-        android:paddingLeft="4dp"
-        android:paddingRight="10dp"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/ami_store_file_item_icon"
-        android:paddingStart="4dp"
-        android:paddingEnd="10dp" />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ami_store_file_item_icon"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:contentDescription="@string/empty_image_description"
+            android:scaleType="center" />
+
+        <TextView
+            android:id="@+id/ami_store_file_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/ami_store_file_item_icon"
+            android:layout_toRightOf="@id/ami_store_file_item_icon"
+            android:paddingStart="4dp"
+            android:paddingLeft="4dp"
+            android:paddingEnd="10dp"
+            android:paddingRight="10dp"
+            tools:text="hello"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/ami_store_file_item_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ami_store_file_item_title"
+            android:layout_toEndOf="@id/ami_store_file_item_icon"
+            android:layout_toRightOf="@id/ami_store_file_item_icon"
+            android:paddingStart="4dp"
+            android:paddingLeft="4dp"
+            android:paddingEnd="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="4dp"
+            tools:text="hello"
+            android:textColor="@android:color/secondary_text_dark"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="10dp"
+            android:id="@+id/ami_store_file_item_arrow"
+            android:contentDescription="@string/empty_image_description"
+            android:src="@drawable/ami_frame_item_shrink"
+            android:layout_alignTop="@id/ami_store_file_item_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
+            android:layout_alignParentEnd="true" />
+
+        <SeekBar
+            android:id="@+id/ami_store_file_item_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ami_store_file_item_description"
+            android:indeterminate="false"
+            android:max="100"
+            android:maxHeight="2dp"
+            android:minHeight="2dp"
+            android:padding="0dp"
+            android:progress="10"
+            android:progressDrawable="@drawable/progress_horizontal" />
+    </RelativeLayout>
 
     <TextView
-        android:id="@+id/ami_store_file_item_description"
+        android:id="@+id/ami_store_file_item_summary"
+        android:maxLines="20"
         android:textSize="12sp"
-        android:textColor="@android:color/secondary_text_dark"
-        android:layout_toRightOf="@id/ami_store_file_item_icon"
-        android:layout_below="@id/ami_store_file_item_title"
-        android:paddingBottom="4dp"
-        android:paddingLeft="4dp"
-        android:paddingRight="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingEnd="10dp"
-        android:layout_toEndOf="@id/ami_store_file_item_icon"
-        android:paddingStart="4dp" />
-
-    <SeekBar
-        android:id="@+id/ami_store_file_item_seek"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="10"
-        android:progressDrawable="@drawable/progress_horizontal"
-        android:maxHeight="2dp"
-        android:minHeight="2dp"
-        android:padding="0dp"
-        android:layout_below="@id/ami_store_file_item_description"
+        android:textColor="@android:color/primary_text_dark"
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-</RelativeLayout>
+
+    <ImageView
+        android:id="@+id/ami_store_file_item_pic"
+        android:textColor="@android:color/primary_text_dark"
+        android:contentDescription="@string/empty_image_description"
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

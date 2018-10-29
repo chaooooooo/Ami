@@ -206,10 +206,12 @@
 package chao.app.ami.plugin.plugins.store;
 
 import chao.app.ami.R;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -226,6 +228,8 @@ public class StoreFile {
     private StoreFile parent;
 
     private boolean isDir;
+
+    private String mSummary;
 
     public StoreFile() {}
 
@@ -290,9 +294,9 @@ public class StoreFile {
         } else if (isMusic()) {
             return "触摸以播放音乐🎵";
         } else if (isPic()) {
-            return "长按预览图片";
+            return "点击预览图片";
         } else if (isText()) {
-            return "长按预览文件内容";
+            return "文本文件";
         } else {
             return "未知文件类型";
         }
@@ -324,5 +328,28 @@ public class StoreFile {
             e.printStackTrace();
         }
         return null;
+    }
+
+    String getSummary() {
+        if (mSummary == null) {
+            try {
+                FileReader fr = new FileReader(path);
+                BufferedReader br = new BufferedReader(fr);
+                StringBuilder builder = new StringBuilder();
+                String line;
+                int count = 0;
+                while ((line = br.readLine()) != null) {
+                    builder.append(line).append("\n");
+                    count++;
+                    if (count >= 20) {
+                        break;
+                    }
+                }
+                mSummary = builder.toString();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+        return mSummary;
     }
 }

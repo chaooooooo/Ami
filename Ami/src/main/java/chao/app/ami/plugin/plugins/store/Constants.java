@@ -221,7 +221,7 @@ public interface Constants {
 
     String FILE_TYPE_MUSIC_MASK = "mp3|m4a|mid|xmf|ogg|wav|wma|ape|flac|aac";
 
-    String FILE_TYPE_TEXT_MASK = "txt|xml|html|java|groovy|gradle|c|cpp|h|dtd|css|dart|sql|aidl|md|bat|sh|json|php|jsp|ini|bat";
+    String FILE_TYPE_TEXT_MASK = "txt|xml|html|java|groovy|gradle|c|cpp|h|dtd|css|dart|sql|aidl|md|bat|sh|json|php|jsp|ini|bat|log";
 
     String FILE_TYPE_PIC_MASK = "jpg|jpeg|png|bmp|webp|gif";
 

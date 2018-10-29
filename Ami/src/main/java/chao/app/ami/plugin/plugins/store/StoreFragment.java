@@ -342,7 +342,6 @@ public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOn
         }
         ft.commit();
         mAdapter.notifyDataSetChanged();
-        mFragment.changed(mData.get(0));
     }
 
     @Override
