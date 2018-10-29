@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import chao.app.ami.Ami;
 
 /**
  * @author chao.qin
@@ -90,6 +91,10 @@ public abstract class AMISupportFragment extends Fragment implements IAMIFragmen
     public void onDetach() {
         super.onDetach();
         mHelper.onDetach();
+    }
+
+    public Context getAppContext() {
+        return Ami.getApp();
     }
 
     @Override

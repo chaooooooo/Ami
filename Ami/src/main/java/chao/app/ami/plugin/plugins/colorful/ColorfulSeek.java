@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import chao.app.debug.R;
+import chao.app.ami.R;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 

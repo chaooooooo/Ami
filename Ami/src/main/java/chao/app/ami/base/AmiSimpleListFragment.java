@@ -4,10 +4,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import chao.app.ami.R;
 import java.util.List;
 
-import chao.app.debug.R;
 
 
 public abstract class AmiSimpleListFragment extends AMISupportFragment implements AdapterView.OnItemClickListener {

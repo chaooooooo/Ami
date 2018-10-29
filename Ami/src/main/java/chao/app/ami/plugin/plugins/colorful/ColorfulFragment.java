@@ -3,9 +3,9 @@ package chao.app.ami.plugin.plugins.colorful;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
+import chao.app.ami.R;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
-import chao.app.debug.R;
 
 /**
  * @author qinchao

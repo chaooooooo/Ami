@@ -212,7 +212,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import chao.app.ami.Ami;
 import chao.app.ami.utils.hierarchy.Hierarchy;
-import chao.app.ami.utils.hierarchy.HierarchyNode;
 import chao.app.ami.utils.hierarchy.ViewHierarchyNode;
 import org.junit.Before;
 import org.junit.Test;
@@ -279,14 +278,5 @@ public class HierarchyTest {
     public void testHierarchy() {
         ViewHierarchyNode root = (ViewHierarchyNode) Hierarchy.of(new ViewHierarchyNode(mView)).root();
         Ami.log("root: " + root.value().getTag());
-
-        Hierarchy.of(root).descendants().forEach(new Hierarchy.Action() {
-            @Override
-            public boolean action(HierarchyNode v) {
-                View view = (View) v.value();
-                Ami.log(view.getTag());
-                return false;
-            }
-        });
     }
 }

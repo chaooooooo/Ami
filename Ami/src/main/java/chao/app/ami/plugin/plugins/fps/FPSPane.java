@@ -210,9 +210,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import chao.app.ami.plugin.AmiPluginSettingPane;
+import chao.app.ami.R;
 import chao.app.ami.plugin.AmiPlugin;
-import chao.app.debug.R;
+import chao.app.ami.plugin.AmiPluginSettingPane;
 
 /**
  * @author qinchao
@@ -229,7 +229,7 @@ public class FPSPane extends AmiPluginSettingPane implements CompoundButton.OnCh
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
         View view = inflater.inflate(R.layout.ami_plugin_fps_componnet_layout, parent, false);
-        fpsCheckBox = (CheckBox) view.findViewById(R.id.ami_fps_settings);
+        fpsCheckBox = view.findViewById(R.id.ami_fps_settings);
         FPSSettings settings = getSettings();
         fpsCheckBox.setChecked(settings.isShowFPS());
         fpsCheckBox.setOnCheckedChangeListener(this);

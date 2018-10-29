@@ -1,10 +1,11 @@
 package chao.app.ami;
 
 import android.app.Application;
+import android.os.Handler;
 import android.util.Log;
 import chao.app.ami.base.AmiHandlerThread;
-import chao.app.ami.plugin.plugins.frame.FrameManager;
 import chao.app.ami.launcher.drawer.DrawerManager;
+import chao.app.ami.plugin.plugins.frame.FrameManager;
 import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;
 import chao.app.ami.utils.Util;
@@ -75,6 +76,7 @@ public class Ami {
         ProxyManager.init(app);
         TextManager.init();
         FrameManager.init();
+        DrawerManager.get();
 //        MonitorManager.init(app);
 
         sHandlerThread = new AmiHandlerThread();
@@ -96,39 +98,8 @@ public class Ami {
         if (!Util.isMainProcess(getApp())) {
             return;
         }
-        DrawerManager.init(drawerId);
+        DrawerManager.get().setDrawerId(drawerId);
     }
-
-    /**
-     *  Ami 功能初始化
-     *
-     * @param app application
-     * @param drawerId   抽屉配置文件Id, 必须是R.raw.xxxx
-     *
-     * @Deprecated 独立功能开关
-     * @see #init(Application)
-     * @see #setDrawerId(int)
-     */
-    @Deprecated
-    public static void init(Application app, int drawerId) {
-        if (!isDebugMode(app)) {
-            return;
-        }
-        if (mInstance != null) {
-            return;
-        }
-
-        if (!Util.isMainProcess(getApp())) {
-            return;
-        }
-
-        mInstance = new Ami(app);
-        DrawerManager.init(drawerId);
-        ProxyManager.init(app);
-        TextManager.init();
-        FrameManager.init();
-    }
-
 
     public static Application getApp() {
         return mApp;
@@ -207,6 +178,7 @@ public class Ami {
         Log.d(tag, className + "." + method + "() " + log);
     }
 
+    @Deprecated
     public static void lifecycle(String tag, String log, int level) {
         if (mLifecycle == LIFECYCLE_LEVEL_NONE) {
             return;
@@ -218,6 +190,16 @@ public class Ami {
     }
 
     public static AmiHandlerThread getHandlerThread() {
+        if (!inited()) {
+            return null;
+        }
         return sHandlerThread;
+    }
+
+    public static Handler getHandler(){
+        if (!inited()) {
+            return null;
+        }
+        return sHandlerThread.getHandler();
     }
 }

@@ -4,10 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import chao.app.ami.R;
 import chao.app.ami.plugin.plugins.frame.IFrame;
 import chao.app.ami.plugin.plugins.frame.SearchFrame;
-import chao.app.debug.R;
 
 /**
  * @author chao.qin

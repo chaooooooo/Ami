@@ -1,5 +1,6 @@
 package chao.app.ami.base;
 
+import android.os.Handler;
 import android.os.HandlerThread;
 
 /**
@@ -8,6 +9,7 @@ import android.os.HandlerThread;
  */
 public class AmiHandlerThread extends HandlerThread {
 
+    private Handler mHandler;
 
     public AmiHandlerThread() {
         super("ami handler thread");
@@ -17,6 +19,11 @@ public class AmiHandlerThread extends HandlerThread {
     @Override
     protected void onLooperPrepared() {
         super.onLooperPrepared();
+        mHandler = new Handler(getLooper());
+    }
+
+    public Handler getHandler() {
+        return mHandler;
     }
 
 }

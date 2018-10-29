@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import chao.app.ami.R;
 import chao.app.ami.utils.DeviceUtil;
-import chao.app.debug.R;
 
 
 public class ViewSettingsPanel extends FrameLayout {

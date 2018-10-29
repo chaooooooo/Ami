@@ -8,11 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import chao.app.ami.R;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
 import chao.app.ami.plugin.AmiPluginSettingPane;
 import chao.app.ami.utils.DeviceUtil;
-import chao.app.debug.R;
 
 /**
  * @author qinchao
@@ -33,6 +33,9 @@ public class GeneralFragment extends AmiPluginFragment {
             }
             LayoutInflater inflater = getLayoutInflater();
             View componentView = generalComponent.onCreateView(inflater, mLayout);
+            if (componentView == null) {
+                throw new NullPointerException("onCreateView should have a return value");
+            }
             addComponentView(generalComponent, componentView);
         }
     }

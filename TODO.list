@@ -132,7 +132,12 @@ ami screen
 
 #2018-9-14
 邮件发送
-查看db，sp,assets, raw,data cache
+查看db，
+sp,      配置是否查看ami的sp
+assets,
+raw,
+data
+cache
 
 
 命令行通信：
@@ -142,3 +147,10 @@ ami计算器 (ami calc)
 ami 数据库操作 (ami sql)
 ami 应用信息查询 (ami show)
 
+
+
+2018-10-12
+启动时间监控
+内存
+CPU
+Network

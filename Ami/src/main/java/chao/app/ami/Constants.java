@@ -15,6 +15,7 @@ public interface Constants {
 
     String AMI_ACTION_LONG_CLICK = "长按事件";
     String AMI_ACTION_VIEW_DETAIL = "显示View详细信息";
+    String AMI_ACTION_SHOW_PASSWORD = "显示/隐藏密码";
 
     int MAX_LIST_WIDTH = DeviceUtil.dp2px(200);
     int MAX_LIST_HEIGHT = DeviceUtil.dp2px(360);

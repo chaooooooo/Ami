@@ -2,6 +2,7 @@ package chao.app.debugtools;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
 import chao.app.ami.Ami;
 import java.io.File;
 
@@ -13,6 +14,10 @@ import java.io.File;
 @SuppressLint("Registered")
 public class AppApplication extends Application {
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+    }
 
     @Override
     public void onCreate() {
@@ -23,7 +28,7 @@ public class AppApplication extends Application {
 
 //        Debug.startMethodTracing(traceFile, 30 * 1024 * 1024);
         Ami.init(this);
-        Ami.setDrawerId(R.raw.drawer);
+//        Ami.setDrawerId(R.raw.drawer);
         Ami.setLifecycleLevel(Ami.LIFECYCLE_LEVEL_NONE);
 
 //        Debug.stopMethodTracing();

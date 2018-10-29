@@ -1,8 +1,8 @@
 package chao.app.ami.plugin;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -12,19 +12,10 @@ import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
-import chao.app.ami.Ami;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.plugin.plugins.general.GeneralPlugin;
 import java.util.ArrayList;
 import java.util.HashMap;
-import net.lucode.hackware.magicindicator.MagicIndicator;
-import net.lucode.hackware.magicindicator.ViewPagerHelper;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView;
 
 /**
  * @author qinchao
@@ -32,7 +23,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorT
  */
 public class AmiPluginManager implements ViewPager.OnPageChangeListener {
 
-    private MagicIndicator mMagicIndicator;
+    private TabLayout mTabLayout;
 
     private ViewPager mViewPager;
 
@@ -41,10 +32,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
     private static HashMap<Class, AmiPlugin> mPluginMap = new HashMap<>();
 
     private PageAdapter mPageAdapter;
-
-    private TabAdapter mTabAdapter;
-
-    private CommonNavigator commonNavigator;
 
     private AmiContentView contentView;
 
@@ -66,15 +53,10 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
         return sInstance;
     }
 
-    public void initView(AmiContentView content, MagicIndicator tabLayout, ViewPager viewPager) {
+    public void initView(AmiContentView content, TabLayout tabLayout, ViewPager viewPager) {
         contentView = content;
-        mMagicIndicator = tabLayout;
+        mTabLayout = tabLayout;
         mViewPager = viewPager;
-
-        mTabAdapter = new TabAdapter();
-        commonNavigator = new CommonNavigator(Ami.getApp());
-        commonNavigator.setAdapter(mTabAdapter);
-        mMagicIndicator.setNavigator(commonNavigator);
 
         for (AmiPlugin plugin : mPlugins) {
             plugin.onBindView(contentView);
@@ -101,9 +83,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
         if (plugin.newFragment() != null) {
             mFragmentPlugins.add(plugin);
         }
-        if (mTabAdapter != null) {
-            mTabAdapter.notifyDataSetChanged();
-        }
         if (mPageAdapter != null) {
             mPageAdapter.notifyDataSetChanged();
         }
@@ -120,9 +99,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
             if (plugin.newFragment() != null) {
                 mFragmentPlugins.add(plugin);
             }
-        }
-        if (mTabAdapter != null) {
-            mTabAdapter.notifyDataSetChanged();
         }
         if (mPageAdapter != null) {
             mPageAdapter.notifyDataSetChanged();
@@ -167,10 +143,8 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
         tipView.setVisibility(View.GONE);
         mActivity = (FragmentActivity) activity;
         FragmentManager fm = mActivity.getSupportFragmentManager();
-        mViewPager.clearOnPageChangeListeners();
         mPageAdapter = new PageAdapter(fm);
         mViewPager.setAdapter(mPageAdapter);
-        ViewPagerHelper.bind(mMagicIndicator, mViewPager);
 
         int position = 0;
         for (AmiPlugin plugin : mPlugins) {
@@ -178,8 +152,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
             plugin.mFragment = fm.findFragmentByTag(mPageAdapter.makeFragmentName(position));
             position++;
         }
-        mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(curIndicator);
     }
 
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
@@ -213,40 +185,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
     }
 
 
-    private class TabAdapter extends CommonNavigatorAdapter {
-
-
-        @Override
-        public int getCount() {
-            return mFragmentPlugins.size();
-        }
-
-        @Override
-        public IPagerTitleView getTitleView(final Context context, final int position) {
-            ColorTransitionPagerTitleView titleView = new ColorTransitionPagerTitleView(context);
-            IPlugin plugin = mFragmentPlugins.get(position);
-            titleView.setText(plugin.getTitle());
-            titleView.setNormalColor(Color.parseColor("#aaaaaa"));
-            titleView.setSelectedColor(Color.WHITE);
-            titleView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mViewPager.setCurrentItem(position);
-                    curIndicator = position;
-                }
-            });
-            return titleView;
-        }
-
-        @Override
-        public IPagerIndicator getIndicator(Context context) {
-            LinePagerIndicator indicator = new LinePagerIndicator(context);
-            indicator.setMode(LinePagerIndicator.MODE_WRAP_CONTENT);
-            indicator.setColors(Color.WHITE);
-            return indicator;
-        }
-    }
-
     private class PageAdapter extends FragmentPagerAdapter {
 
         PageAdapter(FragmentManager fm) {
@@ -261,6 +199,12 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
                 fragment = plugin.newFragment();
             }
             return fragment;
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentPlugins.get(position).getTitle();
         }
 
         public String makeFragmentName(int position) {

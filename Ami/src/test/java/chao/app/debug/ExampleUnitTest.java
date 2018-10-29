@@ -34,5 +34,10 @@ public class ExampleUnitTest {
         System.out.println(field.getGenericType());
 
         System.out.println(null == null);
+
+        String value = "[hello, luqin, 10086, 123]";
+
+        System.out.println("   Hi, luqin   ".trim());
+        System.out.println(value.substring(1, value.length() - 1));
     }
 }

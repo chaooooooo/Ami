@@ -12,12 +12,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import chao.app.ami.Ami;
+import chao.app.ami.R;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
 import chao.app.ami.plugin.plugins.frame.search.ObjectInfo;
 import chao.app.ami.plugin.plugins.frame.search.SearchManager;
 import chao.app.ami.plugin.plugins.frame.search.SearchTextListener;
-import chao.app.debug.R;
 import java.util.ArrayList;
 
 /**

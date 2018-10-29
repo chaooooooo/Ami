@@ -21,13 +21,13 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import chao.app.ami.Constants;
+import chao.app.ami.R;
 import chao.app.ami.utils.DeviceUtil;
 import chao.app.ami.utils.ReflectUtil;
-import chao.app.ami.utils.Util;
+import chao.app.ami.utils.ViewUtil;
 import chao.app.ami.utils.hierarchy.Hierarchy;
 import chao.app.ami.utils.hierarchy.HierarchyNode;
 import chao.app.ami.utils.hierarchy.ViewHierarchyNode;
-import chao.app.debug.R;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 
@@ -163,7 +163,7 @@ public class InterceptorFrameLayout extends FrameLayout implements ViewIntercept
             return false;
         }
         //不支持webview
-        if (Util.isWebView(record.view)) {
+        if (ViewUtil.isWebView(record.view)) {
             return false;
         }
 

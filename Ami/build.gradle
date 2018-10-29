@@ -1,14 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 28
+        versionCode 101
+        versionName "1.0.1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -27,20 +27,15 @@ android {
 }
 
 dependencies {
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    testCompile 'junit:junit:4.12'
-    implementation 'com.android.support:recyclerview-v7:25.4.0'
-    implementation 'com.android.support:support-v4:25.4.0'
-    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
 
-    testCompile 'junit:junit:4.12'
-
-    implementation 'com.sun.mail:android-mail:1.6.0'
-    implementation 'com.sun.mail:android-activation:1.6.0'
-
+    testImplementation 'junit:junit:4.12'
 }
 
 apply from: './jitpack.gradle'

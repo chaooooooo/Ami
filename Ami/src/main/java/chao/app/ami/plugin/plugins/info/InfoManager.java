@@ -7,11 +7,11 @@ import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.TextView;
+import chao.app.ami.R;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.command.beans.Screen;
 import chao.app.ami.plugin.AmiSettings;
 import chao.app.ami.plugin.MovementLayout;
-import chao.app.debug.R;
 
 /**
  * @author qinchao

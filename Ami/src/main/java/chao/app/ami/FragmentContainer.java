@@ -1,15 +1,12 @@
 package chao.app.ami;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import chao.app.ami.base.AMIActivity;
-import chao.app.debug.R;
 
 /**
  * chao.qin

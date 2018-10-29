@@ -7,8 +7,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.text.TextUtils;
-import android.view.View;
-import android.webkit.WebView;
 import chao.app.ami.Ami;
 import chao.app.ami.Constants;
 import java.io.BufferedReader;
@@ -173,23 +171,4 @@ public class Util implements Constants {
         }
         return String.valueOf(pid);
     }
-
-    public static boolean isWebView(View view) {
-        if (view instanceof WebView) {
-            return true;
-        }
-        return isWebView("com.tencent.smtt.sdk.WebView", view)   // 腾讯tbs webview
-            || isWebView("org.xwalk.core.XWalkView", view);      // Crosswalk
-    }
-
-    private static boolean isWebView(String className, View view) {
-        try {
-            Class<?> clazz = Class.forName(className);
-            return clazz.isAssignableFrom(view.getClass());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
 }

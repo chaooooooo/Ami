@@ -206,23 +206,27 @@
 package chao.app.ami.plugin.plugins.fps;
 
 import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.widget.TextView;
 import chao.app.ami.Ami;
+import chao.app.ami.R;
 import chao.app.ami.base.AmiContentView;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
 import chao.app.ami.plugin.AmiSettings;
 import chao.app.ami.plugin.MovementLayout;
-import chao.app.debug.R;
 
 /**
  * @author qinchao
  * @since 2018/9/28
  */
+@RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
 public class FPSPlugin extends AmiPlugin<AmiPluginFragment,FPSSettings, FPSPane> implements AmiSettings.OnSettingsChangeListener {
 
     private TextView fpsView;
+    private FPSManager fpsManager;
 
 
     @Override
@@ -247,16 +251,16 @@ public class FPSPlugin extends AmiPlugin<AmiPluginFragment,FPSSettings, FPSPane>
 
     @Override
     public Object getManager() {
-        return null;
+        return fpsManager;
     }
 
     @Override
     public void onBindView(AmiContentView contentView) {
         MovementLayout movementLayout = contentView.getMovementLayout();
         //fps
-        fpsView = (TextView) contentView.findViewById(R.id.ami_content_fps);
+        fpsView = contentView.findViewById(R.id.ami_content_fps);
         movementLayout.addView(fpsView);
-        FPSManager fpsManager = new FPSManager(new FPSManager.OnFPSUpdateListener() {
+        fpsManager = new FPSManager(new FPSManager.OnFPSUpdateListener() {
             @Override
             public void onFpsUpdate(int fps) {
                 String text = "fps: " + fps;
@@ -273,17 +277,24 @@ public class FPSPlugin extends AmiPlugin<AmiPluginFragment,FPSSettings, FPSPane>
                 fpsView.setText(text);
             }
         });
-        fpsManager.start();
+        FPSSettings settings = getSettings();
+        settings.setSettingsChangeListener(this);
 
-        getSettings().setSettingsChangeListener(this);
+        if (settings.isShowFPS()) {
+            fpsManager.start();
+        }
+
     }
 
 
     @Override
     public <T> void onSettingsChanged(String key, T value) {
         if (getSettings().isShowFPS()) {
-            fpsView.setVisibility(View.VISIBLE);
+            if (fpsManager.start()) {
+                fpsView.setVisibility(View.VISIBLE);
+            }
         } else {
+            fpsManager.stop();
             fpsView.setVisibility(View.GONE);
         }
     }
