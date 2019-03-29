@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -45,14 +46,16 @@ import chao.app.ami.plugin.plugins.logcat.LogcatPlugin;
 import chao.app.ami.plugin.plugins.store.StorePlugin;
 import chao.app.ami.plugin.plugins.viewinterceptor.InterceptorLayerManager;
 import chao.app.ami.plugin.plugins.viewinterceptor.ViewInterceptorPlugin;
+import chao.app.ami.utils.FastJsonUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 
-public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, ViewGroup.OnHierarchyChangeListener {
+public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, View.OnClickListener, WindowCallbackHook.DispatchKeyEventListener, ViewGroup.OnHierarchyChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @SuppressLint("StaticFieldLeak")
     private static DrawerManager sDrawerManager;
@@ -88,7 +91,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             return;
         }
         mActivity = activity;
-        ViewGroup decorView = activity.findViewById(android.R.id.content);
+        ViewGroup decorView = (ViewGroup) activity.findViewById(android.R.id.content);
         int decorViewChildCount = decorView.getChildCount();
         if (decorViewChildCount == 0) {
             return;
@@ -126,19 +129,22 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         if (mDrawerLayout == null) {
             LayoutInflater inflater = LayoutInflater.from(Ami.getApp());
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
-            AmiContentView content = mDrawerLayout.findViewById(R.id.ami_content);
+            AmiContentView content = (AmiContentView) mDrawerLayout.findViewById(R.id.ami_content);
 
-            mInterceptorManager = (InterceptorLayerManager) AmiPluginManager.getPlugin(ViewInterceptorPlugin.class).getManager();
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             content.addView(mInterceptorManager.getLayout(),layoutParams);
 
             View componentContent = findViewById(R.id.drawer_component_content);
-            mNavigationBackView = componentContent.findViewById(R.id.navigation_back);
+            mNavigationBackView = (ImageView) componentContent.findViewById(R.id.navigation_back);
             mNavigationBackView.setOnClickListener(this);
-            mNavigationPathView = componentContent.findViewById(R.id.navigation_title);
-            mDrawerListView = componentContent.findViewById(R.id.ui_list);
+            mNavigationPathView = (TextView) componentContent.findViewById(R.id.navigation_title);
+            mDrawerListView = (RecyclerView) componentContent.findViewById(R.id.ui_list);
             mDrawerListView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
             mDrawerListView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayoutManager.VERTICAL));
+
+            componentContent.findViewById(R.id.ami_component_add).setOnClickListener(this);
+            componentContent.findViewById(R.id.ami_component_edit).setOnClickListener(this);
+            componentContent.findViewById(R.id.ami_component_description).setOnClickListener(this);
 
 //            ViewInterceptor interceptor = new ViewInterceptor();
 //            mInterceptorFrame.setInterceptor(interceptor);
@@ -149,6 +155,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             tabLayout.setupWithViewPager(viewPager, true);
 
             mPluginManager.initView(content, tabLayout, viewPager);
+
+            DrawerSharedPreference.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
             DrawerXmlParser parser = new DrawerXmlParser();
             if (mDrawerId != 0) {
@@ -172,7 +180,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
                 Ami.log("ami xml is not exist: " + amiXml.getParent());
             }
         }
-        TextView tipView = mDrawerLayout.findViewById(R.id.ami_useless_tip_view);
+        TextView tipView = (TextView) mDrawerLayout.findViewById(R.id.ami_useless_tip_view);
         if (mPluginManager != null) {
             mPluginManager.setupPluginTabs(activity, tipView);
         }
@@ -188,6 +196,41 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         mDrawerId = rawId;
     }
 
+    private void parseCachedDrawerNodes() {
+        Set<String> set = DrawerSharedPreference.sharedPreferences.getStringSet(DrawerConstants.prefs.KEY_COMPONENTS, new HashSet<String>());
+        for (String serialize: set) {
+            DrawerComponentInfo serializeComponent = FastJsonUtil.deserialize(serialize, DrawerComponentInfo.class);
+            if (serializeComponent == null) {
+                continue;
+            }
+            ComponentNode component = mDrawerRootNode.findNodeByComponent(serializeComponent.getComponent());
+            if (component == null) {
+                component = new ComponentNode(serializeComponent.getName(), serializeComponent.getComponent());
+            }
+            component.replace(serializeComponent);
+
+            if (component.getParent() != null) {
+                component.getParent().remove(component);
+            }
+            if (component.toGroup) {
+                Node group = mDrawerRootNode.findNodeByName(component.getPkgName());
+                if (group instanceof NodeGroup) {
+                    group.addNode(component);
+                } else {
+                    NodeGroup nodeGroup = new NodeGroup(serializeComponent.getPkgName());
+                    nodeGroup.setPackageName(serializeComponent.getPkgName());
+                    mDrawerRootNode.addNode(nodeGroup);
+                    nodeGroup.addNode(component);
+                }
+            } else {
+                if(component.getParent() == null) {
+                    mDrawerRootNode.addNode(component);
+                }
+            }
+        }
+        mDrawerAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onXmlParserDone(DrawerNode rootNode) {
         if (mDrawerRootNode == null) {
@@ -199,6 +242,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             mDrawerAdapter.updateNavigation();
             mDrawerAdapter.notifyDataSetChanged();
         }
+        parseCachedDrawerNodes();
     }
 
     @Override
@@ -210,6 +254,16 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     public void onClick(View v) {
         if (v == mNavigationBackView) {
             mDrawerAdapter.navigationUp();
+        }
+        final int id = v.getId();
+        if (id == R.id.ami_component_add) {
+            UI.show(mContext, DrawerAddFragment.class);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else if (id == R.id.ami_component_edit) {
+
+        } else if (id == R.id.ami_component_description) {
+            UI.show(mContext, DrawerDescriptionFragment.class);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         }
     }
 
@@ -247,6 +301,20 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         //do nothing
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (DrawerConstants.prefs.KEY_COMPONENTS.equals(key)) {
+            parseCachedDrawerNodes();
+        }
+    }
+
+    public ComponentNode findNodeByComponent(String componentName) {
+        if (mDrawerRootNode != null) {
+            return mDrawerRootNode.findNodeByComponent(componentName);
+        }
+        return null;
+    }
+
     private class DrawerAdapter extends RecyclerView.Adapter {
 
         private NodeGroup mCurrentGroup;
@@ -264,8 +332,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
             View itemView = holder.itemView;
-            TextView textView = itemView.findViewById(R.id.drawer_item_name);
-            ImageView arrow = itemView.findViewById(R.id.drawer_item_arrow);
+            TextView textView = (TextView) itemView.findViewById(R.id.drawer_item_name);
+            ImageView arrow = (ImageView) itemView.findViewById(R.id.drawer_item_arrow);
             Node node = mCurrentGroup.getChild(position);
             int visible = View.INVISIBLE;
             if (node instanceof NodeGroup) {
@@ -459,6 +527,7 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
             new StorePlugin(),
             new ColorfulPlugin()
         );
+        mInterceptorManager = (InterceptorLayerManager) AmiPluginManager.getPlugin(ViewInterceptorPlugin.class).getManager();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mPluginManager.addPlugin(new FPSPlugin());
         }

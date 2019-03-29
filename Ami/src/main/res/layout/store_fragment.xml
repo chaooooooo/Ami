@@ -21,17 +21,24 @@
                 android:layout_height="match_parent" />
         </chao.app.ami.plugin.plugins.store.ResizeLayout>
 
-        <fragment
-            android:id="@+id/ami_store_sp_content"
-            class="chao.app.ami.plugin.plugins.store.StorePrefsFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <fragment
-            android:id="@+id/ami_store_file_content"
-            class="chao.app.ami.plugin.plugins.store.StoreFileFragment"
+        <!--<fragment-->
+            <!--android:id="@+id/ami_store_sp_content"-->
+            <!--class="chao.app.ami.plugin.plugins.store.StorePrefsFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
+        <!--<fragment-->
+            <!--android:id="@+id/ami_store_file_content"-->
+            <!--class="chao.app.ami.plugin.plugins.store.StoreFileFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"/>-->
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/ami_store_view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
+
+
 
     <android.support.design.widget.TabLayout
         android:id="@+id/ami_store_tab"

@@ -231,11 +231,6 @@ public abstract class AMITabFragment extends AMISupportFragment {
     public void setupView(View layout) {
         mTabLayout = layout.findViewById(R.id.ami_base_tablayout);
         mViewPager = layout.findViewById(R.id.ami_base_viewpager);
-        mViewPager.setAdapter(new Adapter());
-
-        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-        mTabLayout.setupWithViewPager(mViewPager);
-
         setupTabLayout();
     }
 
@@ -253,6 +248,11 @@ public abstract class AMITabFragment extends AMISupportFragment {
                 e.printStackTrace();
             }
         }
+        mViewPager.setAdapter(new Adapter());
+
+        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+        mTabLayout.setupWithViewPager(mViewPager);
+
     }
 
     protected abstract Class<? extends Fragment>[] provideFragmentClasses();

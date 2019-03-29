@@ -27,8 +27,4 @@ public class PermissionHelper {
                 .setTipContent(tipContent)
                 .callBack(callback).request();
     }
-
-    public static boolean hasMustPermission(Activity activity) {
-        return PermissionUtil.hasSelfPermissions(activity, Permissions.PERMISSIONS_FIRST);
-    }
 }

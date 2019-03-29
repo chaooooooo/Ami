@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import chao.app.ami.Ami;
 
 public abstract class AMISupportFragment extends Fragment implements IAMIFragment {
     private AMIFragmentHelper mHelper = new AMIFragmentHelper(this);
+    private ActionBar actionBar;
 
     @Override
     public void onAttach(Context context) {
@@ -42,7 +44,26 @@ public abstract class AMISupportFragment extends Fragment implements IAMIFragmen
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = mHelper.onCreateView(inflater, container, savedInstanceState);
+        actionBar = getAppCompatActivity().getSupportActionBar();
         return view;
+    }
+
+    public void setTitle(int titleId) {
+        setTitle(getString(titleId));
+    }
+
+    public void setTitle(String title) {
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        } else if (getActivity() != null){
+            getActivity().setTitle(title);
+        }
+    }
+
+    public void setDisplayHomeAsUpEnabled(boolean enabled) {
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(enabled);
+        }
     }
 
     @Override

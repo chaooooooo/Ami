@@ -523,6 +523,8 @@ public class StoreFileFragment extends StoreContentFragment implements Handler.C
             ProgressBar seekBar = viewHolder.itemView.findViewById(R.id.ami_store_file_item_seek);
             ImageView iconView = viewHolder.itemView.findViewById(R.id.ami_store_file_item_icon);
             ImageView arrowView = viewHolder.itemView.findViewById(R.id.ami_store_file_item_arrow);
+            TextView summaryView = viewHolder.itemView.findViewById(R.id.ami_store_file_item_summary);
+            summaryView.setVisibility(View.GONE);
 
             titleView.setText(storeFile.getName());
             descView.setText(storeFile.getDesc());

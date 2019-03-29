@@ -1,25 +1,17 @@
 package chao.app.ami.launcher.drawer.node;
 
-import chao.app.ami.launcher.drawer.node.NodeGroup;
+import java.io.Serializable;
 
 /**
  * @author chao.qin
  * @since 2017/8/1
  */
 
-public class DrawerNode extends NodeGroup {
+public class DrawerNode extends NodeGroup implements Serializable {
 
-    private String mPackageName;
 
     public DrawerNode(String name) {
         super(name);
     }
 
-    public String getPackageName() {
-        return mPackageName;
-    }
-
-    public void setPackageName(String packageName) {
-        mPackageName = packageName;
-    }
 }

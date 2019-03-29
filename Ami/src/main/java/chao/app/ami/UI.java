@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.widget.Toast;
 import chao.app.ami.utils.permission.PermissionHelper;
@@ -20,6 +21,64 @@ import chao.app.ami.utils.permission.PermissionListener;
  */
 
 public class UI {
+
+    public static class Builder {
+        private Context context;
+
+        private Class clazz;
+
+        private int flags;
+
+        private Bundle bundle;
+
+        private String[] permissions;
+
+        public Builder(@NonNull Context context, @NonNull Class clazz) {
+            this.context = context;
+            this.clazz = clazz;
+        }
+
+        public Builder addFlags(int flags) {
+            this.flags |= flags;
+            return this;
+        }
+
+        public Builder setData(Bundle bundle) {
+            this.bundle = bundle;
+            return this;
+        }
+
+
+        public Builder addPermission(String... permission) {
+            this.permissions = permission;
+            return this;
+        }
+
+        public void show() {
+            if (permissions == null || permissions.length == 0) {
+                showInner(this);
+                return;
+            }
+            PermissionHelper.requestPermissions(context, permissions, new PermissionListener() {
+                @Override
+                public void onPassed() {
+                    showInner(Builder.this);
+                }
+
+                @Override
+                public boolean onDenied(boolean neverAsk) {
+                    Toast.makeText(context, "当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限", Toast.LENGTH_LONG).show();
+                    return super.onDenied(neverAsk);
+                }
+            });
+        }
+
+
+    }
+
+    private static void showInner(Builder builder) {
+        showInner(builder.context, builder.clazz, builder.bundle, builder.flags);
+    }
 
     public static void show(Context context, Class clazz) {
         show(context,clazz,null,0);

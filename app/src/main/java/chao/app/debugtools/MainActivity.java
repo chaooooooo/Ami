@@ -4,6 +4,8 @@ import android.os.Bundle;
 import chao.app.ami.UI;
 import chao.app.ami.annotations.LayoutID;
 import chao.app.ami.base.AMIActivity;
+import chao.app.ami.launcher.drawer.DrawerAddFragment;
+import chao.app.ami.launcher.drawer.DrawerSelectPermissionFragment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +53,7 @@ public class MainActivity extends AMIActivity {
     @Override
     public void setupView(Bundle savedInstanceState) {
         super.setupView(savedInstanceState);
-        UI.show(this, PasswordFragment.class);
+        UI.show(this, DrawerAddFragment.class);
     }
 
 }

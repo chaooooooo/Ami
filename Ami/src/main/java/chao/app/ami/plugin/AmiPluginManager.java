@@ -23,8 +23,6 @@ import java.util.HashMap;
  */
 public class AmiPluginManager implements ViewPager.OnPageChangeListener {
 
-    private TabLayout mTabLayout;
-
     private ViewPager mViewPager;
 
     private ArrayList<AmiPlugin> mPlugins = new ArrayList<>();
@@ -55,7 +53,6 @@ public class AmiPluginManager implements ViewPager.OnPageChangeListener {
 
     public void initView(AmiContentView content, TabLayout tabLayout, ViewPager viewPager) {
         contentView = content;
-        mTabLayout = tabLayout;
         mViewPager = viewPager;
 
         for (AmiPlugin plugin : mPlugins) {

@@ -2,15 +2,15 @@ package chao.app.ami.launcher.drawer.node;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
+import chao.app.ami.launcher.drawer.DrawerComponentInfo;
 import chao.app.ami.launcher.drawer.DrawerParserException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ComponentNode extends Node implements IObjectExtraParent {
+public class ComponentNode extends Node implements IObjectExtraParent, Serializable {
 
     private static final String TAG = ComponentNode.class.getSimpleName();
 
@@ -26,13 +26,16 @@ public class ComponentNode extends Node implements IObjectExtraParent {
     private String mComponent;
 
     private int mFlags;   // Intent.mFlags
-    
-    private final static ArrayMap<String, Integer> FLAG_CONSTANT_MAP = new ArrayMap<>();
 
-    private static final ArrayList<String> mPermissions = new ArrayList<>();
+    private String mPkgName;
+    
+    private final static transient HashMap<String, Integer> FLAG_CONSTANT_MAP = new HashMap<>();
+
+    public ArrayList<String> permissions = new ArrayList<>();
 
     private HashMap<String, String> mInputMap;
 
+    public boolean toGroup = false;
 
     static {
         FLAG_CONSTANT_MAP.put("FLAG_GRANT_READ_URI_PERMISSION", 0x00000001);
@@ -66,17 +69,17 @@ public class ComponentNode extends Node implements IObjectExtraParent {
     }
  
 
-    private Bundle mBundle = new Bundle();
+    private transient Bundle mBundle = new Bundle();
 
-    public ComponentNode(String name) {
+    public ComponentNode(String name, String component) {
         super(name);
-    }
-
-    public void setComponent(String component) {
         mComponent = component;
     }
 
     public String getComponent() {
+        if (mComponent.startsWith(".")) {
+            mComponent = mPkgName + mComponent;
+        }
         return mComponent;
     }
 
@@ -205,17 +208,40 @@ public class ComponentNode extends Node implements IObjectExtraParent {
 
     public void addPermission(String permission) {
         permission = permission.replaceFirst("Manifest", "android");
-        mPermissions.add(permission);
+        permissions.add(permission);
     }
 
     public ArrayList<String> getPermissions() {
-        return mPermissions;
+        return permissions;
     }
 
     public String[] getPermissionArray() {
-        String[] perArray = new String[mPermissions.size()];
-        mPermissions.toArray(perArray);
+        String[] perArray = new String[permissions.size()];
+        permissions.toArray(perArray);
         return perArray;
     }
 
+    @Override
+    public void addNode(Node node) {
+        super.addNode(node);
+        NodeGroup parent = (NodeGroup) getParent();
+        mPkgName = parent.getPackageName();
+    }
+
+    public String getPkgName() {
+        return mPkgName;
+    }
+
+    public void setPkgName(String pkgName) {
+        this.mPkgName = pkgName;
+    }
+
+    public void replace(DrawerComponentInfo replace) {
+        setName(replace.getName());
+        setPkgName(replace.getPkgName());
+        toGroup = replace.isToGroup();
+        permissions = replace.getPermissions();
+//        mFlags = replace.mFlags;
+//        mInputMap = replace.mInputMap;
+    }
 }

@@ -29,7 +29,7 @@ public class FragmentManagerHook {
     public static Field mFragmentManagerImpl;
     public static Field FragmentManager_mActive;
 
-
+    private static boolean sHooked = true;
 
     static {
         try {
@@ -54,11 +54,15 @@ public class FragmentManagerHook {
             FragmentManager_mActive.setAccessible(true);
 
         } catch (NoSuchFieldException e) {
+            sHooked = false;
             e.printStackTrace();
         }
     }
 
     public static Object getFragmentManagerImpl(Activity activity) {
+        if (!sHooked) {
+            return null;
+        }
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 Object controller = Activity_FragmentController.get(activity);
@@ -75,6 +79,9 @@ public class FragmentManagerHook {
 
     @SuppressWarnings("unchecked")
     public static ArrayList<Fragment> getActiveFragments(Activity activity) {
+        if (!sHooked) {
+            return null;
+        }
         try {
             Object active = FragmentManager_mActive.get(getFragmentManagerImpl(activity));
             if (active instanceof ArrayList) {

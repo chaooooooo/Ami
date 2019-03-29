@@ -258,6 +258,9 @@ public class Hierarchy<V> {
             forEach(new Action<HierarchyNode<V>>() {
                 @Override
                 public boolean action(HierarchyNode<V> v) {
+                    if (filter.onFilter(v)) {
+                        return filter.onMatcher(v);
+                    }
                     return false;
                 }
             });

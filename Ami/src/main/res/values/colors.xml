@@ -5,4 +5,9 @@
     <color name="ami_colorPrimary">#3F51B5</color>
     <color name="transparent">#00000000</color>
     <color name="white">#ffffff</color>
+
+    <color name="colorPrimary">@color/ami_colorPrimary</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
 </resources>

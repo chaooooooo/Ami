@@ -1,6 +1,7 @@
 package chao.app.ami.launcher.drawer.node;
 
 import chao.app.ami.launcher.drawer.DrawerConstants;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,7 +9,7 @@ import java.util.ArrayList;
  * @since 2017/8/1
  */
 
-public class Node implements DrawerConstants {
+public class Node implements DrawerConstants, Serializable {
 
     private ArrayList<Property> mProperties = new ArrayList<>();
 
@@ -49,11 +50,16 @@ public class Node implements DrawerConstants {
     }
 
     public void addNode(Node node) {
+        if (node.mParent != null && node.mParent != this) {
+            throw new RuntimeException("node has already has a parent." + node.mParent);
+        }
         mChildren.add(node);
+        node.mParent = this;
     }
 
     public void remove(Node node) {
         mChildren.remove(node);
+        node.mParent = null;
     }
 
     public void clear() {
@@ -68,7 +74,7 @@ public class Node implements DrawerConstants {
         return mChildren.get(index);
     }
 
-    public ArrayList<Node> getmChildren() {
+    public ArrayList<Node> getChildren() {
         return mChildren;
     }
 }

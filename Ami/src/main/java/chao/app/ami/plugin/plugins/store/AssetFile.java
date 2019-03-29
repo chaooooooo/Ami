@@ -256,10 +256,14 @@ public class AssetFile extends StoreFile {
 
     @Override
     public FileDescriptor getFd() {
-        return getAfd().getFileDescriptor();
+        AssetFileDescriptor afd = getAfd();
+        if (afd == null) {
+            return null;
+        }
+        return afd.getFileDescriptor();
     }
 
-    public AssetFileDescriptor getAfd() {
+    AssetFileDescriptor getAfd() {
         AssetManager assetManager = Ami.getApp().getAssets();
         try {
             return assetManager.openFd(getPath());
@@ -267,5 +271,11 @@ public class AssetFile extends StoreFile {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public InputStream getFileStream() throws IOException {
+        AssetManager assetManager = Ami.getApp().getAssets();
+        return assetManager.open(getPath());
     }
 }

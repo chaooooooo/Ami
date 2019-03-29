@@ -211,8 +211,9 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Locale;
 
 /**
@@ -330,11 +331,15 @@ public class StoreFile {
         return null;
     }
 
+    public InputStream getFileStream() throws IOException {
+        return new FileInputStream(getPath());
+    }
+
     String getSummary() {
         if (mSummary == null) {
             try {
-                FileReader fr = new FileReader(path);
-                BufferedReader br = new BufferedReader(fr);
+                InputStreamReader isr = new InputStreamReader(getFileStream());
+                BufferedReader br = new BufferedReader(isr);
                 StringBuilder builder = new StringBuilder();
                 String line;
                 int count = 0;

@@ -1,11 +1,13 @@
 package chao.app.ami.launcher.drawer.node;
 
+import java.io.Serializable;
+
 /**
  * @author chao.qin
  * @since 2017/8/1
  */
 
-public class Property extends Node {
+public class Property extends Node implements Serializable {
 
     private String key;
     private String value;

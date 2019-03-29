@@ -55,6 +55,12 @@ public class Interceptor<T> implements InvocationHandler {
         if (listener != null) {
             classLoader = listener.getClass().getClassLoader();
         }
+        if (classLoader == null && source != null) {
+            classLoader = source.getClass().getClassLoader();
+        }
+        if (classLoader == null && interfaces[0] != null) {
+            classLoader = interfaces[0].getClassLoader();
+        }
         Interceptor<T> interceptor = new Interceptor<>(source);
         interceptor.setOnInterceptorListener(listener);
         interceptor.mIntercept = intercept;
@@ -63,6 +69,7 @@ public class Interceptor<T> implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Ami.log(method);
         Object result = null;
         if (mInterceptorListener != null) {
             result = mInterceptorListener.onBeforeInterceptor(proxy, method, args);

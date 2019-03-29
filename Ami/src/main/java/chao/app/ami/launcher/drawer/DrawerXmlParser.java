@@ -94,14 +94,13 @@ public class DrawerXmlParser {
                                 current = root;
                                 break;
                             case XML_EVENT_ITEM:
-                                ComponentNode componentNode = new ComponentNode(name);
                                 String component = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_COMPONENT);
                                 String flags = mPullParser.getAttributeValue(null, XML_ATTRIBUTE_FLAGS);
+                                ComponentNode componentNode = new ComponentNode(name, component);
                                 if (!(current instanceof NodeGroup)) {
                                     throw new DrawerParserException("wrong format in drawer xml.");
                                 }
-                                componentNode.setParent((NodeGroup) current);
-                                componentNode.setComponent(component);
+                                componentNode.setParent(current);
                                 componentNode.setFlags(flags);
                                 current = componentNode;
                                 break;

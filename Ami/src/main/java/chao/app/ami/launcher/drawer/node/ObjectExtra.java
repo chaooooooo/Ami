@@ -2,6 +2,7 @@ package chao.app.ami.launcher.drawer.node;
 
 import android.text.TextUtils;
 import chao.app.ami.utils.ReflectUtil;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,7 +11,7 @@ import java.lang.reflect.Method;
  * @author qinchao
  * @since 2018/9/4
  */
-public class ObjectExtra extends NodeGroup implements IObjectExtraParent {
+public class ObjectExtra extends NodeGroup implements IObjectExtraParent,Serializable {
 
     private static final String XML_EXTRA_FORMAT_BOOLEAN = "boolean";
     private static final String XML_EXTRA_FORMAT_INT = "int";
@@ -23,7 +24,7 @@ public class ObjectExtra extends NodeGroup implements IObjectExtraParent {
 
     private Class clazz;
 
-    private Object instance;
+    private transient Object instance;
 
     private String className;
 

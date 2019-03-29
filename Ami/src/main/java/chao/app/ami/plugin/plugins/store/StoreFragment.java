@@ -210,8 +210,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -219,7 +222,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import chao.app.ami.Ami;
 import chao.app.ami.R;
 import chao.app.ami.plugin.AmiPlugin;
 import chao.app.ami.plugin.AmiPluginFragment;
@@ -231,15 +233,19 @@ import java.util.Comparator;
  * @author qinchao
  * @since 2018/10/7
  */
-public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOnTabSelectedListener {
+public class StoreFragment extends AmiPluginFragment implements ViewPager.OnPageChangeListener {
 
     private RecyclerView mRecyclerView;
 
     private StoreContentFragment mFragment;
 
-    private StoreContentFragment mPrefsFragment;
+    private StoreFileFragment mFileFragment = new StoreFileFragment();
 
-    private StoreContentFragment mFileFragment;
+    private StorePrefsFragment mPrefsFragment = new StorePrefsFragment();
+
+    private StoreContentFragment[] mFragments = new StoreContentFragment[]{mPrefsFragment, mFileFragment};
+
+    private String[] mTitles = new String[]{"prefs", "文件"};
 
     private Adapter mAdapter;
 
@@ -255,13 +261,12 @@ public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOn
 
     private TabLayout mTabLayout;
 
-    private TabLayout.Tab mPrefsTab;
-
-    private TabLayout.Tab mFileTab;
+    private ViewPager mViewPager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFragment = mPrefsFragment;
         mAdapter = new Adapter();
         mDirs.add(Constants.DIR_KEY_ASSETS);
         mDirs.add(Constants.DIR_KEY_DATA_DATA);
@@ -292,9 +297,6 @@ public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOn
             return;
         }
         FragmentManager fm = getChildFragmentManager();
-        mPrefsFragment = (StorePrefsFragment) fm.findFragmentById(R.id.ami_store_sp_content);
-        mFileFragment = (StoreContentFragment) fm.findFragmentById(R.id.ami_store_file_content);
-        mFragment = mPrefsFragment;
         mData = mPrefs;
         mRecyclerView = findView(R.id.ami_store_sp_titles);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(context, RecyclerView.VERTICAL));
@@ -303,16 +305,12 @@ public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOn
         mTabLayout = findView(R.id.ami_store_tab);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
 
-        mPrefsTab = mTabLayout.newTab();
-        mPrefsTab.setText("prefs");
+        mViewPager = findView(R.id.ami_store_view_pager);
+        PagerAdapter pagerAdapter = new StorePageAdapter(fm);
+        mViewPager.setAdapter(pagerAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mViewPager.addOnPageChangeListener(this);
 
-
-        mFileTab = mTabLayout.newTab();
-        mFileTab.setText("文件");
-
-        mTabLayout.addTab(mPrefsTab);
-        mTabLayout.addTab(mFileTab);
-        mTabLayout.addOnTabSelectedListener(this);
     }
 
     @Override
@@ -326,33 +324,58 @@ public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOn
     }
 
     @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        FragmentManager fm = getChildFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        if (tab == mPrefsTab) {
-            mFragment = mPrefsFragment;
-            mData = mPrefs;
-            ft.hide(mFileFragment);
-            ft.show(mPrefsFragment);
-        } else if (tab == mFileTab) {
-            mFragment = mFileFragment;
+    public void onPageScrolled(int i, float v, int i1) {
+
+    }
+
+    @Override
+    public void onPageSelected(int i) {
+        mFragment = mFragments[i];
+        if (mFragment == mFileFragment) {
             mData = mDirs;
-            ft.hide(mPrefsFragment);
-            ft.show(mFileFragment);
+        } else if (mFragment == mPrefsFragment) {
+            mData = mPrefs;
         }
-        ft.commit();
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-        Ami.log();
+    public void onPageScrollStateChanged(int i) {
+
     }
 
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-        Ami.log();
-    }
+
+//    private TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.OnTabSelectedListener() {
+//        @Override
+//        public void onTabSelected(TabLayout.Tab tab) {
+//            FragmentManager fm = getChildFragmentManager();
+//            FragmentTransaction ft = fm.beginTransaction();
+//            if (tab == mPrefsTab) {
+//                mFragment = mPrefsFragment;
+//                mData = mPrefs;
+//                ft.hide(mFileFragment);
+//                ft.show(mPrefsFragment);
+//            } else if (tab == mFileTab) {
+//                mFragment = mFileFragment;
+//                mData = mDirs;
+//                ft.hide(mPrefsFragment);
+//                ft.show(mFileFragment);
+//            }
+//            ft.commit();
+//            mAdapter.notifyDataSetChanged();
+//        }
+//
+//        @Override
+//        public void onTabUnselected(TabLayout.Tab tab) {
+//            Ami.log();
+//        }
+//
+//        @Override
+//        public void onTabReselected(TabLayout.Tab tab) {
+//            Ami.log();
+//        }
+//    };
+
 
     private class Adapter extends RecyclerView.Adapter {
 
@@ -387,6 +410,30 @@ public class StoreFragment extends AmiPluginFragment implements TabLayout.BaseOn
         @Override
         public int getItemCount() {
             return mData.size();
+        }
+    }
+
+
+    class StorePageAdapter extends FragmentPagerAdapter {
+
+        StorePageAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragments.length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragments[position];
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mTitles[position];
         }
     }
 }

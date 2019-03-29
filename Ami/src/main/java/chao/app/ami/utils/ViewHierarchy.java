@@ -33,8 +33,8 @@ public class ViewHierarchy {
             return (T) mPoint.getParent();
         }
 
-        public ViewFamily<ViewGroup> ancestors() {
-            return new ViewFamily<>(new Itr<ViewGroup>() {
+        public ViewFamily<View> ancestors() {
+            return new ViewFamily<>(new Itr<View>() {
                 @Override
                 public void onCreate() {
                     mPoint = mView;
@@ -47,7 +47,7 @@ public class ViewHierarchy {
                 }
 
                 @Override
-                public ViewGroup next() {
+                public View next() {
                     ViewGroup parent = nextParent();
                     mPoint = parent;
                     return parent;

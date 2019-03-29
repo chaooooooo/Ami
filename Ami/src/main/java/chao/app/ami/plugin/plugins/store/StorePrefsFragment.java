@@ -221,6 +221,7 @@ import android.widget.TextView;
 import chao.app.ami.Ami;
 import chao.app.ami.R;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -276,6 +277,9 @@ public class StorePrefsFragment extends StoreContentFragment implements View.OnF
         Object value = entry.getValue();
 
         String title = key + "( " + value.getClass().getSimpleName() + " )";
+        if (value instanceof Collection) {
+            title += "(" + ((Collection) value).size() + ")";
+        }
 
         View view = mInflater.inflate(R.layout.ami_prefs_item_layout, mLayout, false);
         TextView titleView = view.findViewById(R.id.ami_prefs_item_title);

@@ -9,4 +9,8 @@ public interface DrawerConstants {
 
     String EXTRA_KEY_INPUT = "inputs";
 
+    interface prefs {
+        String KEY_COMPONENTS = "components";
+    }
+
 }
