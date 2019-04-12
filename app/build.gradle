@@ -34,11 +34,9 @@ dependencies {
 
 
     testImplementation 'junit:junit:4.12'
-//    debugImplementation  'com.github.chaooooooo:Ami:master-SNAPSHOT'
 
     implementation project(':Ami')
 
-    implementation 'com.aicaigroup:tracker:0.0.4.12-SNAPSHOT'
 }
 
 configurations.all {
