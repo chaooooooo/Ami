@@ -113,6 +113,10 @@ public class Ami {
         log(TAG, " >>> " + String.valueOf(log));
     }
 
+    public static void log(String log, Object... args) {
+        log(String.format(log, args));
+    }
+
     public static void log() {
         log(TAG, "");
     }

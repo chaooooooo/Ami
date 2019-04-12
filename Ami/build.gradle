@@ -46,6 +46,6 @@ ac {
     maven {
         groupId 'chao.app.ami'
         artifactId 'ami'
-        versionName '1.0.5'
+        versionName '1.0.7'
     }
 }

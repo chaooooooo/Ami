@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import chao.app.ami.Ami;
+import com.aicaigroup.tracker.DebugMode;
+import com.aicaigroup.tracker.TrackerAPI;
 import java.io.File;
 
 /**
@@ -26,10 +28,12 @@ public class AppApplication extends Application {
         File path = getExternalCacheDir();
         String traceFile = path.getAbsolutePath() + "/" + System.currentTimeMillis() + "ami.trace";
 
+        TrackerAPI.init(this, "", "xxx", "xxx", DebugMode.DEBUG_OFF);
 //        Debug.startMethodTracing(traceFile, 30 * 1024 * 1024);
         Ami.init(this);
         Ami.setDrawerId(R.raw.drawer);
         Ami.setLifecycleLevel(Ami.LIFECYCLE_LEVEL_NONE);
+
 
 //        Debug.stopMethodTracing();
 

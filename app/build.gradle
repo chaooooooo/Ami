@@ -5,7 +5,7 @@ android {
     buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "chao.app.debugtools"
-        minSdkVersion 15
+        minSdkVersion 17
         targetSdkVersion 28
         versionCode 101
         versionName "1.0.1"
@@ -37,6 +37,8 @@ dependencies {
 //    debugImplementation  'com.github.chaooooooo:Ami:master-SNAPSHOT'
 
     implementation project(':Ami')
+
+    implementation 'com.aicaigroup:tracker:0.0.4.12-SNAPSHOT'
 }
 
 configurations.all {

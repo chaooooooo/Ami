@@ -431,18 +431,26 @@ public class DrawerAddFragment extends AMISupportFragment implements AdapterView
                 return;
             }
             PackageManager packageManager = context.getPackageManager();
-            PackageInfo packageInfo;
+            PackageInfo packageInfo = null;
             try {
                 packageInfo = packageManager.getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
-
-                for (ActivityInfo activity : packageInfo.activities) {
-                    Class<?> aClass = Class.forName(activity.name);
-                    mClassList.add(aClass);
-                }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            }
+
+            if (packageInfo == null) {
+                return;
+            }
+            for (ActivityInfo activity : packageInfo.activities) {
+                Class<?> aClass = null;
+                try {
+                    aClass = Class.forName(activity.name);
+                } catch (ClassNotFoundException e) {
+                    Ami.log("parse activities for drawer configuration: %s not found.", activity.name);
+                }
+                if (aClass != null) {
+                    mClassList.add(aClass);
+                }
             }
 
         }
@@ -491,6 +499,9 @@ public class DrawerAddFragment extends AMISupportFragment implements AdapterView
 
                     ArrayList<Class> bingo = new ArrayList<>();
                     for (Class clazz: mClassList) {
+                        if (clazz == null) {
+                            continue;
+                        }
                         String simpleName = clazz.getSimpleName().toLowerCase();
                         if (simpleName.contains(String.valueOf(constraint).toLowerCase())) {
                             bingo.add(clazz);
