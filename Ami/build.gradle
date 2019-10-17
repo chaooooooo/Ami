@@ -42,7 +42,7 @@ dependencies {
 
 apply from: './jitpack.gradle'
 
-ac {
+abkit {
     maven {
         groupId 'chao.app.ami'
         artifactId 'ami'

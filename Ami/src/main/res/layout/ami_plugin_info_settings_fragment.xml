@@ -26,7 +26,20 @@
         android:layout_toEndOf="@id/ami_info_settings_app" />
 
     <CheckBox
+        android:id="@+id/ami_info_device_info"
+        android:layout_below="@id/ami_info_settings_app"
+        android:text="@string/ami_info_device_info"
+        android:textSize="16sp"
+        android:layout_margin="10dp"
+        android:textColor="@android:color/primary_text_light"
+        android:lines="1"
+        android:maxLines="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <CheckBox
         android:id="@+id/ami_info_settings_log"
+        android:layout_toRightOf="@id/ami_info_device_info"
         android:layout_below="@id/ami_info_settings_app"
         android:text="@string/ami_info_settings_log"
         android:textSize="16sp"

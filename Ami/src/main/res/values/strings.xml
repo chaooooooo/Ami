@@ -36,4 +36,5 @@
     <string name="ami_drawer_add_configuration_main_title">基本信息</string>
     <string name="ami_drawer_add_configuration_group">添加到分组%s</string>
     <string name="ami_drawer_add_configuration_extra_title">配置参数</string>
+    <string name="ami_info_device_info">设备信息</string>
 </resources>
