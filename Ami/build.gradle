@@ -49,3 +49,11 @@ dependencies {
 }
 
 //apply from: './jitpack.gradle'
+
+abkit {
+    maven {
+        groupId 'chao.app.ami'
+        artifactId 'ami'
+        versionName '1.0.5'
+    }
+}

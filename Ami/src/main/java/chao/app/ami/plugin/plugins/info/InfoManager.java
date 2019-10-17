@@ -3,6 +3,7 @@ package chao.app.ami.plugin.plugins.info;
 import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -25,6 +26,8 @@ public class InfoManager implements AmiSettings.OnSettingsChangeListener {
 
     private InfoSettings settings;
 
+    private TextView deviceInfoView;
+
     private String screenInfo;
 
     public InfoManager(@NonNull AmiContentView contentView, final InfoSettings settings) {
@@ -35,12 +38,16 @@ public class InfoManager implements AmiSettings.OnSettingsChangeListener {
         MovementLayout movementLayout = contentView.getMovementLayout();
 
         //appInfo
-        appInfoView = (TextView) contentView.findViewById(R.id.ami_content_app_info);
+        appInfoView = contentView.findViewById(R.id.ami_content_app_info);
         movementLayout.addView(appInfoView);
 
 
-        displayView = (TextView) contentView.findViewById(R.id.ami_content_app_display);
+        displayView = contentView.findViewById(R.id.ami_content_app_display);
         movementLayout.addView(displayView);
+
+        deviceInfoView = contentView.findViewById(R.id.ami_content_device_info);
+        movementLayout.addView(deviceInfoView);
+
         updateVisible();
     }
 
@@ -56,6 +63,12 @@ public class InfoManager implements AmiSettings.OnSettingsChangeListener {
         } else {
             displayView.setVisibility(View.GONE);
         }
+
+        if (settings.isShowDeviceInfo()) {
+            deviceInfoView.setVisibility(View.VISIBLE);
+        } else {
+            deviceInfoView.setVisibility(View.GONE);
+        }
     }
 
     void setupManager(Activity activity) {
@@ -64,6 +77,8 @@ public class InfoManager implements AmiSettings.OnSettingsChangeListener {
             screenInfo = getDisplayInfo(activity);
         }
         displayView.setText(screenInfo);
+
+        deviceInfoView.setText(getDeviceInfo());
     }
 
     private String getDisplayInfo(Activity activity) {
@@ -92,6 +107,17 @@ public class InfoManager implements AmiSettings.OnSettingsChangeListener {
             e.printStackTrace();
         }
         return buffer.toString();
+    }
+
+    private String getDeviceInfo() {
+        StringBuilder builder = new StringBuilder();
+        builder
+                .append("版本: android ").append(Build.VERSION.RELEASE)
+                .append(", level ").append(Build.VERSION.SDK_INT).append("\n")
+                .append("制造商:").append(Build.MANUFACTURER).append("\n")
+                .append("品牌:").append(Build.BRAND).append("\n")
+                .append("型号:").append(Build.MODEL);
+        return builder.toString();
     }
 
     @Override

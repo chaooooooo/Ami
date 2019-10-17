@@ -12,6 +12,8 @@ public class InfoSettings extends AmiSettings {
 
     private boolean showDisplayMetrics = spUtils.getBoolean("displayMetrics", false);
 
+    private boolean showDeviceInfo = spUtils.getBoolean("deviceInfo", false);
+
     public InfoSettings() {
     }
 
@@ -32,5 +34,14 @@ public class InfoSettings extends AmiSettings {
     public void setShowDisplayMetrics(boolean showDisplayMetrics) {
         this.showDisplayMetrics = showDisplayMetrics;
         put("displayMetrics", showDisplayMetrics);
+    }
+
+    public boolean isShowDeviceInfo() {
+        return showDeviceInfo;
+    }
+
+    public void setShowDeviceInfo(boolean showDeviceInfo) {
+        this.showDeviceInfo = showDeviceInfo;
+        put("deviceInfo", showDeviceInfo);
     }
 }

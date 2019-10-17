@@ -21,6 +21,8 @@ public class InfoPane extends AmiPluginSettingPane implements CompoundButton.OnC
 
     private CheckBox displayMetricsCheckBox;
 
+    private CheckBox deviceCheckbox;
+
     private InfoManager manager;
 
     private InfoSettings settings;
@@ -39,14 +41,17 @@ public class InfoPane extends AmiPluginSettingPane implements CompoundButton.OnC
         appInfoCheckbox = (CheckBox) layout.findViewById(R.id.ami_info_settings_app);
         logEnabledCheckbox = (CheckBox) layout.findViewById(R.id.ami_info_settings_log);
         displayMetricsCheckBox = (CheckBox) layout.findViewById(R.id.ami_info_settings_display);
+        deviceCheckbox = layout.findViewById(R.id.ami_info_device_info);
 
         appInfoCheckbox.setChecked(settings.isShowAppInfo());
         logEnabledCheckbox.setChecked(settings.logEnabled());
         displayMetricsCheckBox.setChecked(settings.isShowDisplayMetrics());
+        deviceCheckbox.setChecked(settings.isShowDeviceInfo());
 
         appInfoCheckbox.setOnCheckedChangeListener(this);
         logEnabledCheckbox.setOnCheckedChangeListener(this);
         displayMetricsCheckBox.setOnCheckedChangeListener(this);
+        deviceCheckbox.setOnCheckedChangeListener(this);
 
         return layout;
     }
@@ -59,6 +64,8 @@ public class InfoPane extends AmiPluginSettingPane implements CompoundButton.OnC
             settings.setLogEnabled(isChecked);
         } else if (buttonView == displayMetricsCheckBox) {
             settings.setShowDisplayMetrics(isChecked);
+        } else if (buttonView == deviceCheckbox) {
+            settings.setShowDeviceInfo(isChecked);
         }
     }
 }
