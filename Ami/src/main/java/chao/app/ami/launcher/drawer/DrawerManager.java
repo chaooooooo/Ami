@@ -18,6 +18,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,7 +128,8 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
         mRealView = realView;
 
         if (mDrawerLayout == null) {
-            LayoutInflater inflater = LayoutInflater.from(Ami.getApp());
+            Context context = new ContextThemeWrapper(Ami.getApp(), R.style.Ami);
+            LayoutInflater inflater = LayoutInflater.from(context);
             mDrawerLayout = (DrawerLayout) inflater.inflate(R.layout.drawer_launcher, mDecorView, false);
             AmiContentView content = (AmiContentView) mDrawerLayout.findViewById(R.id.ami_content);
 

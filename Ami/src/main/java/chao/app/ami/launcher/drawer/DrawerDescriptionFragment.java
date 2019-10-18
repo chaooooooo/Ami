@@ -205,9 +205,14 @@
 
 package chao.app.ami.launcher.drawer;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
+import android.widget.ImageView;
 import chao.app.ami.R;
 import chao.app.ami.base.AMISupportFragment;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author qinchao
@@ -216,6 +221,14 @@ import chao.app.ami.base.AMISupportFragment;
 public class DrawerDescriptionFragment extends AMISupportFragment {
     @Override
     public void setupView(View layout) {
+        try {
+            InputStream inputStream = getResources().getAssets().open("ami_drawer_usage.png");
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            ImageView imageView = (ImageView) layout;
+            imageView.setImageBitmap(bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

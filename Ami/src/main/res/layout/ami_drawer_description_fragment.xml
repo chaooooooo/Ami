@@ -202,8 +202,8 @@
   ~    limitations under the License.
   ~
   -->
-<View xmlns:android="http://schemas.android.com/apk/res/android"
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ami_drawer_usage"
+    android:scaleType="fitXY"
     android:contentDescription="@string/empty_image_description" />

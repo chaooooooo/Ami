@@ -43,8 +43,7 @@ public class Ami {
 
     private static int mLifecycle = LIFECYCLE_LEVEL_NONE;
 
-    private Ami(Application app) {
-        mApp = app;
+    private Ami() {
     }
 
     private static boolean isDebugMode(Application app) {
@@ -60,6 +59,7 @@ public class Ami {
     }
 
     public static void init(Application app) {
+        mApp = app;
         if (!isDebugMode(app)) {
             return;
         }
@@ -72,7 +72,7 @@ public class Ami {
             return;
         }
 
-        mInstance = new Ami(app);
+        mInstance = new Ami();
         ProxyManager.init(app);
         TextManager.init();
         FrameManager.init();
