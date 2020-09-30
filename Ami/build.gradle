@@ -38,11 +38,11 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compileOnly 'com.android.support:appcompat-v7:28.0.0'
-    compileOnly 'com.android.support:design:28.0.0'
-    compileOnly 'com.android.support:recyclerview-v7:28.0.0'
-    compileOnly 'com.android.support:support-v4:28.0.0'
-    compileOnly 'com.android.support:support-annotations:28.0.0'
+    api 'com.android.support:appcompat-v7:28.0.0'
+    api 'com.android.support:design:28.0.0'
+    api 'com.android.support:recyclerview-v7:28.0.0'
+    api 'com.android.support:support-v4:28.0.0'
+    api 'com.android.support:support-annotations:28.0.0'
     //noinspection GradleDependency
     implementation 'com.alibaba:fastjson:1.1.68.android'
     testImplementation 'junit:junit:4.12'
@@ -52,8 +52,8 @@ dependencies {
 
 abkit {
     maven {
-        groupId 'chao.app.ami'
+        groupId 'chao.android.tools'
         artifactId 'ami'
-        versionName '1.0.5'
+        versionName '1.0.6'
     }
 }

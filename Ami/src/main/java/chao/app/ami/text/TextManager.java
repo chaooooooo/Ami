@@ -53,6 +53,9 @@ public class TextManager {
      */
     public static Poetry getTPoetry() {
         checkDebugMode();
+        if (sPoetryList == null) {
+            init();
+        }
         int size = sPoetryList.size();
         int rand = (int) (Math.random() * size);
         return sPoetryList.get(rand);
@@ -78,6 +81,9 @@ public class TextManager {
      */
     public static Poetry getSPoetry() {
         checkDebugMode();
+        if (sSongPoetryList == null) {
+            init();
+        }
         int size = sSongPoetryList.size();
         int rand = (int) (Math.random() * size);
         return sSongPoetryList.get(rand);
@@ -99,7 +105,7 @@ public class TextManager {
 
     private static void checkDebugMode() {
         if (!Util.isHostAppDebugMode(Ami.getApp())) {
-            throw new IllegalStateException("TextManager must be use in debug mode.");
+//            throw new IllegalStateException("TextManager must be use in debug mode.");
         }
     }
 }

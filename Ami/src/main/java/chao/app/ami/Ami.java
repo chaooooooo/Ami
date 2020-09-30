@@ -1,6 +1,7 @@
 package chao.app.ami;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import chao.app.ami.base.AmiHandlerThread;
@@ -10,6 +11,7 @@ import chao.app.ami.proxy.ProxyManager;
 import chao.app.ami.text.TextManager;
 import chao.app.ami.utils.Util;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
@@ -102,6 +104,31 @@ public class Ami {
     }
 
     public static Application getApp() {
+        if (mApp == null) {
+            return reflectApplication();
+        }
+        return mApp;
+    }
+
+    public static Application reflectApplication() {
+        if (mApp == null) {
+            synchronized (Ami.class) {
+                if (mApp == null) {
+                    try {
+                        Class<?> ActivityThread = Class.forName("android.app.ActivityThread");
+
+                        Method method = ActivityThread.getMethod("currentActivityThread");
+                        Object currentActivityThread = method.invoke(ActivityThread);//获取currentActivityThread 对象
+
+                        Method method2 = currentActivityThread.getClass().getMethod("getApplication");
+                        mApp =(Application) method2.invoke(currentActivityThread);//获取 Context对象
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
         return mApp;
     }
 

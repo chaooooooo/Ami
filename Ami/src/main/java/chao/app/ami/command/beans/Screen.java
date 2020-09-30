@@ -65,13 +65,15 @@ public class Screen {
     public String toString() {
         StringBuilder buffer = new StringBuilder();
         return buffer.append("屏幕像素: ").append(width).append(" x ").append(height).append("\n")
-            .append("屏幕长宽: ").append(mNumberFormat.format(width/xdpi)).append(" x ").append(mNumberFormat.format(height/ydpi)).append(" (英寸)").append("\n")
-            .append("屏幕尺寸：").append(mNumberFormat.format(inch)).append(" (英寸)").append("\n")
-            .append("屏幕密度: ").append(density).append("\n")
-            .append("规格: ").append(densityType).append("\n")
-            .append("x每英寸像素: ").append(xdpi).append("\n")
-            .append("y每英寸像素: ").append(ydpi)
-            .toString();
+                .append("屏幕长宽: ").append(mNumberFormat.format(width / xdpi)).append(" x ").append(mNumberFormat.format(height / ydpi)).append(" (英寸)").append("\n")
+                .append("屏幕尺寸：").append(mNumberFormat.format(inch)).append(" (英寸)").append("\n")
+                .append("屏幕密度: ").append(density).append("\n")
+                .append("规格: ").append(densityType).append("\n")
+                .append("x每英寸像素: ").append(xdpi).append("\n")
+                .append("y每英寸像素: ").append(ydpi).append("\n")
+                .append("x dp size: ").append(width / density).append("\n")
+                .append("y dp size: ").append(height / density).append("\n")
+                .toString();
 
     }
 }
