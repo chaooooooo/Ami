@@ -54,6 +54,6 @@ abkit {
     maven {
         groupId 'chao.android.tools'
         artifactId 'ami'
-        versionName '1.0.6'
+        versionName '1.0.7'
     }
 }

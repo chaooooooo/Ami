@@ -29,18 +29,18 @@ public class Util implements Constants {
     private static final int BUFFER_SIZE = 1000;
 
     public static boolean isHostAppDebugMode(Application app) {
-        String packageName = app.getPackageName();
-        try {
-            Class<?> buildConfig = Class.forName(packageName + ".BuildConfig");
-            Field debugField = buildConfig.getDeclaredField("DEBUG");
-            return (boolean) debugField.get(null);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+//        String packageName = app.getPackageName();
+//        try {
+//            Class<?> buildConfig = Class.forName(packageName + ".BuildConfig");
+//            Field debugField = buildConfig.getDeclaredField("DEBUG");
+//            return (boolean) debugField.get(null);
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchFieldException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
         return false;
     }
 
