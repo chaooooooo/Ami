@@ -213,7 +213,7 @@ import chao.app.ami.plugin.AmiSettings;
  */
 public class FPSSettings extends AmiSettings {
 
-    private boolean showFPS = spUtils.getBoolean("fps", true);
+    private boolean showFPS = spUtils.getBoolean("fps", false);
 
     public boolean isShowFPS() {
         return showFPS;

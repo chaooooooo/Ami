@@ -75,8 +75,8 @@ public class Ami {
         }
 
         mInstance = new Ami();
-        ProxyManager.init(app);
-        TextManager.init();
+//        ProxyManager.init(app);
+//        TextManager.init();
         FrameManager.init();
         DrawerManager.get();
 //        MonitorManager.init(app);

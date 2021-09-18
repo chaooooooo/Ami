@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'upload'
+
 
 android {
     compileSdkVersion 28
@@ -26,13 +28,13 @@ android {
     }
 }
 
-abkit {
-    maven {
-        artifactId 'ami'
-        groupId 'chao.android.tools'
-        versionName '1.0.2'
-    }
-}
+//abkit {
+//    maven {
+//        artifactId 'ami'
+//        groupId 'chao.android.tools'
+//        versionName '1.0.2'
+//    }
+//}
 
 dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -50,10 +52,17 @@ dependencies {
 
 //apply from: './jitpack.gradle'
 
-abkit {
-    maven {
-        groupId 'chao.android.tools'
-        artifactId 'ami'
-        versionName '1.0.7'
-    }
+//abkit {
+//    maven {
+//        groupId 'chao.android.tools'
+//        artifactId 'ami'
+//        versionName '1.0.7'
+//    }
+//}
+
+upInfo {
+    version = "0.0.1-SNAPSHOT"
+    artifactId = "ami"
+    groupId = "com.tuya.smart"
+    hasPomDepend false
 }

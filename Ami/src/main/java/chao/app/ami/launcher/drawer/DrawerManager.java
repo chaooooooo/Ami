@@ -522,12 +522,13 @@ public class DrawerManager implements DrawerXmlParser.DrawerXmlParserListener, V
     private void init() {
         mPluginManager = AmiPluginManager.getInstance();
         mPluginManager.addGeneralPlugin(new GeneralPlugin());
-        mPluginManager.addPlugin(new LogcatPlugin(),
+        mPluginManager.addPlugin(
+//                new LogcatPlugin(),
             new FramePlugin(),
             new InfoPlugin(),
             new ViewInterceptorPlugin(),
-            new StorePlugin(),
-            new ColorfulPlugin()
+            new StorePlugin()
+//            new ColorfulPlugin()
         );
         mInterceptorManager = (InterceptorLayerManager) AmiPluginManager.getPlugin(ViewInterceptorPlugin.class).getManager();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
